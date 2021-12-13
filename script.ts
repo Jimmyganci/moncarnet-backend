@@ -2,14 +2,14 @@ export {};
 const express = require("express");
 const app = express();
 const cors = require("cors");
-const { setupRoutes } = require("./routes/index");
+const { setupRoutes } = require("./controllers/index");
 
 const port = process.env.PORT || 8000;
 
 app.use(express.json());
 
 const corsOptions = {
-  origin: true,
+  origin: true, // accept all origin
   credentials: true, // access-control-allow-credentials:true
   optionSuccessStatus: 200,
 };

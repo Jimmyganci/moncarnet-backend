@@ -1,7 +1,7 @@
 generator client {
   provider = "prisma-client-js"
 }
-// connect to my local bdd
+// connect to the local bdd
 datasource db { 
   provider = "mysql"
   url      = env("DATABASE_URL") 

@@ -8,6 +8,7 @@ brandsRouter.get("/", async (req: Request, res: Response) => {
   const brands = await prisma.brand.findMany();
   res.json(brands);
 });
+
 brandsRouter.post("/", async (req: Request, res: Response) => {
   const addBrands = await prisma.brand.create({
     data: {
@@ -17,6 +18,7 @@ brandsRouter.post("/", async (req: Request, res: Response) => {
   });
   res.json(addBrands);
 });
+
 brandsRouter.put("/:id", async (req: Request, res: Response) => {
   const id: number = parseInt(req.params.id);
   const brandUpdate = await prisma.brand.update({

@@ -4,6 +4,7 @@ const prosRouter = require("./pros");
 const service_bookRouter = require("./service_book");
 const brandsRouter = require("./brands");
 const modelsRouter = require("./models");
+const authRouter = require("./auth");
 
 const setupRoutes = (app: any) => {
   // vehicules routes
@@ -18,6 +19,8 @@ const setupRoutes = (app: any) => {
   app.use("/api/brands", brandsRouter);
   // Models routes
   app.use("/api/models", modelsRouter);
+  //   Auth routes
+  app.use("/api/auth", authRouter);
 };
 
 module.exports = {

@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, response, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 const modelsRouter = require("express").Router();
 
@@ -14,6 +14,7 @@ modelsRouter.get("/", async (req: Request, res: Response) => {
   });
   res.json(models);
 });
+
 modelsRouter.post("/", async (req: Request, res: Response) => {
   const addModels = await prisma.models.create({
     data: {

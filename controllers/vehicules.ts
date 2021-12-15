@@ -28,11 +28,14 @@ vehiculesRouter.get("/model/:id", async (req: Request, res: Response) => {
   });
   res.json(vehicules);
 });
-vehiculesRouter.get("/model/brand/:id", async (req: Request, res: Response) => {
+vehiculesRouter.get("/model/:id/brand", async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
-  const vehicules = await prisma.brand.findUnique({
+  const vehicules = await prisma.models.findUnique({
     where: {
-      id_brand: id,
+      id_model: id,
+    },
+    select: {
+      brand: true,
     },
   });
   res.json(vehicules);

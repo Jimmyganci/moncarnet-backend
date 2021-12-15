@@ -8,21 +8,6 @@ const prisma = new PrismaClient();
 // get many vehicules informations with brands, models
 vehiculesRouter.get("/all", async (req: Request, res: Response) => {
   const vehicules = await prisma.vehicules.findMany();
-  //     select: {
-  //       immat: true,
-  //       registration_date: true,
-  //       models: {
-  //         include: { brand: true },
-  //       },
-  //       users: {
-  //         select: { firstname: true, lastname: true, email: true, address: true },
-  //       },
-  //       types: {
-  //         select: { name_type: true },
-  //       },
-  //       url_vehiculeRegistration: true,
-  //     },
-  //   });
   res.json(vehicules);
 });
 vehiculesRouter.get("/:id", async (req: Request, res: Response) => {
@@ -43,7 +28,7 @@ vehiculesRouter.get("/model/:id", async (req: Request, res: Response) => {
   });
   res.json(vehicules);
 });
-vehiculesRouter.get("/brand/:id", async (req: Request, res: Response) => {
+vehiculesRouter.get("/model/brand/:id", async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
   const vehicules = await prisma.brand.findUnique({
     where: {

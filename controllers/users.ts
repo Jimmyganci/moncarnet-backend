@@ -26,7 +26,9 @@ usersRouter.post("/", async (req: Request, res: Response) => {
       email: email,
     },
   });
-  if (!email) {
+  console.log(emailExisting);
+
+  if (emailExisting === null) {
     UserAuth.hashPassword(password)
       .then((hashedPassword: string) => {
         prisma.users

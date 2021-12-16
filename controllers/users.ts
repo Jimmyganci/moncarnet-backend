@@ -5,9 +5,29 @@ const UserAuth = require("../helpers/users");
 
 const prisma = new PrismaClient();
 
-usersRouter.get("/", async (req: Request, res: Response) => {
+usersRouter.get("/all", async (req: Request, res: Response) => {
   const users = await prisma.users.findMany();
-  res.json(users);
+  res.status(200).json(users);
+});
+
+usersRouter.get("/:id", async (req: Request, res: Response) => {
+  const id = parseInt(req.params.id);
+  const user = await prisma.users.findUnique({
+    where: {
+      id_user: id,
+    },
+  });
+  res.status(200).json(user);
+});
+
+usersRouter.get("/vehicules/:id", async (req: Request, res: Response) => {
+  const id = parseInt(req.params.id);
+  const vehiculeUser = await prisma.vehicules.findMany({
+    where: {
+      user_id_user: id,
+    },
+  });
+  res.status(200).json(vehiculeUser);
 });
 
 usersRouter.post("/", async (req: Request, res: Response) => {

@@ -4,6 +4,7 @@ const brandsRouter = require("express").Router();
 
 const prisma = new PrismaClient();
 
+// authorization:admin
 brandsRouter.get("/", async (req: Request, res: Response) => {
   const brands = await prisma.brand.findMany();
   res.json(brands);

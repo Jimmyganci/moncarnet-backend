@@ -4,27 +4,30 @@ const vehiculesRouter = require("express").Router();
 
 const prisma = new PrismaClient();
 
+interface VehiculeInfos {
+  immat: string;
+  registration_date: Date;
+  model_id_model: number;
+  user_id_user: number;
+  types_id_type: number;
+  url_vehiculeRegistration: string;
+}
+
 // get many vehicules (authorization: admin)
 vehiculesRouter.get("/all", async (req: Request, res: Response) => {
-  const vehicules = await prisma.vehicules.findMany({
-    include: {
-      models: true,
-    },
-  });
+  const vehicules: Array<Object> = await prisma.vehicules.findMany();
   res.json(vehicules);
 });
-
 // get one vehicule (authorization: all)
 vehiculesRouter.get("/:id", async (req: Request, res: Response) => {
-  const id = String(req.params.id);
+  const immat = String(req.params.id);
   const vehicules = await prisma.vehicules.findUnique({
     where: {
-      immat: id,
+      immat: immat,
     },
   });
   res.json(vehicules);
 });
-
 // get model's vehicule (authorization: all)
 vehiculesRouter.get("/model/:id", async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
@@ -35,7 +38,6 @@ vehiculesRouter.get("/model/:id", async (req: Request, res: Response) => {
   });
   res.json(vehicules);
 });
-
 // get brand vehicule (authorization: all)
 vehiculesRouter.get("/model/:id/brand", async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
@@ -44,12 +46,15 @@ vehiculesRouter.get("/model/:id/brand", async (req: Request, res: Response) => {
       id_model: id,
     },
     select: {
-      brand: true,
+      brand: {
+        select: {
+          name: true,
+        },
+      },
     },
   });
   res.json(vehicules);
 });
-
 // get user's vehicule (authorization: pros, admin)
 vehiculesRouter.get("/user/:id", async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
@@ -60,30 +65,21 @@ vehiculesRouter.get("/user/:id", async (req: Request, res: Response) => {
   });
   res.json(vehicules);
 });
-
 // post vehicule (authorization: user, admin)
 vehiculesRouter.post("/", async (req: Request, res: Response) => {
-  const {
-    immat,
-    registration_date,
-    model_id_model,
-    user_id_user,
-    types_id_type,
-    url_vehiculeRegistration,
-  } = req.body;
+  const vehicule: VehiculeInfos = req.body;
   const vehicules = await prisma.vehicules.create({
     data: {
-      immat: immat,
-      registration_date: registration_date,
-      model_id_model: model_id_model,
-      user_id_user: user_id_user,
-      types_id_type: types_id_type,
-      url_vehiculeRegistration: url_vehiculeRegistration,
+      immat: vehicule.immat,
+      registration_date: vehicule.registration_date,
+      model_id_model: vehicule.model_id_model,
+      user_id_user: vehicule.user_id_user,
+      types_id_type: vehicule.types_id_type,
+      url_vehiculeRegistration: vehicule.url_vehiculeRegistration,
     },
   });
   res.json(vehicules);
 });
-
 // update vehicule (authorization: user, admin)
 vehiculesRouter.put("/:id", async (req: Request, res: Response) => {
   const id: string = req.params.id;
@@ -103,7 +99,6 @@ vehiculesRouter.put("/:id", async (req: Request, res: Response) => {
   });
   res.json(vehiculeUpdate);
 });
-
 // delete vehicule (authorization: user, admin)
 vehiculesRouter.delete("/", async (req: Request, res: Response) => {
   const id: string = req.params.id;

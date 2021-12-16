@@ -4,6 +4,6 @@
 
 /prisma/schema.prisma
 
-dist/
+/dist
 
-.vscode/
+/.vscode

@@ -69,7 +69,7 @@ vehiculesRouter.get("/user/:id", async (req: Request, res: Response) => {
 vehiculesRouter.post("/", async (req: Request, res: Response) => {
   const vehicule: VehiculeInfos = req.body;
   const vehicules = await prisma.vehicules.create({
-    data: {
+    data : {
       immat: vehicule.immat,
       registration_date: vehicule.registration_date,
       model_id_model: vehicule.model_id_model,

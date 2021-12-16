@@ -4,4 +4,6 @@
 
 /prisma/schema.prisma
 
-*.js
+dist/
+
+.vscode/

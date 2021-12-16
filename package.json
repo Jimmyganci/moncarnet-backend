@@ -10,7 +10,8 @@
   },
   "scripts": {
     "dev": "ts-node ./script.ts",
-    "start": "nodemon script.ts"
+    "start": "nodemon script.ts",
+    "ts": "tsc -w"
   },
   "dependencies": {
     "@prisma/client": "3.6.0",

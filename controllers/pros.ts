@@ -8,21 +8,31 @@ prosRouter.get("/", async (req: Request, res: Response) => {
   const pros = await prisma.pros.findMany();
   res.json(pros);
 });
-
+// authorization : admin only
 prosRouter.post("/", async (req: Request, res: Response) => {
+  const {
+    name,
+    email,
+    hashedPassword,
+    adress,
+    phone,
+    postal_code,
+    city,
+    siret,
+  } = req.body;
   const pros = await prisma.pros.create({
     data: {
-      name: req.body.name,
-      email: req.body.email,
-      hashedPassword: req.body.hashedPassword,
-      adress: req.body.adress,
-      phone: req.body.phone,
-      postal_code: req.body.postal_code,
-      city: req.body.city,
-      siret: req.body.siret,
+      name: name,
+      email: email,
+      hashedPassword: hashedPassword,
+      adress: adress,
+      phone: phone,
+      postal_code: postal_code,
+      city: city,
+      siret: siret,
     },
   });
-  res.json(pros);
+  res.status(200).json(pros);
 });
 
 prosRouter.put("/:id", async (req: Request, res: Response) => {

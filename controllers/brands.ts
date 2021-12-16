@@ -10,6 +10,32 @@ brandsRouter.get("/", async (req: Request, res: Response) => {
   res.json(brands);
 });
 
+// Search a vehicule by id
+brandsRouter.get("/:id", async (req: Request, res: Response) =>  {
+  const id: number = parseInt(req.params.id);
+const brandsById = await prisma.brand.findUnique({
+
+  where: {
+    id_brand: id,
+  },
+});
+res.json(brandsById)
+});
+
+// search/obtain vehicules models for a specific brand
+brandsRouter.get("/brand/models", async (req: Request, res: Response) => {
+  const models = (req.query.models)
+  const brands = await prisma.brand.findMany({
+    
+
+  },
+
+  );
+  res.json(models);
+});
+
+
+
 brandsRouter.post("/", async (req: Request, res: Response) => {
   const addBrands = await prisma.brand.create({
     data: {
@@ -45,3 +71,5 @@ brandsRouter.delete("/:id", async (req: Request, res: Response) => {
 });
 
 module.exports = brandsRouter;
+
+// brands.ts : "get({filters: name})", "get:id", "get/brand/models", "get/brand/vehicules", "get/brand/users", post, put, delete

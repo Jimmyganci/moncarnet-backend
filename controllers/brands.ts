@@ -12,7 +12,7 @@ brandsRouter.get("/", async (req: Request, res: Response) => {
 
 // Search a vehicule by id
 brandsRouter.get("/:id", async (req: Request, res: Response) =>  {
-  const id: number = parseInt(req.params.id);
+  const id = parseInt(req.params.id);
 const brandsById = await prisma.brand.findUnique({
 
   where: {
@@ -24,9 +24,14 @@ res.json(brandsById)
 
 // search/obtain vehicules models for a specific brand
 brandsRouter.get("/brand/models", async (req: Request, res: Response) => {
-  const models = (req.query.models)
+  const models =  (req.query.models)
   const brands = await prisma.brand.findMany({
-    
+
+    where:  {
+      
+
+
+    }
 
   },
 

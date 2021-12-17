@@ -41,7 +41,7 @@ brandsRouter.get("/:idbrand/models", async (req: Request, res: Response) => {
   res.status(200).json(findModelsByBrand)
 });
 
-// search/obtain  vehicules for a specific brand (for pros)
+// search/obtain  vehicules for a specific brand (for pros)search/obtain  vehicules for a specific brand (for pros)
 brandsRouter.get("/vehicules/:idbrand", async (req: Request, res: Response) => {
   const idBrand = req.params.idbrand;
   const vehiculeByBrand = await prisma.vehicules.findMany({
@@ -53,6 +53,26 @@ brandsRouter.get("/vehicules/:idbrand", async (req: Request, res: Response) => {
   });
   res.status(200).json(vehiculeByBrand);
 });
+
+// serach/obtain users by brand 
+
+brandsRouter.get("/:idbrand/users", async (req: Request, res: Response) => {
+  const idBrand = req.params.idbrand;
+  const usersByBrand = await prisma.users.findMany({
+    where: {
+      vehicules: {
+        some:{
+          models:{
+            brand:{id_brand: Number(idBrand)}
+          }
+        }
+      }
+    },
+  });
+  res.status(200).json(usersByBrand);
+});
+
+
 
 
 
@@ -92,4 +112,4 @@ brandsRouter.delete("/:id", async (req: Request, res: Response) => {
 
 module.exports = brandsRouter;
 
-// brands.ts : "get({filters: name})", "get:id", "get/brand/models", "get/brand/vehicules", "get/brand/users", post, put, delete
+// brands.ts : "get({filters: name})", "get:id", "get/brand/models", "get/vehicules/:idbrand", "get/:idbrand/users", post, put, delete

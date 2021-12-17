@@ -5,9 +5,9 @@ const brandsRouter = require("express").Router();
 const prisma = new PrismaClient();
 
 interface BrandInfo {
-  id_brand : number,
-  code: string,
-  name :string
+  id_brand: number;
+  code: string;
+  name: string;
 }
 
 // authorization:admin
@@ -17,28 +17,26 @@ brandsRouter.get("/", async (req: Request, res: Response) => {
 });
 
 // Search a vehicule by id
-brandsRouter.get("/:id", async (req: Request, res: Response) =>  {
+brandsRouter.get("/:id", async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
-const brandsById = await prisma.brand.findUnique({
-
-  where: {
-    id_brand: id,
-  },
-});
-res.json(brandsById)
+  const brandsById = await prisma.brand.findUnique({
+    where: {
+      id_brand: id,
+    },
+  });
+  res.json(brandsById);
 });
 
 // search/obtain  models for a specific brand
 brandsRouter.get("/:idbrand/models", async (req: Request, res: Response) => {
-  const idBrand = parseInt(req.params.idbrand)
+  const idBrand = parseInt(req.params.idbrand);
   const findModelsByBrand = await prisma.models.findMany({
-    where : {
-      id_brand : idBrand,
-    }
+    where: {
+      id_brand: idBrand,
+    },
+  });
 
-  })
-
-  res.status(200).json(findModelsByBrand)
+  res.status(200).json(findModelsByBrand);
 });
 
 // search/obtain  vehicules for a specific brand (for pros)search/obtain  vehicules for a specific brand (for pros)
@@ -54,27 +52,23 @@ brandsRouter.get("/vehicules/:idbrand", async (req: Request, res: Response) => {
   res.status(200).json(vehiculeByBrand);
 });
 
-// serach/obtain users by brand 
+// serach/obtain users by brand
 
 brandsRouter.get("/:idbrand/users", async (req: Request, res: Response) => {
   const idBrand = req.params.idbrand;
   const usersByBrand = await prisma.users.findMany({
     where: {
       vehicules: {
-        some:{
-          models:{
-            brand:{id_brand: Number(idBrand)}
-          }
-        }
-      }
+        some: {
+          models: {
+            brand: { id_brand: Number(idBrand) },
+          },
+        },
+      },
     },
   });
   res.status(200).json(usersByBrand);
 });
-
-
-
-
 
 brandsRouter.post("/", async (req: Request, res: Response) => {
   const addBrands = await prisma.brand.create({

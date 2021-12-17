@@ -4,6 +4,12 @@ const brandsRouter = require("express").Router();
 
 const prisma = new PrismaClient();
 
+interface BrandInfo {
+  id_brand : number,
+  code: string,
+  name :string
+}
+
 // authorization:admin
 brandsRouter.get("/", async (req: Request, res: Response) => {
   const brands = await prisma.brand.findMany();
@@ -22,21 +28,17 @@ const brandsById = await prisma.brand.findUnique({
 res.json(brandsById)
 });
 
-// search/obtain vehicules models for a specific brand
-brandsRouter.get("/brand/models", async (req: Request, res: Response) => {
-  const models =  (req.query.models)
-  const brands = await prisma.brand.findMany({
-
-    where:  {
-      
-
-
+// search/obtain  models for a specific brand
+brandsRouter.get("/:idbrand/models", async (req: Request, res: Response) => {
+  const idBrand = parseInt(req.params.idbrand)
+  const findModelByBrand = await prisma.models.findMany({
+    where : {
+      id_brand : idBrand,
     }
 
-  },
+  })
 
-  );
-  res.json(models);
+  res.status(200).json(findModelByBrand)
 });
 
 

@@ -1,19 +1,23 @@
 # moncarnet-backend
 
-npm install
+<pre>npm install</pre>
 
 copy ".env.sample" file and add your mysql login
+
 Don't forget to add port for localhost
 
 make npm start to the console for launch the server.
 
-API Mon Carnet
+<pre>npm start</pre>
 
------------------------Vehicules--------------------------
+<h1>Vehicule</h1>
 
-Get all vehicules: axios.get("/api/vehicules/all")
+<h2>// Get all vehicules //</h2>
 
-Result: [
+<pre>.get("/api/vehicules/all")</pre>
+<h2>Results</h2>
+
+<pre>[
 {
 "immat": "CL-940-TE",
 "registration_date": "2007-10-21T00:00:00.000Z",
@@ -46,13 +50,15 @@ Result: [
 "types_id_type": 1,
 "url_vehiculeRegistration": ""
 }
-]
+]</pre>
 
-Get one vehicule: axios.get("/api/vehicules/:immat)
-Get one vehicule: axios.get("/api/vehicules/CL-940-TE)
+# <h2>//Get one vehicule//</h2>
 
-Result :
+  <pre>.get("/api/vehicules/:immat)</pre>
+  <pre>.get("/api/vehicules/CL-940-TE)</pre>
 
+<h2>Results :</h2>
+<pre>
 {
 "immat": "CL-940-TE",
 "registration_date": "2007-10-21T00:00:00.000Z",
@@ -60,32 +66,49 @@ Result :
 "user_id_user": 2,
 "types_id_type": 2,
 "url_vehiculeRegistration": ""
-}
+}</pre>
 
-Get user's vehicule: axios.get("/api/vehicules/user/:id)
-Get user's vehicule: axios.get("/api/vehicules/user/2)
+# <h2>//Get user's vehicule//</h2>
 
-Get model's vehicule: axios.get("/api/vehicules/model/:id)
-Get model's vehicule: axios.get("/api/vehicules/model/5)
-Result :
+<pre>.get("/api/vehicules/user/:id)</pre>
+<pre>.get("/api/vehicules/user/2)</pre>
+
+# <h2>//Get model's vehicule//</h2>
+
+<pre>.get("/api/vehicules/model/:id)</pre>
+<pre>.get("/api/vehicules/model/5)</pre>
+
+<h2>Results :</h2>
+
+<pre>
 {
 "id_model": 5,
 "code": "3.2CL",
 "name": " - 3.2CL",
 "id_brand": 1
-}
+}</pre>
 
-Get brand's vehicule: axios.get("/api/vehicules/brand/:id)
-Get brand's vehicule: axios.get("/api/vehicules/brand/1)
-Result:
+# <h2>//Get brand's vehicule//</h2>
+
+<pre>.get("/api/vehicules/brand/:id)</pre>
+<pre>.get("/api/vehicules/brand/1)</pre>
+
+<h2>Results:</h2>
+<pre>
 {
 "id_brand": 1,
 "code": "ACURA",
 "name": "Acura"
-}
+}</pre>
 
-Post vehicule : axios.post("/api/vehicules")
+# <h2>//Post vehicule//</h2>
 
-Put vehicules : axios:put("api/vehicule/:id)
+<pre>.post("/api/vehicules")</pre>
 
-Delete vehicules : axios:delete("api/vehicule/:id)
+# <h2>//Put vehicules//</h2>
+
+<pre>.put("api/vehicule/:id)</pre>
+
+# <h2>//Delete vehicules//</h2>
+
+<pre>.delete("api/vehicule/:id)</pre>

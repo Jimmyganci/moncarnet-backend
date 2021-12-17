@@ -1,13 +1,49 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import { userInfo } from "os";
 const usersRouter = require("express").Router();
 const UserAuth = require("../helpers/users");
 
 const prisma = new PrismaClient();
 
+interface UsersInfos {
+  id_user: number;
+  firstname: string;
+  lastname: string;
+  email: string;
+  password: string;
+  address: string;
+  phone: string;
+  postal_code: number;
+  city: string;
+}
+
 usersRouter.get("/all", async (req: Request, res: Response) => {
-  const users = await prisma.users.findMany();
-  res.status(200).json(users);
+  const lastnameFilter = String(req.query.lastname);
+  const cityFilter = String(req.query.city);
+
+  if (req.query.lastname) {
+    const usersFilterByLastname = await prisma.users.findMany({
+      where: {
+        lastname: {
+          contains: lastnameFilter,
+        },
+      },
+    });
+    res.status(200).json(usersFilterByLastname);
+  } else if (req.query.city) {
+    const userFilterByCity = await prisma.users.findMany({
+      where: {
+        city: {
+          contains: cityFilter,
+        },
+      },
+    });
+    res.status(200).json(userFilterByCity);
+  } else {
+    const allUsers = await prisma.users.findMany();
+    res.status(200).json(allUsers);
+  }
 });
 
 usersRouter.get("/:id", async (req: Request, res: Response) => {

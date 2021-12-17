@@ -22,7 +22,8 @@
   "scripts": {
     "dev": "ts-node ./script.ts",
     "start": "nodemon script.ts",
-    "ts": "tsc -w"
+    "ts": "tsc -w",
+    "lint": "eslint . --ext .ts"
   },
   "dependencies": {
     "@prisma/client": "3.6.0",

@@ -4,11 +4,44 @@ const brandsRouter = require("express").Router();
 
 const prisma = new PrismaClient();
 
+interface BrandInfo {
+  id_brand : number,
+  code: string,
+  name :string
+}
+
 // authorization:admin
 brandsRouter.get("/", async (req: Request, res: Response) => {
   const brands = await prisma.brand.findMany();
   res.json(brands);
 });
+
+// Search a vehicule by id
+brandsRouter.get("/:id", async (req: Request, res: Response) =>  {
+  const id = parseInt(req.params.id);
+const brandsById = await prisma.brand.findUnique({
+
+  where: {
+    id_brand: id,
+  },
+});
+res.json(brandsById)
+});
+
+// search/obtain  models for a specific brand
+brandsRouter.get("/:idbrand/models", async (req: Request, res: Response) => {
+  const idBrand = parseInt(req.params.idbrand)
+  const findModelByBrand = await prisma.models.findMany({
+    where : {
+      id_brand : idBrand,
+    }
+
+  })
+
+  res.status(200).json(findModelByBrand)
+});
+
+
 
 brandsRouter.post("/", async (req: Request, res: Response) => {
   const addBrands = await prisma.brand.create({
@@ -45,3 +78,5 @@ brandsRouter.delete("/:id", async (req: Request, res: Response) => {
 });
 
 module.exports = brandsRouter;
+
+// brands.ts : "get({filters: name})", "get:id", "get/brand/models", "get/brand/vehicules", "get/brand/users", post, put, delete

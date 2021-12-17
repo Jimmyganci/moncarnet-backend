@@ -15,7 +15,7 @@ interface VehiculeInfos {
 
 // get many vehicules (authorization: admin)
 vehiculesRouter.get("/all", async (req: Request, res: Response) => {
-  const vehicules: Array<Object> = await prisma.vehicules.findMany();
+  const vehicules = await prisma.vehicules.findMany();
   res.json(vehicules);
 });
 // get one vehicule (authorization: all)

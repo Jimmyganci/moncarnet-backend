@@ -5,6 +5,7 @@ const service_bookRouter = require("./service_book");
 const brandsRouter = require("./brands");
 const modelsRouter = require("./models");
 const authRouter = require("./auth");
+const typesRouter = require("./types");
 
 const setupRoutes = (app: any) => {
   // vehicules routes
@@ -19,6 +20,8 @@ const setupRoutes = (app: any) => {
   app.use("/api/brands", brandsRouter);
   // Models routes
   app.use("/api/models", modelsRouter);
+  // Types routes
+  app.use("/api/types", typesRouter);
   //   Auth routes
   app.use("/api/auth", authRouter);
 };

@@ -1,6 +1,5 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
-import { userInfo } from "os";
 const usersRouter = require("express").Router();
 const UserAuth = require("../helpers/users");
 
@@ -19,136 +18,184 @@ interface UsersInfos {
 }
 
 usersRouter.get("/all", async (req: Request, res: Response) => {
-  const lastnameFilter = String(req.query.lastname);
-  const cityFilter = String(req.query.city);
-
+  const { lastname, city, postal_code } = req.query;
   if (req.query.lastname) {
-    const usersFilterByLastname = await prisma.users.findMany({
-      where: {
-        lastname: {
-          contains: lastnameFilter,
+    try {
+      const usersFilterByLastname = await prisma.users.findMany({
+        where: {
+          lastname: {
+            contains: String(lastname),
+          },
         },
-      },
-    });
-    res.status(200).json(usersFilterByLastname);
+      });
+      res.status(200).json(usersFilterByLastname);
+    } catch (err) {
+      res.status(404).send(err);
+    }
+  } else if (req.query.postal_code) {
+    try {
+      const userFilterByPostal_code = await prisma.users.findMany({
+        where: {
+          postal_code: { in: Number(postal_code) },
+        },
+      });
+      res.status(200).json(userFilterByPostal_code);
+    } catch (err) {
+      res.status(404).send(err);
+    }
   } else if (req.query.city) {
-    const userFilterByCity = await prisma.users.findMany({
-      where: {
-        city: {
-          contains: cityFilter,
+    try {
+      const userFilterByCity = await prisma.users.findMany({
+        where: {
+          city: {
+            contains: String(city),
+          },
         },
-      },
-    });
-    res.status(200).json(userFilterByCity);
+      });
+      res.status(200).json(userFilterByCity);
+    } catch (err) {
+      res.status(404).send(err);
+    }
   } else {
-    const allUsers = await prisma.users.findMany();
-    res.status(200).json(allUsers);
+    try {
+      const allUsers = await prisma.users.findMany();
+      res.status(200).json(allUsers);
+    } catch (err) {
+      res.status(404).send(err);
+    }
   }
 });
 
-usersRouter.get("/:id", async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
-  const user = await prisma.users.findUnique({
-    where: {
-      id_user: id,
-    },
-  });
-  res.status(200).json(user);
+usersRouter.get("/:idUser", async (req: Request, res: Response) => {
+  const idUser = parseInt(req.params.idUser);
+  try {
+    const user = await prisma.users.findUnique({
+      where: {
+        id_user: idUser,
+      },
+    });
+    res.status(200).json(user);
+  } catch (err) {
+    res.status(404).send(err);
+  }
 });
 
-usersRouter.get("/vehicules/:id", async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
-  const vehiculeUser = await prisma.vehicules.findMany({
-    where: {
-      user_id_user: id,
-    },
-  });
-  res.status(200).json(vehiculeUser);
+usersRouter.get("/vehicules/:idUser", async (req: Request, res: Response) => {
+  const idUser = parseInt(req.params.idUser);
+  try {
+    const vehiculeUser = await prisma.vehicules.findMany({
+      where: {
+        user_id_user: idUser,
+      },
+    });
+    res.status(200).json(vehiculeUser);
+  } catch (err) {
+    res.status(404).send(err);
+  }
+});
+
+usersRouter.get("/pros/:idUser", async (req: Request, res: Response) => {
+  const idUser = parseInt(req.params.idUser);
+  try {
+    const findProsByUser = await prisma.pros.findMany({
+      where: {
+        users: {
+          some: {
+            id_user: idUser,
+          },
+        },
+      },
+    });
+    res.status(200).json(findProsByUser);
+  } catch (err) {
+    res.status(404).send(err);
+  }
 });
 
 usersRouter.post("/", async (req: Request, res: Response) => {
-  const {
-    firstname,
-    lastname,
-    email,
-    password,
-    address,
-    phone,
-    postal_code,
-    city,
-  } = req.body;
+  const user: UsersInfos = req.body;
+
   const emailExisting = await prisma.users.findUnique({
     where: {
-      email: email,
+      email: user.email,
     },
   });
-  console.log(emailExisting);
 
   if (emailExisting === null) {
-    UserAuth.hashPassword(password)
-      .then((hashedPassword: string) => {
-        prisma.users
-          .create({
-            data: {
-              firstname: firstname,
-              lastname: lastname,
-              email: email,
-              hashedPassword: hashedPassword,
-              address: address,
-              phone: phone,
-              postal_code: postal_code,
-              city: city,
-            },
-          })
-          .then((res) => console.log(res))
-          .catch((err) => res.send(err));
-      })
-      .then(() =>
-        res.json({
-          firstname,
-          lastname,
-          email,
-          address,
-          phone,
-          postal_code,
-          city,
-        })
-      )
-      .catch((err: Error) => res.send(err));
+    try {
+      const hashedPassword = await UserAuth.hashPassword(user.password);
+      const createUser = await prisma.users.create({
+        data: {
+          firstname: user.firstname,
+          lastname: user.lastname,
+          email: user.email,
+          hashedPassword: hashedPassword,
+          address: user.address,
+          phone: user.phone,
+          postal_code: user.postal_code,
+          city: user.city,
+        },
+      });
+      res.status(200).json(createUser);
+    } catch (err) {
+      res.status(404).send(err);
+    }
   } else {
     res.status(409).send("Email already used");
   }
 });
 
-usersRouter.put("/:id", async (req: Request, res: Response) => {
-  const id: number = parseInt(req.params.id);
+usersRouter.put("/:idUser", async (req: Request, res: Response) => {
+  const idUser = parseInt(req.params.idUser);
+  const user: UsersInfos = req.body;
 
-  const userUpdate = await prisma.users.update({
+  const emailExisting = await prisma.users.findMany({
     where: {
-      id_user: id,
-    },
-    data: {
-      firstname: req.body.firstname,
-      lastname: req.body.lastname,
-      email: req.body.email,
-      hashedPassword: req.body.hashedPassword,
-      address: req.body.address,
-      phone: req.body.phone,
-      postal_code: req.body.postal_code,
-      city: req.body.city,
+      email: user.email,
+      NOT: {
+        id_user: idUser,
+      },
     },
   });
-  res.json(userUpdate);
+  try {
+    if (emailExisting.length === 0) {
+      const hashedPassword = await UserAuth.hashPassword(user.password);
+      const userUpdate = await prisma.users.update({
+        where: {
+          id_user: idUser,
+        },
+        data: {
+          firstname: user.firstname,
+          lastname: user.lastname,
+          email: user.email,
+          hashedPassword: hashedPassword,
+          address: user.address,
+          phone: user.phone,
+          postal_code: user.postal_code,
+          city: user.city,
+        },
+      });
+      res.json(userUpdate);
+    }
+  } catch (err) {
+    res.send(err);
+  }
+
+  res.status(404).send("Email already used");
 });
 
-usersRouter.delete("/:id", async (req: Request, res: Response) => {
-  const id: number = parseInt(req.params.id);
-  const userDelete = await prisma.users.delete({
-    where: {
-      id_user: id,
-    },
-  });
-  res.status(200).send("User deleted!");
+usersRouter.delete("/:idUser", async (req: Request, res: Response) => {
+  const idUser: number = parseInt(req.params.idUser);
+  try {
+    const userDelete = await prisma.users.delete({
+      where: {
+        id_user: idUser,
+      },
+    });
+    res.status(200).send(userDelete.firstname + " deleted");
+  } catch (err) {
+    res.status(404).send(err);
+  }
 });
 
 module.exports = usersRouter;

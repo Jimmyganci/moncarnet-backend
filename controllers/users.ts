@@ -66,12 +66,12 @@ usersRouter.get("/all", async (req: Request, res: Response) => {
   }
 });
 
-usersRouter.get("/:id", async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
+usersRouter.get("/:idUser", async (req: Request, res: Response) => {
+  const idUser = parseInt(req.params.idUser);
   try {
     const user = await prisma.users.findUnique({
       where: {
-        id_user: id,
+        id_user: idUser,
       },
     });
     res.status(200).json(user);
@@ -80,12 +80,12 @@ usersRouter.get("/:id", async (req: Request, res: Response) => {
   }
 });
 
-usersRouter.get("/vehicules/:id", async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
+usersRouter.get("/vehicules/:idUser", async (req: Request, res: Response) => {
+  const idUser = parseInt(req.params.idUser);
   try {
     const vehiculeUser = await prisma.vehicules.findMany({
       where: {
-        user_id_user: id,
+        user_id_user: idUser,
       },
     });
     res.status(200).json(vehiculeUser);
@@ -145,15 +145,15 @@ usersRouter.post("/", async (req: Request, res: Response) => {
   }
 });
 
-usersRouter.put("/:id", async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
+usersRouter.put("/:idUser", async (req: Request, res: Response) => {
+  const idUser = parseInt(req.params.idUser);
   const user: UsersInfos = req.body;
 
   const emailExisting = await prisma.users.findMany({
     where: {
       email: user.email,
       NOT: {
-        id_user: id,
+        id_user: idUser,
       },
     },
   });
@@ -162,7 +162,7 @@ usersRouter.put("/:id", async (req: Request, res: Response) => {
       const hashedPassword = await UserAuth.hashPassword(user.password);
       const userUpdate = await prisma.users.update({
         where: {
-          id_user: id,
+          id_user: idUser,
         },
         data: {
           firstname: user.firstname,
@@ -184,12 +184,12 @@ usersRouter.put("/:id", async (req: Request, res: Response) => {
   res.status(404).send("Email already used");
 });
 
-usersRouter.delete("/:id", async (req: Request, res: Response) => {
-  const id: number = parseInt(req.params.id);
+usersRouter.delete("/:idUser", async (req: Request, res: Response) => {
+  const idUser: number = parseInt(req.params.idUser);
   try {
     const userDelete = await prisma.users.delete({
       where: {
-        id_user: id,
+        id_user: idUser,
       },
     });
     res.status(200).send(userDelete.firstname + " deleted");

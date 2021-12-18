@@ -16,7 +16,7 @@ interface UsersInfos {
   postal_code: number;
   city: string;
 }
-
+// authorization : admin
 usersRouter.get("/all", async (req: Request, res: Response) => {
   const { lastname, city, postal_code } = req.query;
   if (req.query.lastname) {
@@ -65,7 +65,7 @@ usersRouter.get("/all", async (req: Request, res: Response) => {
     }
   }
 });
-
+// authorizations: user, admin, pros
 usersRouter.get("/:idUser", async (req: Request, res: Response) => {
   const idUser = parseInt(req.params.idUser);
   try {
@@ -79,7 +79,7 @@ usersRouter.get("/:idUser", async (req: Request, res: Response) => {
     res.status(404).send(err);
   }
 });
-
+//  authorizations : admin user
 usersRouter.get("/vehicules/:idUser", async (req: Request, res: Response) => {
   const idUser = parseInt(req.params.idUser);
   try {
@@ -93,7 +93,7 @@ usersRouter.get("/vehicules/:idUser", async (req: Request, res: Response) => {
     res.status(404).send(err);
   }
 });
-
+// authorization: admin, user
 usersRouter.get("/pros/:idUser", async (req: Request, res: Response) => {
   const idUser = parseInt(req.params.idUser);
   try {
@@ -112,6 +112,26 @@ usersRouter.get("/pros/:idUser", async (req: Request, res: Response) => {
   }
 });
 
+usersRouter.put("/pros/:idUser", async (req: Request, res: Response) => {
+  const idUser = parseInt(req.params.idUser);
+  const idPros = parseInt(req.body.idPros);
+  try {
+    const createProsAndUsers = await prisma.users.update({
+      where: {
+        id_user: idUser,
+      },
+      data: {
+        pros: {
+          connect: { id_pros: idPros },
+        },
+      },
+    });
+    res.status(200).json(createProsAndUsers);
+  } catch (err) {
+    res.status(404).send(err);
+  }
+});
+// authorization: admin, user
 usersRouter.post("/", async (req: Request, res: Response) => {
   const user: UsersInfos = req.body;
 
@@ -144,7 +164,7 @@ usersRouter.post("/", async (req: Request, res: Response) => {
     res.status(409).send("Email already used");
   }
 });
-
+// authorization: admin, user
 usersRouter.put("/:idUser", async (req: Request, res: Response) => {
   const idUser = parseInt(req.params.idUser);
   const user: UsersInfos = req.body;
@@ -183,7 +203,7 @@ usersRouter.put("/:idUser", async (req: Request, res: Response) => {
 
   res.status(404).send("Email already used");
 });
-
+// authorization: admin, user
 usersRouter.delete("/:idUser", async (req: Request, res: Response) => {
   const idUser: number = parseInt(req.params.idUser);
   try {

@@ -4,6 +4,8 @@ const typesRouter = require("express").Router();
 
 const prisma = new PrismaClient();
 
+// just admin
+
 typesRouter.get("/all", async (req: Request, res: Response) => {
   const { name } = req.query;
   if (req.query.name) {

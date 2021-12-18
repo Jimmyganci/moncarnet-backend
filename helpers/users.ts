@@ -26,6 +26,4 @@ const verifyPassword = (plainPassword: string, hashedPassword: string) => {
   return argon2.verify(hashedPassword, plainPassword, hashingOptions);
 };
 
-hashPassword("Jimmy").then((res: Response) => console.log(res));
-
 module.exports = { calculateToken, decodeToken, hashPassword, verifyPassword };

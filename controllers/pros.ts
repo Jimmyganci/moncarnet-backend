@@ -1,69 +1,147 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 const prosRouter = require("express").Router();
+const UserAuth = require("../helpers/users");
 
 const prisma = new PrismaClient();
 
+interface ProsInfos {
+  id_pros: number;
+  name: string;
+  email: string;
+  password: string;
+  adress: string;
+  phone: string;
+  postal_code: number;
+  city: string;
+  siret: number;
+}
+
 prosRouter.get("/", async (req: Request, res: Response) => {
-  const pros = await prisma.pros.findMany();
-  res.json(pros);
+  try {
+    const pros = await prisma.pros.findMany();
+    res.status(200).json(pros);
+  } catch (err) {
+    res.status(404).send(err);
+  }
 });
+
+prosRouter.get("/:idPros", async (req: Request, res: Response) => {
+  const idPros = parseInt(req.params.idPros);
+  try {
+    const getOnePros = await prisma.pros.findUnique({
+      where: {
+        id_pros: idPros,
+      },
+    });
+    res.status(200).json(getOnePros);
+  } catch (err) {
+    res.status(404).send(err);
+  }
+});
+
+prosRouter.get("/users/:idPros", async (req: Request, res: Response) => {
+  const idPros = parseInt(req.params.idPros);
+  try {
+    const usersPros = await prisma.users.findMany({
+      where: {
+        pros: {
+          some: {
+            id_pros: idPros,
+          },
+        },
+      },
+    });
+    res.status(200).json(usersPros);
+  } catch (err) {
+    res.status(404).send(err);
+  }
+});
+
 // authorization : admin only
 prosRouter.post("/", async (req: Request, res: Response) => {
-  const {
-    name,
-    email,
-    hashedPassword,
-    adress,
-    phone,
-    postal_code,
-    city,
-    siret,
-  } = req.body;
-  const pros = await prisma.pros.create({
-    data: {
-      name: name,
-      email: email,
-      hashedPassword: hashedPassword,
-      adress: adress,
-      phone: phone,
-      postal_code: postal_code,
-      city: city,
-      siret: siret,
+  const pros: ProsInfos = req.body;
+
+  const emailExisting = await prisma.pros.findUnique({
+    where: {
+      email: pros.email,
     },
   });
-  res.status(200).json(pros);
+  if (!emailExisting) {
+    try {
+      const hashedPassword = await UserAuth.hashPassword(pros.password);
+      const createPros = await prisma.pros.create({
+        data: {
+          name: pros.name,
+          email: pros.email,
+          hashedPassword: hashedPassword,
+          adress: pros.adress,
+          phone: pros.phone,
+          postal_code: pros.postal_code,
+          city: pros.city,
+          siret: pros.siret,
+        },
+      });
+      res.status(200).json(createPros);
+    } catch (err) {
+      res.status(404).send(err);
+    }
+  } else {
+    res.status(409).send("Email already used");
+  }
 });
 
-prosRouter.put("/:id", async (req: Request, res: Response) => {
-  const id: number = parseInt(req.params.id);
+prosRouter.put("/:idPros", async (req: Request, res: Response) => {
+  const idPros = parseInt(req.params.idPros);
+  const pros: ProsInfos = req.body;
 
-  const prosUpdate = await prisma.pros.update({
+  const emailExisting = await prisma.pros.findMany({
     where: {
-      id_pros: id,
-    },
-    data: {
-      name: req.body.name,
-      email: req.body.email,
-      hashedPassword: req.body.hashedPassword,
-      adress: req.body.adress,
-      phone: req.body.phone,
-      postal_code: req.body.postal_code,
-      city: req.body.city,
-      siret: req.body.siret,
+      email: pros.email,
+      NOT: {
+        id_pros: idPros,
+      },
     },
   });
-  res.json(prosUpdate);
+  if (emailExisting.length === 0) {
+    try {
+      const hashedPassword = await UserAuth.hashPassword(pros.password);
+      const prosUpdate = await prisma.pros.update({
+        where: {
+          id_pros: idPros,
+        },
+        data: {
+          name: pros.name,
+          email: pros.email,
+          hashedPassword: hashedPassword,
+          adress: pros.adress,
+          phone: pros.phone,
+          postal_code: pros.postal_code,
+          city: pros.city,
+          siret: pros.siret,
+        },
+      });
+      res.status(200).json(prosUpdate);
+    } catch (err) {
+      res.status(404).send(err);
+    }
+  } else {
+    res.status(409).send("Email already used");
+  }
 });
 
-prosRouter.delete("/:id", async (req: Request, res: Response) => {
-  const id: number = parseInt(req.params.id);
-  const prosDelete = await prisma.pros.delete({
-    where: {
-      id_pros: id,
-    },
-  });
-  res.status(200).json(prosDelete).send("User deleted!");
+prosRouter.delete("/:idPros", async (req: Request, res: Response) => {
+  const idPros = parseInt(req.params.idPros);
+  try {
+    const prosDelete = await prisma.pros.delete({
+      where: {
+        id_pros: idPros,
+      },
+    });
+    res.status(200).json(prosDelete).send("User deleted!");
+  } catch (err) {
+    res.status(404).send(err);
+  }
 });
 
 module.exports = prosRouter;

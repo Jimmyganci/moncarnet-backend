@@ -113,12 +113,12 @@ usersRouter.get("/pros/:idUser", async (req: Request, res: Response) => {
 });
 
 usersRouter.put("/pros/:idUser", async (req: Request, res: Response) => {
-  const idUser = parseInt(req.params.idUser);
-  const idPros = parseInt(req.body.idPros);
+  const { idUser } = req.params;
+  const { idPros }: { idPros: number } = req.body;
   try {
     const createProsAndUsers = await prisma.users.update({
       where: {
-        id_user: idUser,
+        id_user: Number(idUser),
       },
       data: {
         pros: {
@@ -177,8 +177,9 @@ usersRouter.put("/:idUser", async (req: Request, res: Response) => {
       },
     },
   });
-  try {
-    if (emailExisting.length === 0) {
+
+  if (emailExisting.length === 0) {
+    try {
       const hashedPassword = await UserAuth.hashPassword(user.password);
       const userUpdate = await prisma.users.update({
         where: {
@@ -195,13 +196,13 @@ usersRouter.put("/:idUser", async (req: Request, res: Response) => {
           city: user.city,
         },
       });
-      res.json(userUpdate);
+      res.status(200).json(userUpdate);
+    } catch (err) {
+      res.status(404).send(err);
     }
-  } catch (err) {
-    res.send(err);
+  } else {
+    res.status(409).send("Email already used!");
   }
-
-  res.status(404).send("Email already used");
 });
 // authorization: admin, user
 usersRouter.delete("/:idUser", async (req: Request, res: Response) => {

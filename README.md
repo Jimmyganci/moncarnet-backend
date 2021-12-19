@@ -296,6 +296,38 @@ Results:
     }
 </pre>
 
+# <h3>//Add user's pro//</h3>
+
+<pre>.get("api/users/pro/:idUser")</pre>
+<pre>.get("/api/users/pro/4")</pre>
+
+Results:
+
+<pre>
+     {
+        "id_pros": 1,
+        "name": "Bernadin auto",
+        "email": "auto@gmail.com",
+        "hashedPassword": "bon",
+        "adress": "78 avenue du temps",
+        "postal_code": 33130,
+        "city": "Bordeaux",
+        "siret": 76549864,
+        "phone": "06-56-57-57-76"
+    },
+    {
+        "id_pros": 2,
+        "name": "auto",
+        "email": "auto6@gmail.com",
+        "hashedPassword": "bon",
+        "adress": "78 avenue du temps",
+        "postal_code": 33130,
+        "city": "Bordeaux",
+        "siret": 76549864,
+        "phone": "06-56-57-57-76"
+    }
+</pre>
+
 # <h3>//Put user//</h3>
 
 <pre>.get("api/users/:idUser")</pre>

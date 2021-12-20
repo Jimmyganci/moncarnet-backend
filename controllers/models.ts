@@ -1,15 +1,18 @@
-import { Request, response, Response } from "express";
+import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 const modelsRouter = require("express").Router();
 
 const prisma = new PrismaClient();
 
 modelsRouter.get("/", async (req: Request, res: Response) => {
-  const models = await prisma.models.findMany({
-    select: {
-      code: true,
-      name: true,
-      brand: true,
+  const models = await prisma.models.findMany();
+  res.json(models);
+});
+modelsRouter.get("/:idModel", async (req: Request, res: Response) => {
+  const idModel = parseInt(req.params.idModel);
+  const models = await prisma.models.findUnique({
+    where: {
+      id_model: idModel,
     },
   });
   res.json(models);
@@ -47,7 +50,7 @@ modelsRouter.delete("/:id", async (req: Request, res: Response) => {
       id_model: id,
     },
   });
-  res.send("model Deleted");
+  res.send(`${modelDeleted.name} deleted`);
 });
 
 module.exports = modelsRouter;

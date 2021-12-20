@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import bodyValidator from "../middleware/bodyValidator";
+const { postPros } = require("../JOI/usersValidate");
 const prosRouter = require("express").Router();
 const UserAuth = require("../helpers/users");
 
@@ -16,7 +18,7 @@ interface ProsInfos {
   city: string;
   siret: number;
 }
-
+// authorization : admin, user
 prosRouter.get("/", async (req: Request, res: Response) => {
   try {
     const pros = await prisma.pros.findMany();
@@ -25,7 +27,7 @@ prosRouter.get("/", async (req: Request, res: Response) => {
     res.status(404).send(err);
   }
 });
-
+// authorization : admin, user, pros
 prosRouter.get("/:idPros", async (req: Request, res: Response) => {
   const idPros = parseInt(req.params.idPros);
   try {
@@ -39,7 +41,7 @@ prosRouter.get("/:idPros", async (req: Request, res: Response) => {
     res.status(404).send(err);
   }
 });
-
+// authorization : admin, users
 prosRouter.get("/users/:idPros", async (req: Request, res: Response) => {
   const idPros = parseInt(req.params.idPros);
   try {
@@ -59,38 +61,42 @@ prosRouter.get("/users/:idPros", async (req: Request, res: Response) => {
 });
 
 // authorization : admin only
-prosRouter.post("/", async (req: Request, res: Response) => {
-  const pros: ProsInfos = req.body;
+prosRouter.post(
+  "/",
+  bodyValidator(postPros),
+  async (req: Request, res: Response) => {
+    const pros: ProsInfos = req.body;
 
-  const emailExisting = await prisma.pros.findUnique({
-    where: {
-      email: pros.email,
-    },
-  });
-  if (!emailExisting) {
-    try {
-      const hashedPassword = await UserAuth.hashPassword(pros.password);
-      const createPros = await prisma.pros.create({
-        data: {
-          name: pros.name,
-          email: pros.email,
-          hashedPassword: hashedPassword,
-          adress: pros.adress,
-          phone: pros.phone,
-          postal_code: pros.postal_code,
-          city: pros.city,
-          siret: pros.siret,
-        },
-      });
-      res.status(200).json(createPros);
-    } catch (err) {
-      res.status(404).send(err);
+    const emailExisting = await prisma.pros.findUnique({
+      where: {
+        email: pros.email,
+      },
+    });
+    if (!emailExisting) {
+      try {
+        const hashedPassword = await UserAuth.hashPassword(pros.password);
+        const createPros = await prisma.pros.create({
+          data: {
+            name: pros.name,
+            email: pros.email,
+            hashedPassword: hashedPassword,
+            adress: pros.adress,
+            phone: pros.phone,
+            postal_code: pros.postal_code,
+            city: pros.city,
+            siret: pros.siret,
+          },
+        });
+        res.status(200).json(createPros);
+      } catch (err) {
+        res.status(404).send(err);
+      }
+    } else {
+      res.status(409).send("Email already used");
     }
-  } else {
-    res.status(409).send("Email already used");
   }
-});
-
+);
+// authorization : admin pros
 prosRouter.put("/:idPros", async (req: Request, res: Response) => {
   const idPros = parseInt(req.params.idPros);
   const pros: ProsInfos = req.body;
@@ -129,7 +135,7 @@ prosRouter.put("/:idPros", async (req: Request, res: Response) => {
     res.status(409).send("Email already used");
   }
 });
-
+// authorization : admin
 prosRouter.delete("/:idPros", async (req: Request, res: Response) => {
   const idPros = parseInt(req.params.idPros);
   try {

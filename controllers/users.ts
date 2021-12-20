@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import bodyValidator from "../middleware/bodyValidator";
+const { postUser } = require("../JOI/usersValidate");
 const usersRouter = require("express").Router();
 const UserAuth = require("../helpers/users");
 
@@ -16,6 +18,7 @@ interface UsersInfos {
   postal_code: number;
   city: string;
 }
+
 // authorization : admin
 usersRouter.get("/all", async (req: Request, res: Response) => {
   const { lastname, city, postal_code } = req.query;
@@ -132,78 +135,86 @@ usersRouter.put("/pros/:idUser", async (req: Request, res: Response) => {
   }
 });
 // authorization: admin, user
-usersRouter.post("/", async (req: Request, res: Response) => {
-  const user: UsersInfos = req.body;
+usersRouter.post(
+  "/",
+  bodyValidator(postUser),
+  async (req: Request, res: Response) => {
+    const user: UsersInfos = req.body;
 
-  const emailExisting = await prisma.users.findUnique({
-    where: {
-      email: user.email,
-    },
-  });
-
-  if (emailExisting === null) {
-    try {
-      const hashedPassword = await UserAuth.hashPassword(user.password);
-      const createUser = await prisma.users.create({
-        data: {
-          firstname: user.firstname,
-          lastname: user.lastname,
-          email: user.email,
-          hashedPassword: hashedPassword,
-          address: user.address,
-          phone: user.phone,
-          postal_code: user.postal_code,
-          city: user.city,
-        },
-      });
-      res.status(200).json(createUser);
-    } catch (err) {
-      res.status(404).send(err);
-    }
-  } else {
-    res.status(409).send("Email already used");
-  }
-});
-// authorization: admin, user
-usersRouter.put("/:idUser", async (req: Request, res: Response) => {
-  const idUser = parseInt(req.params.idUser);
-  const user: UsersInfos = req.body;
-
-  const emailExisting = await prisma.users.findMany({
-    where: {
-      email: user.email,
-      NOT: {
-        id_user: idUser,
+    const emailExisting = await prisma.users.findUnique({
+      where: {
+        email: user.email,
       },
-    },
-  });
+    });
 
-  if (emailExisting.length === 0) {
-    try {
-      const hashedPassword = await UserAuth.hashPassword(user.password);
-      const userUpdate = await prisma.users.update({
-        where: {
+    if (emailExisting === null) {
+      try {
+        const hashedPassword = await UserAuth.hashPassword(user.password);
+        const createUser = await prisma.users.create({
+          data: {
+            firstname: user.firstname,
+            lastname: user.lastname,
+            email: user.email,
+            hashedPassword: hashedPassword,
+            address: user.address,
+            phone: user.phone,
+            postal_code: user.postal_code,
+            city: user.city,
+          },
+        });
+        res.status(200).json(createUser);
+      } catch (err) {
+        res.status(404).send(err);
+      }
+    } else {
+      res.status(409).send("Email already used");
+    }
+  }
+);
+// authorization: admin, user
+usersRouter.put(
+  "/:idUser",
+  bodyValidator(postUser),
+  async (req: Request, res: Response) => {
+    const idUser = parseInt(req.params.idUser);
+    const user: UsersInfos = req.body;
+
+    const emailExisting = await prisma.users.findMany({
+      where: {
+        email: user.email,
+        NOT: {
           id_user: idUser,
         },
-        data: {
-          firstname: user.firstname,
-          lastname: user.lastname,
-          email: user.email,
-          hashedPassword: hashedPassword,
-          address: user.address,
-          phone: user.phone,
-          postal_code: user.postal_code,
-          city: user.city,
-        },
-      });
-      res.status(200).json(userUpdate);
-    } catch (err) {
-      res.status(404).send(err);
+      },
+    });
+
+    if (emailExisting.length === 0) {
+      try {
+        const hashedPassword = await UserAuth.hashPassword(user.password);
+        const userUpdate = await prisma.users.update({
+          where: {
+            id_user: idUser,
+          },
+          data: {
+            firstname: user.firstname,
+            lastname: user.lastname,
+            email: user.email,
+            hashedPassword: hashedPassword,
+            address: user.address,
+            phone: user.phone,
+            postal_code: user.postal_code,
+            city: user.city,
+          },
+        });
+        res.status(200).json(userUpdate);
+      } catch (err) {
+        res.status(404).send(err);
+      }
+    } else {
+      res.status(409).send("Email already used!");
     }
-  } else {
-    res.status(409).send("Email already used!");
   }
-});
+);
 // authorization: admin, user
 usersRouter.delete("/:idUser", async (req: Request, res: Response) => {
   const idUser: number = parseInt(req.params.idUser);

@@ -15,12 +15,44 @@ interface VehiculeInfos {
 
 // get many vehicules (authorization: admin)
 vehiculesRouter.get("/all", async (req: Request, res: Response) => {
+  const { brand, model } = req.query;
+  if (req.query.brand) {
+    try {
+      const vehiculeByBrand = await prisma.vehicules.findMany({
+        where: {
+          models: {
+            brand: {
+              name: {
+                contains: String(brand),
+              },
+            },
+          },
+        },
+      });
+      res.status(200).json(vehiculeByBrand);
+    } catch (err) {
+      res.status(404).send(err);
+    }
+  } else if (req.query.model) {
+    try {
+      const vehiculeByModel = await prisma.vehicules.findMany({
+        where: {
+          models: {
+            name: { contains: String(model) },
+          },
+        },
+      });
+      res.status(200).json(vehiculeByModel);
+    } catch (err) {
+      res.status(404).send(err);
+    }
+  }
   const vehicules = await prisma.vehicules.findMany();
   res.json(vehicules);
 });
 // get one vehicule (authorization: all)
-vehiculesRouter.get("/:id", async (req: Request, res: Response) => {
-  const immat = String(req.params.id);
+vehiculesRouter.get("/:immat", async (req: Request, res: Response) => {
+  const immat = String(req.params.immat);
   const vehicules = await prisma.vehicules.findUnique({
     where: {
       immat: immat,
@@ -29,38 +61,41 @@ vehiculesRouter.get("/:id", async (req: Request, res: Response) => {
   res.json(vehicules);
 });
 // get model's vehicule (authorization: all)
-vehiculesRouter.get("/model/:id", async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
+vehiculesRouter.get("/model/:idModel", async (req: Request, res: Response) => {
+  const idModel = parseInt(req.params.idModel);
   const vehicules = await prisma.models.findUnique({
     where: {
-      id_model: id,
+      id_model: idModel,
     },
   });
   res.json(vehicules);
 });
 // get brand vehicule (authorization: all)
-vehiculesRouter.get("/model/:id/brand", async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
-  const vehicules = await prisma.models.findUnique({
-    where: {
-      id_model: id,
-    },
-    select: {
-      brand: {
-        select: {
-          name: true,
+vehiculesRouter.get(
+  "/model/:idModel/brand",
+  async (req: Request, res: Response) => {
+    const idModel = parseInt(req.params.idModel);
+    const vehicules = await prisma.models.findUnique({
+      where: {
+        id_model: idModel,
+      },
+      select: {
+        brand: {
+          select: {
+            name: true,
+          },
         },
       },
-    },
-  });
-  res.json(vehicules);
-});
+    });
+    res.json(vehicules);
+  }
+);
 // get user's vehicule (authorization: pros, admin)
-vehiculesRouter.get("/user/:id", async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
+vehiculesRouter.get("/user/:idUser", async (req: Request, res: Response) => {
+  const idUser = parseInt(req.params.idUser);
   const vehicules = await prisma.users.findUnique({
     where: {
-      id_user: id,
+      id_user: idUser,
     },
   });
   res.json(vehicules);
@@ -81,12 +116,12 @@ vehiculesRouter.post("/", async (req: Request, res: Response) => {
   res.json(vehicules);
 });
 // update vehicule (authorization: user, admin)
-vehiculesRouter.put("/:id", async (req: Request, res: Response) => {
-  const id: string = req.params.id;
+vehiculesRouter.put("/:immat", async (req: Request, res: Response) => {
+  const immat: string = req.params.immat;
 
   const vehiculeUpdate = await prisma.vehicules.update({
     where: {
-      immat: id,
+      immat: immat,
     },
     data: {
       immat: req.body.immat,
@@ -100,11 +135,11 @@ vehiculesRouter.put("/:id", async (req: Request, res: Response) => {
   res.json(vehiculeUpdate);
 });
 // delete vehicule (authorization: user, admin)
-vehiculesRouter.delete("/", async (req: Request, res: Response) => {
-  const id: string = req.params.id;
+vehiculesRouter.delete("/;immat", async (req: Request, res: Response) => {
+  const immat: string = req.params.immat;
   const vehiculeDeleted = await prisma.vehicules.delete({
     where: {
-      immat: id,
+      immat: immat,
     },
   });
   res.json(vehiculeDeleted);

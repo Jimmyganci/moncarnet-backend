@@ -7,7 +7,7 @@ const service_bookRouter = require("express").Router();
 const prisma = new PrismaClient();
 
 service_bookRouter.get("/", async (req: Request, res: Response) => {
-  const serviceBook = await prisma.service_book.findMany();
+  const serviceBook = await prisma.service_Book.findMany();
   res.json(serviceBook);
 });
 
@@ -15,7 +15,7 @@ service_bookRouter.post(
   "/",
   bodyValidator(postServiceBook),
   async (req: Request, res: Response) => {
-    const addServiceBook = await prisma.service_book.create({
+    const addServiceBook = await prisma.service_Book.create({
       data: {
         date: new Date(req.body.date),
         service: req.body.service,
@@ -32,7 +32,7 @@ service_bookRouter.post(
 service_bookRouter.put("/:id", async (req: Request, res: Response) => {
   const id: number = parseInt(req.params.id);
 
-  const userUpdate = await prisma.service_book.update({
+  const userUpdate = await prisma.service_Book.update({
     where: {
       id_service_book: id,
     },
@@ -51,7 +51,7 @@ service_bookRouter.put("/:id", async (req: Request, res: Response) => {
 
 service_bookRouter.delete("/:id", async (req: Request, res: Response) => {
   const id: number = parseInt(req.params.id);
-  const deleteService_book = await prisma.service_book.delete({
+  const deleteService_book = await prisma.service_Book.delete({
     where: {
       id_service_book: id,
     },

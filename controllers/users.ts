@@ -9,18 +9,6 @@ import checktoken from "../middleware/checkToken";
 
 const prisma = new PrismaClient();
 
-// interface UsersInfos {
-//   id_user: number;
-//   firstname: string;
-//   lastname: string;
-//   email: string;
-//   password: string;
-//   address: string;
-//   phone: string;
-//   postal_code: number;
-//   city: string;
-// }
-
 // authorization : admin
 usersRouter.get("/all", checktoken, async (req: Request, res: Response) => {
   const { lastname, city, postal_code } = req.query;
@@ -93,7 +81,9 @@ usersRouter.get(
     try {
       const vehiculeUser = await prisma.vehicules.findMany({
         where: {
-          user_id_user: idUser,
+          user: {
+            id_user: idUser,
+          },
         },
       });
       res.status(200).json(vehiculeUser);

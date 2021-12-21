@@ -1,34 +1,21 @@
-// import { NextFunction, Request, Response } from "express";
-// // function parseJwt(token: string) {
-// //   const base64Url = token.split(".")[1];
-// //   const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-// //   const buff = new Buffer(base64, "base64");
-// //   const payloadinit = buff.toString("ascii");
-// //   const payload = JSON.parse(payloadinit);
-// //   return payload.role;
-// // }
+import { NextFunction, Request, Response } from "express";
 
-// function checkRole(req: Request, res: Response, next: NextFunction): void {
-//   try {
-//     const rawToken = req.headers.cookie;
-//     const token = rawToken?.split("=");
-//     console.log(rawToken, token);
+function checkRole(req: Request, res: Response, next: NextFunction): void {
+  try {
+    if (typeof req.userLogin === "undefined") {
+      throw new Error("You need to login.");
+    }
 
-//     if (typeof token === "undefined" || typeof rawToken === "undefined") {
-//       throw new Error("You need to login.");
-//     }
-//     // const role = parseJwt(rawToken as string);
+    if (req.userLogin.roleId[0] !== "id_admin") {
+      throw new Error("Only administrators can acces this ressource");
+    }
 
-//     // if (role !== "ADMIN") {
-//     //   throw new Error("Only administrators can acces this ressource");
-//     // }
+    return next();
+  } catch (err) {
+    res.status(401);
 
-//     return next();
-//   } catch (err) {
-//     res.status(401);
+    return next(err);
+  }
+}
 
-//     return next(err);
-//   }
-// }
-
-// export default checkRole;
+export default checkRole;

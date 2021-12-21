@@ -5,7 +5,7 @@ function checkToken(req: Request, res: Response, next: NextFunction) {
   try {
     const { user_token } = req.cookies;
 
-    if (typeof user_token === "undefined") {
+    if ((typeof user_token === "undefined") || (user_token.origin !== "MonCarnet")) {
       throw new Error("You need to login.");
     }
 

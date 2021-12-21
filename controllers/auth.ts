@@ -19,7 +19,7 @@ authRouter.post("/login", async (req: Request, res: Response) => {
         if (passwordIsCorrect) {
           const token = UserAuth.calculateToken(email, user.id_user);
           res.cookie("user_token", token);
-          res.send();
+          res.status(200).send("User connected");
         } else {
           res.status(401).send("Invalid credentials");
         }

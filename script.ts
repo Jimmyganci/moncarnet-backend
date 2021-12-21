@@ -1,12 +1,11 @@
-export {};
 const express = require("express");
-const app = express();
+const cookieParser = require("cookie-parser");
 const cors = require("cors");
+const app = express();
+
 const { setupRoutes } = require("./controllers/index");
 
 const port = process.env.PORT || 8000;
-
-app.use(express.json());
 
 const corsOptions = {
   origin: true, // accept all origin
@@ -15,6 +14,8 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
+app.use(express.json());
+app.use(cookieParser());
 setupRoutes(app);
 
 app.listen(port, () => {

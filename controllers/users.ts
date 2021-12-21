@@ -4,21 +4,22 @@ import bodyValidator from "../middleware/bodyValidator";
 const { postUser } = require("../JOI/validate");
 const usersRouter = require("express").Router();
 const UserAuth = require("../helpers/users");
+import IUserInfos from "../interfaces/IuserInfos";
 import checktoken from "../middleware/checkToken";
 
 const prisma = new PrismaClient();
 
-interface UsersInfos {
-  id_user: number;
-  firstname: string;
-  lastname: string;
-  email: string;
-  password: string;
-  address: string;
-  phone: string;
-  postal_code: number;
-  city: string;
-}
+// interface UsersInfos {
+//   id_user: number;
+//   firstname: string;
+//   lastname: string;
+//   email: string;
+//   password: string;
+//   address: string;
+//   phone: string;
+//   postal_code: number;
+//   city: string;
+// }
 
 // authorization : admin
 usersRouter.get("/all", checktoken, async (req: Request, res: Response) => {
@@ -152,7 +153,7 @@ usersRouter.post(
   "/",
   bodyValidator(postUser),
   async (req: Request, res: Response) => {
-    const user: UsersInfos = req.body;
+    const user: IUserInfos = req.body;
 
     const emailExisting = await prisma.users.findUnique({
       where: {
@@ -191,7 +192,7 @@ usersRouter.put(
   checktoken,
   async (req: Request, res: Response) => {
     const idUser = parseInt(req.params.idUser);
-    const user: UsersInfos = req.body;
+    const user: IUserInfos = req.body;
 
     const emailExisting = await prisma.users.findMany({
       where: {

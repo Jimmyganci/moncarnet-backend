@@ -1,3 +1,4 @@
+import express from "express";
 const vehiculesRouter = require("./vehicules");
 const usersRouter = require("./users");
 const prosRouter = require("./pros");
@@ -8,7 +9,7 @@ const authRouter = require("./auth");
 const typesRouter = require("./types");
 import checkToken from "../middleware/checkToken";
 
-const setupRoutes = (app: any) => {
+const setupRoutes = (app: express.Application) => {
   // vehicules routes
   app.use("/api/vehicules", checkToken, vehiculesRouter);
   // Users routes

@@ -4,12 +4,6 @@ const brandsRouter = require("express").Router();
 
 const prisma = new PrismaClient();
 
-interface BrandInfo {
-  id_brand: number;
-  code: string;
-  name: string;
-}
-
 // authorization:admin
 brandsRouter.get("/", async (req: Request, res: Response) => {
   const brands = await prisma.brand.findMany();
@@ -101,7 +95,7 @@ brandsRouter.delete("/:id", async (req: Request, res: Response) => {
       id_brand: id,
     },
   });
-  res.send("brand Deleted");
+  res.send(`${brandDeleted.name} deleted`);
 });
 
 module.exports = brandsRouter;

@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import bodyValidator from "../middleware/bodyValidator";
+const { postType } = require("../JOI/validate");
 const typesRouter = require("express").Router();
 
 const prisma = new PrismaClient();
@@ -60,28 +62,32 @@ typesRouter.get("/vehicules/:idType", async (req: Request, res: Response) => {
   }
 });
 
-typesRouter.post("/", async (req: Request, res: Response) => {
-  const { name_type }: { name_type: string } = req.body;
-  const existingType = await prisma.types.findUnique({
-    where: {
-      name_type: name_type,
-    },
-  });
-  if (!existingType) {
-    try {
-      const createTypes = await prisma.types.create({
-        data: {
-          name_type: name_type,
-        },
-      });
-      res.status(200).json(createTypes);
-    } catch (err) {
-      res.status(404).send("error " + err);
+typesRouter.post(
+  "/",
+  bodyValidator(postType),
+  async (req: Request, res: Response) => {
+    const { name_type }: { name_type: string } = req.body;
+    const existingType = await prisma.types.findUnique({
+      where: {
+        name_type: name_type,
+      },
+    });
+    if (!existingType) {
+      try {
+        const createTypes = await prisma.types.create({
+          data: {
+            name_type: name_type,
+          },
+        });
+        res.status(200).json(createTypes);
+      } catch (err) {
+        res.status(404).send("error " + err);
+      }
+    } else {
+      res.status(202).send("already used in the database");
     }
-  } else {
-    res.status(202).send("already used in the database");
   }
-});
+);
 
 typesRouter.put("/:idType", async (req: Request, res: Response) => {
   const { idType } = req.params;

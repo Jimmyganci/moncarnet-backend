@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import bodyValidator from "../middleware/bodyValidator";
+const { postVehicule } = require("../JOI/validate");
 const vehiculesRouter = require("express").Router();
 
 const prisma = new PrismaClient();
@@ -46,9 +48,10 @@ vehiculesRouter.get("/all", async (req: Request, res: Response) => {
     } catch (err) {
       res.status(404).send(err);
     }
+  } else {
+    const vehicules = await prisma.vehicules.findMany();
+    res.json(vehicules);
   }
-  const vehicules = await prisma.vehicules.findMany();
-  res.json(vehicules);
 });
 // get one vehicule (authorization: all)
 vehiculesRouter.get("/:immat", async (req: Request, res: Response) => {
@@ -101,20 +104,24 @@ vehiculesRouter.get("/user/:idUser", async (req: Request, res: Response) => {
   res.json(vehicules);
 });
 // post vehicule (authorization: user, admin)
-vehiculesRouter.post("/", async (req: Request, res: Response) => {
-  const vehicule: VehiculeInfos = req.body;
-  const vehicules = await prisma.vehicules.create({
-    data: {
-      immat: vehicule.immat,
-      registration_date: vehicule.registration_date,
-      model_id_model: vehicule.model_id_model,
-      user_id_user: vehicule.user_id_user,
-      types_id_type: vehicule.types_id_type,
-      url_vehiculeRegistration: vehicule.url_vehiculeRegistration,
-    },
-  });
-  res.json(vehicules);
-});
+vehiculesRouter.post(
+  "/",
+  bodyValidator(postVehicule),
+  async (req: Request, res: Response) => {
+    const vehicule: VehiculeInfos = req.body;
+    const vehicules = await prisma.vehicules.create({
+      data: {
+        immat: vehicule.immat,
+        registration_date: vehicule.registration_date,
+        model_id_model: vehicule.model_id_model,
+        user_id_user: vehicule.user_id_user,
+        types_id_type: vehicule.types_id_type,
+        url_vehiculeRegistration: vehicule.url_vehiculeRegistration,
+      },
+    });
+    res.json(vehicules);
+  }
+);
 // update vehicule (authorization: user, admin)
 vehiculesRouter.put("/:immat", async (req: Request, res: Response) => {
   const immat: string = req.params.immat;

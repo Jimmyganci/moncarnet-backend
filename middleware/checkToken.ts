@@ -1,7 +1,7 @@
-import { Response, NextFunction } from "express";
-import jwt from "jsonwebtoken";
+import { Request, Response, NextFunction } from "express";
+const jwt = require("jsonwebtoken");
 
-function checkToken(req: any, res: Response, next: NextFunction) {
+function checkToken(req: Request, res: Response, next: NextFunction) {
   try {
     const { user_token } = req.cookies;
 
@@ -9,7 +9,7 @@ function checkToken(req: any, res: Response, next: NextFunction) {
       throw new Error("You need to login.");
     }
 
-    req.user = jwt.verify(user_token, process.env.TOKEN as string);
+    req.userLogin = jwt.verify(user_token, process.env.TOKEN as string);
 
     return next();
   } catch (err) {

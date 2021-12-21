@@ -20,7 +20,8 @@ authRouter.post("/login", async (req: Request, res: Response) => {
           const token = UserAuth.calculateToken(
             email,
             user.id_user,
-            "MonCarnet"
+            "MonCarnet",
+            Object.keys(user)
           );
           res.cookie("user_token", token);
           res.status(200).send("User connected");

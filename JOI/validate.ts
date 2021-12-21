@@ -15,7 +15,7 @@ const postPros = Joi.object().keys({
   name: Joi.string().max(255),
   email: Joi.string().email({ allowUnicode: false }).required(),
   password: Joi.string().min(7).max(255).required(),
-  adress: Joi.string().min(5),
+  address: Joi.string().min(5),
   phone: Joi.string().min(6).max(20),
   postal_code: Joi.number().integer().min(5),
   city: Joi.string(),

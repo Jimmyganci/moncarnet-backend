@@ -22,7 +22,6 @@ model Models {
   brand     Brand       @relation(fields: [id_brand], references: [id_brand])
   vehicules Vehicules[]
 
-//   @@index([id_brand], map: "fk_models_brands1_idx")
 }
 
 model Pros {
@@ -50,8 +49,6 @@ model Service_Book {
   vehicules_immat String   @db.VarChar(15)
   pros            Pros     @relation(fields: [pros_id_pros], references: [id_pros])
 
-//   @@index([pros_id_pros], map: "fk_service_book_pros1_idx")
-//   @@index([vehicules_immat], map: "fk_service_book_vehicules1_idx")
 }
 
 model Types {
@@ -85,7 +82,4 @@ model Vehicules {
   type                     Types    @relation(fields: [id_typeId], references: [id_type])
   user                     Users    @relation(fields: [id_userId], references: [id_user])
 
-//   @@index([id_modelId], map: "vehicules_id_modelId_fkey")
-//   @@index([id_typeId], map: "vehicules_id_typeId_fkey")
-//   @@index([id_userId], map: "vehicules_id_userId_fkey")
 }

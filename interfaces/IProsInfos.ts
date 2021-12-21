@@ -3,7 +3,7 @@ export default interface ProsInfos {
   name: string;
   email: string;
   password: string;
-  adress: string;
+  address: string;
   phone: string;
   postal_code: number;
   city: string;

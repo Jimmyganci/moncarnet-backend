@@ -51,9 +51,7 @@ typesRouter.get("/vehicules/:idType", async (req: Request, res: Response) => {
   try {
     const findVehiculeByType = await prisma.vehicules.findMany({
       where: {
-        types: {
-          id_type: Number(idType),
-        },
+        id_typeId: Number(idType),
       },
     });
     res.status(200).send(findVehiculeByType);

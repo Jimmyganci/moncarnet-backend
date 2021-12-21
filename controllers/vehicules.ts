@@ -14,7 +14,7 @@ vehiculesRouter.get("/all", async (req: Request, res: Response) => {
     try {
       const vehiculeByBrand = await prisma.vehicules.findMany({
         where: {
-          models: {
+          model: {
             brand: {
               name: {
                 contains: String(brand),
@@ -31,8 +31,10 @@ vehiculesRouter.get("/all", async (req: Request, res: Response) => {
     try {
       const vehiculeByModel = await prisma.vehicules.findMany({
         where: {
-          models: {
-            name: { contains: String(model) },
+          model: {
+            name: {
+              contains: String(model),
+            },
           },
         },
       });
@@ -105,43 +107,71 @@ vehiculesRouter.post(
       data: {
         immat: vehicule.immat,
         registration_date: vehicule.registration_date,
-        model_id_model: vehicule.model_id_model,
-        user_id_user: vehicule.user_id_user,
-        types_id_type: vehicule.types_id_type,
         url_vehiculeRegistration: vehicule.url_vehiculeRegistration,
+        model: {
+          connect: {
+            id_model: vehicule.id_modelId,
+          },
+        },
+        type: {
+          connect: {
+            id_type: vehicule.id_typeId,
+          },
+        },
+        user: {
+          connect: {
+            id_user: vehicule.id_userId,
+          },
+        },
       },
     });
-    res.json(vehicules);
+    res.status(200).json(vehicules);
   }
 );
 // update vehicule (authorization: user, admin)
 vehiculesRouter.put("/:immat", async (req: Request, res: Response) => {
   const immat: string = req.params.immat;
-
+  const vehicule: VehiculeInfos = req.body;
   const vehiculeUpdate = await prisma.vehicules.update({
     where: {
       immat: immat,
     },
     data: {
-      immat: req.body.immat,
-      registration_date: req.body.registration_date,
-      model_id_model: req.body.model_id_model,
-      user_id_user: req.body.user_id_user,
-      types_id_type: req.body.types_id_type,
-      url_vehiculeRegistration: req.body.url_vehiculeRegistration,
+      immat: vehicule.immat,
+      registration_date: vehicule.registration_date,
+      url_vehiculeRegistration: vehicule.url_vehiculeRegistration,
+      model: {
+        connect: {
+          id_model: vehicule.id_modelId,
+        },
+      },
+      type: {
+        connect: {
+          id_type: vehicule.id_typeId,
+        },
+      },
+      user: {
+        connect: {
+          id_user: vehicule.id_userId,
+        },
+      },
     },
   });
   res.json(vehiculeUpdate);
 });
 // delete vehicule (authorization: user, admin)
-vehiculesRouter.delete("/;immat", async (req: Request, res: Response) => {
+vehiculesRouter.delete("/:immat", async (req: Request, res: Response) => {
   const immat: string = req.params.immat;
-  const vehiculeDeleted = await prisma.vehicules.delete({
-    where: {
-      immat: immat,
-    },
-  });
-  res.json(vehiculeDeleted);
+  try {
+    const vehiculeDeleted = await prisma.vehicules.delete({
+      where: {
+        immat: immat,
+      },
+    });
+    res.status(200).send(`${vehiculeDeleted.immat} deleted`);
+  } catch (err) {
+    res.status(404).send(err);
+  }
 });
 
 module.exports = vehiculesRouter;

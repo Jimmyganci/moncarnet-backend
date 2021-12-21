@@ -4,8 +4,8 @@ const jwt = require("jsonwebtoken");
 
 const PRIVATE_KEY = process.env.TOKEN;
 
-const calculateToken = (userEmail = "", id_user: number) => {
-  return jwt.sign({ email: userEmail, id_user }, PRIVATE_KEY);
+const calculateToken = (userEmail = "", id_user: number, origin = "") => {
+  return jwt.sign({ email: userEmail, id_user, origin }, PRIVATE_KEY);
 };
 
 const hashingOptions = {

@@ -4,11 +4,8 @@ const jwt = require("jsonwebtoken");
 
 const PRIVATE_KEY = process.env.TOKEN;
 
-const calculateToken = (userEmail = "", id_user: number) => {
-  return jwt.sign({ email: userEmail, id_user }, PRIVATE_KEY);
-};
-const decodeToken = (token: string) => {
-  return jwt.decode(token);
+const calculateToken = (userEmail = "", id_user: number, origin = "") => {
+  return jwt.sign({ email: userEmail, id_user, origin }, PRIVATE_KEY);
 };
 
 const hashingOptions = {
@@ -26,4 +23,4 @@ const verifyPassword = (plainPassword: string, hashedPassword: string) => {
   return argon2.verify(hashedPassword, plainPassword, hashingOptions);
 };
 
-module.exports = { calculateToken, decodeToken, hashPassword, verifyPassword };
+module.exports = { calculateToken, hashPassword, verifyPassword };

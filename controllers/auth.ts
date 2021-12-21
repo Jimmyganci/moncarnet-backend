@@ -17,7 +17,11 @@ authRouter.post("/login", async (req: Request, res: Response) => {
     UserAuth.verifyPassword(password, user.hashedPassword).then(
       (passwordIsCorrect: boolean) => {
         if (passwordIsCorrect) {
-          const token = UserAuth.calculateToken(email, user.id_user);
+          const token = UserAuth.calculateToken(
+            email,
+            user.id_user,
+            "MonCarnet"
+          );
           res.cookie("user_token", token);
           res.status(200).send("User connected");
         } else {

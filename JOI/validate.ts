@@ -15,7 +15,7 @@ const postPros = Joi.object().keys({
   name: Joi.string().max(255),
   email: Joi.string().email({ allowUnicode: false }).required(),
   password: Joi.string().min(7).max(255).required(),
-  adress: Joi.string().min(5),
+  address: Joi.string().min(5),
   phone: Joi.string().min(6).max(20),
   postal_code: Joi.number().integer().min(5),
   city: Joi.string(),
@@ -25,10 +25,10 @@ const postPros = Joi.object().keys({
 const postVehicule = Joi.object().keys({
   immat: Joi.string().max(15),
   registration_date: Joi.date(),
-  model_id_model: Joi.number(),
-  user_id_user: Joi.number(),
-  types_id_type: Joi.number(),
   url_vehiculeRegistration: Joi.string().allow(null, ""),
+  id_modelId: Joi.number(),
+  id_typeId: Joi.number(),
+  id_userId: Joi.number(),
 });
 
 const postType = Joi.object().keys({

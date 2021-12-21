@@ -11,6 +11,9 @@ function checkToken(req: Request, res: Response, next: NextFunction) {
 
     req.userLogin = jwt.verify(user_token, process.env.TOKEN as string);
 
+    if (req.userLogin.origin !== "MonCarnet") {
+      throw new Error("You need to login");
+    }
     return next();
   } catch (err) {
     res.status(401);

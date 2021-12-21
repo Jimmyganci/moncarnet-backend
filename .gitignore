@@ -1,13 +1,4 @@
 dist/
 node_modules/
-<<<<<<< HEAD
-.env
-prisma/schema.prisma
-dist/
-.vscode
-=======
-/prisma/schema.prisma
 .env
 .vscode
-
->>>>>>> 101a166e70ca08134a15f671518bae471d12e3cc

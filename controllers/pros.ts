@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import bodyValidator from "../middleware/bodyValidator";
-const { postPros } = require("../JOI/usersValidate");
+const { postPros } = require("../JOI/validate");
 const prosRouter = require("express").Router();
 const UserAuth = require("../helpers/users");
 

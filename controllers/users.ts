@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
 import bodyValidator from "../middleware/bodyValidator";
-const { postUser } = require("../JOI/usersValidate");
+const { postUser } = require("../JOI/validate");
 const usersRouter = require("express").Router();
 const UserAuth = require("../helpers/users");
+import checktoken from "../middleware/checkToken";
 
 const prisma = new PrismaClient();
 
@@ -20,7 +21,7 @@ interface UsersInfos {
 }
 
 // authorization : admin
-usersRouter.get("/all", async (req: Request, res: Response) => {
+usersRouter.get("/all", checktoken, async (req: Request, res: Response) => {
   const { lastname, city, postal_code } = req.query;
   if (req.query.lastname) {
     try {
@@ -69,7 +70,7 @@ usersRouter.get("/all", async (req: Request, res: Response) => {
   }
 });
 // authorizations: user, admin, pros
-usersRouter.get("/:idUser", async (req: Request, res: Response) => {
+usersRouter.get("/:idUser", checktoken, async (req: Request, res: Response) => {
   const idUser = parseInt(req.params.idUser);
   try {
     const user = await prisma.users.findUnique({
@@ -83,57 +84,69 @@ usersRouter.get("/:idUser", async (req: Request, res: Response) => {
   }
 });
 //  authorizations : admin user
-usersRouter.get("/vehicules/:idUser", async (req: Request, res: Response) => {
-  const idUser = parseInt(req.params.idUser);
-  try {
-    const vehiculeUser = await prisma.vehicules.findMany({
-      where: {
-        user_id_user: idUser,
-      },
-    });
-    res.status(200).json(vehiculeUser);
-  } catch (err) {
-    res.status(404).send(err);
+usersRouter.get(
+  "/vehicules/:idUser",
+  checktoken,
+  async (req: Request, res: Response) => {
+    const idUser = parseInt(req.params.idUser);
+    try {
+      const vehiculeUser = await prisma.vehicules.findMany({
+        where: {
+          user_id_user: idUser,
+        },
+      });
+      res.status(200).json(vehiculeUser);
+    } catch (err) {
+      res.status(404).send(err);
+    }
   }
-});
+);
 // authorization: admin, user
-usersRouter.get("/pros/:idUser", async (req: Request, res: Response) => {
-  const idUser = parseInt(req.params.idUser);
-  try {
-    const findProsByUser = await prisma.pros.findMany({
-      where: {
-        users: {
-          some: {
-            id_user: idUser,
+usersRouter.get(
+  "/pros/:idUser",
+  checktoken,
+  async (req: Request, res: Response) => {
+    const idUser = parseInt(req.params.idUser);
+    try {
+      const findProsByUser = await prisma.pros.findMany({
+        where: {
+          users: {
+            some: {
+              id_user: idUser,
+            },
           },
         },
-      },
-    });
-    res.status(200).json(findProsByUser);
-  } catch (err) {
-    res.status(404).send(err);
+      });
+      res.status(200).json(findProsByUser);
+    } catch (err) {
+      res.status(404).send(err);
+    }
   }
-});
+);
 
-usersRouter.put("/pros/:idUser", async (req: Request, res: Response) => {
-  const { idUser } = req.params;
-  const { idPros }: { idPros: number } = req.body;
-  try {
-    const createProsAndUsers = await prisma.users.update({
-      where: {
-        id_user: Number(idUser),
-      },
-      data: {
-        pros: {
-          connect: { id_pros: idPros },
+usersRouter.put(
+  "/pros/:idUser",
+  checktoken,
+  async (req: Request, res: Response) => {
+    const { idUser } = req.params;
+    const { idPros }: { idPros: number } = req.body;
+    try {
+      const createProsAndUsers = await prisma.users.update({
+        where: {
+          id_user: Number(idUser),
         },
-      },
-    });
-    res.status(200).json(createProsAndUsers);
-  } catch (err) {
-    res.status(404).send(err);
+        data: {
+          pros: {
+            connect: { id_pros: idPros },
+          },
+        },
+      });
+      res.status(200).json(createProsAndUsers);
+    } catch (err) {
+      res.status(404).send(err);
+    }
   }
-});
+);
 // authorization: admin, user
 usersRouter.post(
   "/",
@@ -175,6 +188,7 @@ usersRouter.post(
 usersRouter.put(
   "/:idUser",
   bodyValidator(postUser),
+  checktoken,
   async (req: Request, res: Response) => {
     const idUser = parseInt(req.params.idUser);
     const user: UsersInfos = req.body;
@@ -216,18 +230,22 @@ usersRouter.put(
   }
 );
 // authorization: admin, user
-usersRouter.delete("/:idUser", async (req: Request, res: Response) => {
-  const idUser: number = parseInt(req.params.idUser);
-  try {
-    const userDelete = await prisma.users.delete({
-      where: {
-        id_user: idUser,
-      },
-    });
-    res.status(200).send(userDelete.firstname + " deleted");
-  } catch (err) {
-    res.status(404).send(err);
+usersRouter.delete(
+  "/:idUser",
+  checktoken,
+  async (req: Request, res: Response) => {
+    const idUser: number = parseInt(req.params.idUser);
+    try {
+      const userDelete = await prisma.users.delete({
+        where: {
+          id_user: idUser,
+        },
+      });
+      res.status(200).send(userDelete.firstname + " deleted");
+    } catch (err) {
+      res.status(404).send(err);
+    }
   }
-});
+);
 
 module.exports = usersRouter;

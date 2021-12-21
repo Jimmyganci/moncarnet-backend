@@ -3,17 +3,9 @@ import { PrismaClient } from "@prisma/client";
 import bodyValidator from "../middleware/bodyValidator";
 const { postVehicule } = require("../JOI/validate");
 const vehiculesRouter = require("express").Router();
+import VehiculeInfos from "../interfaces/IVehiculeInfos";
 
 const prisma = new PrismaClient();
-
-interface VehiculeInfos {
-  immat: string;
-  registration_date: Date;
-  model_id_model: number;
-  user_id_user: number;
-  types_id_type: number;
-  url_vehiculeRegistration: string;
-}
 
 // get many vehicules (authorization: admin)
 vehiculesRouter.get("/all", async (req: Request, res: Response) => {

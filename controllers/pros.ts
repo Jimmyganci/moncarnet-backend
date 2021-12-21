@@ -4,20 +4,9 @@ import bodyValidator from "../middleware/bodyValidator";
 const { postPros } = require("../JOI/validate");
 const prosRouter = require("express").Router();
 const UserAuth = require("../helpers/users");
-
+import ProsInfos from "../interfaces/IProsInfos";
 const prisma = new PrismaClient();
 
-interface ProsInfos {
-  id_pros: number;
-  name: string;
-  email: string;
-  password: string;
-  adress: string;
-  phone: string;
-  postal_code: number;
-  city: string;
-  siret: number;
-}
 // authorization : admin, user
 prosRouter.get("/", async (req: Request, res: Response) => {
   try {

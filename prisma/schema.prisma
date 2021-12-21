@@ -1,0 +1,91 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Brand {
+  id_brand Int      @id @default(autoincrement())
+  code     String?  @db.VarChar(45)
+  name     String   @db.VarChar(100)
+  models   Models[]
+}
+
+model Models {
+  id_model  Int         @id @default(autoincrement())
+  code      String?     @db.VarChar(45)
+  name      String?     @db.VarChar(100)
+  id_brand  Int
+  brand     Brand       @relation(fields: [id_brand], references: [id_brand])
+  vehicules Vehicules[]
+
+//   @@index([id_brand], map: "fk_models_brands1_idx")
+}
+
+model Pros {
+  id_pros        Int            @id @default(autoincrement())
+  name           String         @db.VarChar(255)
+  email          String         @unique(map: "email_UNIQUE") @db.VarChar(255)
+  hashedPassword String         @db.VarChar(255)
+  address         String         @db.Text
+  postal_code    Int
+  city           String         @db.VarChar(150)
+  siret          Int
+  phone          String         @db.VarChar(15)
+  service_book   Service_Book[]
+  users          Users[]        @relation("prostousers")
+}
+
+model Service_Book {
+  id_service_book Int      @id @default(autoincrement())
+  date            DateTime @db.Date
+  service         String   @db.Text
+  observations    String?  @db.Text
+  pros_id_pros    Int
+  kilometrage     Int
+  url_invoice     String?  @db.MediumText
+  vehicules_immat String   @db.VarChar(15)
+  pros            Pros     @relation(fields: [pros_id_pros], references: [id_pros])
+
+//   @@index([pros_id_pros], map: "fk_service_book_pros1_idx")
+//   @@index([vehicules_immat], map: "fk_service_book_vehicules1_idx")
+}
+
+model Types {
+  id_type   Int         @id @default(autoincrement())
+  name_type String      @unique(map: "name_type_UNIQUE") @db.VarChar(100)
+  vehicules Vehicules[]
+}
+
+model Users {
+  id_user        Int         @id @default(autoincrement())
+  firstname      String      @db.VarChar(100)
+  lastname       String      @db.VarChar(100)
+  email          String      @unique(map: "email_UNIQUE") @db.VarChar(255)
+  hashedPassword String?     @db.VarChar(255)
+  address        String      @db.Text
+  phone          String      @db.VarChar(15)
+  postal_code    Int
+  city           String      @db.VarChar(150)
+  vehicules      Vehicules[]
+  pros           Pros[]      @relation("prostousers")
+}
+
+model Vehicules {
+  immat                    String   @id @db.VarChar(15)
+  registration_date        DateTime @db.Date
+  url_vehiculeRegistration String   @db.MediumText
+  id_modelId               Int
+  id_typeId                Int
+  id_userId                Int
+  model                    Models   @relation(fields: [id_modelId], references: [id_model])
+  type                     Types    @relation(fields: [id_typeId], references: [id_type])
+  user                     Users    @relation(fields: [id_userId], references: [id_user])
+
+//   @@index([id_modelId], map: "vehicules_id_modelId_fkey")
+//   @@index([id_typeId], map: "vehicules_id_typeId_fkey")
+//   @@index([id_userId], map: "vehicules_id_userId_fkey")
+}

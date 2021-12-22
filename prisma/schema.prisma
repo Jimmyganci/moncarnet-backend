@@ -1,0 +1,104 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model brand {
+  id_brand Int      @id @default(autoincrement())
+  code     String?  @db.VarChar(45)
+  name     String   @db.VarChar(100)
+  models   models[]
+}
+
+model models {
+  id_model  Int         @id @default(autoincrement())
+  code      String?     @db.VarChar(45)
+  name      String?     @db.VarChar(100)
+  id_brand  Int
+  brand     brand       @relation(fields: [id_brand], references: [id_brand], onDelete: NoAction, onUpdate: NoAction, map: "fk_models_brands1")
+  vehicules vehicules[]
+
+  @@index([id_brand], map: "fk_models_brands1_idx")
+}
+
+model pros {
+  id_pros        Int            @id @default(autoincrement())
+  name           String         @db.VarChar(255)
+  email          String         @db.VarChar(255)
+  hashedPassword String         @db.VarChar(255)
+  adress         String         @db.Text
+  postal_code    Int
+  city           String         @db.VarChar(150)
+  siret          Int
+  phone          String         @db.VarChar(15)
+  service_book   service_book[]
+  users_pros     users_pros[]
+}
+
+model service_book {
+  id_service_book Int      @id @default(autoincrement())
+  date            DateTime @db.Date
+  service         String   @db.Text
+  observations    String?  @db.Text
+  pros_id_pros    Int
+  kilometrage     Int
+  url_invoice     String?  @db.MediumText
+  vehicules_immat String   @db.VarChar(15)
+  pros            pros     @relation(fields: [pros_id_pros], references: [id_pros], onDelete: NoAction, onUpdate: NoAction, map: "fk_service_book_pros1")
+
+  @@index([pros_id_pros], map: "fk_service_book_pros1_idx")
+  @@index([vehicules_immat], map: "fk_service_book_vehicules1_idx")
+}
+
+model types {
+  id_type   Int         @id @default(autoincrement())
+  name_type String      @db.VarChar(100)
+  vehicules vehicules[]
+}
+
+model users {
+  id_user        Int          @id @default(autoincrement())
+  firstname      String       @db.VarChar(100)
+  lastname       String       @db.VarChar(100)
+  email          String       @unique(map: "email_UNIQUE") @db.VarChar(255)
+  hashedPassword String?      @db.VarChar(255)
+  address        String       @db.Text
+  phone          String       @db.VarChar(15)
+  postal_code    Int
+  city           String       @db.VarChar(150)
+  users_pros     users_pros[]
+  vehicules      vehicules[]
+}
+
+model users_pros {
+  user_id_user Int
+  pros_id_pros Int
+  pros         pros  @relation(fields: [pros_id_pros], references: [id_pros], onDelete: NoAction, onUpdate: NoAction, map: "fk_users_has_pros_pros1")
+  users        users @relation(fields: [user_id_user], references: [id_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_users_has_pros_users1")
+
+  @@id([user_id_user, pros_id_pros])
+  @@index([pros_id_pros], map: "fk_users_has_pros_pros1_idx")
+  @@index([user_id_user], map: "fk_users_has_pros_users1_idx")
+}
+
+model vehicules {
+  immat                    String   @id @db.VarChar(15)
+  registration_date        DateTime @db.Date
+  model_id_model           Int
+  user_id_user             Int?
+  types_id_type            Int
+  url_vehiculeRegistration String   @db.MediumText
+  models                   models   @relation(fields: [model_id_model], references: [id_model], onDelete: NoAction, onUpdate: NoAction, map: "fk_cars_models")
+  types                    types    @relation(fields: [types_id_type], references: [id_type], onDelete: NoAction, onUpdate: NoAction, map: "fk_vehicules_types1")
+  users                    users?   @relation(fields: [user_id_user], references: [id_user], onDelete: NoAction, onUpdate: NoAction, map: "fk_cars_users1")
+
+  @@index([model_id_model], map: "fk_cars_models_idx")
+  @@index([user_id_user], map: "fk_cars_users1_idx")
+  @@index([types_id_type], map: "fk_vehicules_types1_idx")
+}
+
+// hied

@@ -67,7 +67,6 @@ brandsRouter.get("/:idbrand/users", async (req: Request, res: Response) => {
     },
   });
   res.status(200).json(usersByBrand);
-<<<<<<< HEAD
 });   
 
 // brandFilteredByVehiculeName / brandFilteredByUsers / allBrands
@@ -112,8 +111,7 @@ brandsRouter.get("/:idbrand/users", async (req: Request, res: Response) => {
 //   });
 //   res.json(addBrands);
 // });
-=======
-});
+
 
 brandsRouter.post("/", async (req: Request, res: Response) => {
   const addBrands = await prisma.brand.create({
@@ -124,7 +122,6 @@ brandsRouter.post("/", async (req: Request, res: Response) => {
   });
   res.json(addBrands);
 });
->>>>>>> dd77def71fd2c93437b770af9911f7d8976a6454
 
 brandsRouter.put("/:id", async (req: Request, res: Response) => {
   const id: number = parseInt(req.params.id);

@@ -21,6 +21,7 @@ const setupRoutes = (app: any) => {
   app.use("/api/models", modelsRouter);
   //   Auth routes
   app.use("/api/auth", authRouter);
+  
 };
 
 module.exports = {

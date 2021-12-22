@@ -19,11 +19,12 @@ module.exports = {
   plugins: ["@typescript-eslint"],
   rules: {
     "prettier/prettier": ["error", {}, { usePrettierrc: true }], // Use our .prettierrc file as source
-    "no-unused-vars": "off",
+    "no-unused-vars": 0,
     "@typescript-eslint/no-unused-vars": [
       "error",
       { argsIgnorePattern: "^_", ignoreRestSiblings: true },
     ],
     "no-console": 1,
+    "@typescript-eslint/no-var-requires": 0,
   },
 };

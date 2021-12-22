@@ -5,12 +5,6 @@ const brandsRouter = require("express").Router();
 
 const prisma = new PrismaClient();
 
-interface BrandInfo {
-  id_brand : number,
-  code: string,
-  name :string
-}
-
 // authorization:admin
 brandsRouter.get("/", async (req: Request, res: Response) => {
   const brands = await prisma.brand.findMany();
@@ -18,28 +12,26 @@ brandsRouter.get("/", async (req: Request, res: Response) => {
 });
 
 // Search a vehicule by id
-brandsRouter.get("/:id", async (req: Request, res: Response) =>  {
+brandsRouter.get("/:id", async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
-const brandsById = await prisma.brand.findUnique({
-
-  where: {
-    id_brand: id,
-  },
-});
-res.json(brandsById)
+  const brandsById = await prisma.brand.findUnique({
+    where: {
+      id_brand: id,
+    },
+  });
+  res.json(brandsById);
 });
 
 // search/obtain  models for a specific brand
 brandsRouter.get("/:idbrand/models", async (req: Request, res: Response) => {
-  const idBrand = parseInt(req.params.idbrand)
+  const idBrand = parseInt(req.params.idbrand);
   const findModelsByBrand = await prisma.models.findMany({
-    where : {
-      id_brand : idBrand,
-    }
+    where: {
+      id_brand: idBrand,
+    },
+  });
 
-  })
-
-  res.status(200).json(findModelsByBrand)
+  res.status(200).json(findModelsByBrand);
 });
 
 // search/obtain  vehicules for a specific brand (for pros)search/obtain  vehicules for a specific brand (for pros)
@@ -47,30 +39,35 @@ brandsRouter.get("/vehicules/:idbrand", async (req: Request, res: Response) => {
   const idBrand = req.params.idbrand;
   const vehiculesByBrand = await prisma.vehicules.findMany({
     where: {
-      models: {
-        id_brand: parseInt(idBrand),
+      model: {
+        brand: {
+          id_brand: Number(idBrand),
+        },
       },
     },
   });
   res.status(200).json(vehiculesByBrand);
 });
 
-// serach/obtain users by brand 
+// serach/obtain users by brand
 
 brandsRouter.get("/:idbrand/users", async (req: Request, res: Response) => {
   const idBrand = req.params.idbrand;
   const usersByBrand = await prisma.users.findMany({
     where: {
       vehicules: {
-        some:{
-          models:{
-            brand:{id_brand: Number(idBrand)}
-          }
-        }
-      }
+        some: {
+          model: {
+            brand: {
+              id_brand: Number(idBrand),
+            },
+          },
+        },
+      },
     },
   });
   res.status(200).json(usersByBrand);
+<<<<<<< HEAD
 });   
 
 // brandFilteredByVehiculeName / brandFilteredByUsers / allBrands
@@ -115,6 +112,19 @@ brandsRouter.get("/:idbrand/users", async (req: Request, res: Response) => {
 //   });
 //   res.json(addBrands);
 // });
+=======
+});
+
+brandsRouter.post("/", async (req: Request, res: Response) => {
+  const addBrands = await prisma.brand.create({
+    data: {
+      code: req.body.code,
+      name: req.body.name,
+    },
+  });
+  res.json(addBrands);
+});
+>>>>>>> dd77def71fd2c93437b770af9911f7d8976a6454
 
 brandsRouter.put("/:id", async (req: Request, res: Response) => {
   const id: number = parseInt(req.params.id);
@@ -137,7 +147,7 @@ brandsRouter.delete("/:id", async (req: Request, res: Response) => {
       id_brand: id,
     },
   });
-  res.send("brand Deleted");
+  res.send(`${brandDeleted.name} deleted`);
 });
 
 module.exports = brandsRouter;

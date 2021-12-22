@@ -7,6 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+<<<<<<< HEAD
 model brand {
   id_brand Int      @id @default(autoincrement())
   code     String?  @db.VarChar(45)
@@ -15,10 +16,21 @@ model brand {
 }
 
 model models {
+=======
+model Brand {
+  id_brand Int      @id @default(autoincrement())
+  code     String?  @db.VarChar(45)
+  name     String   @db.VarChar(100)
+  models   Models[]
+}
+
+model Models {
+>>>>>>> dd77def71fd2c93437b770af9911f7d8976a6454
   id_model  Int         @id @default(autoincrement())
   code      String?     @db.VarChar(45)
   name      String?     @db.VarChar(100)
   id_brand  Int
+<<<<<<< HEAD
   brand     brand       @relation(fields: [id_brand], references: [id_brand], onDelete: NoAction, onUpdate: NoAction, map: "fk_models_brands1")
   vehicules vehicules[]
 
@@ -31,15 +43,36 @@ model pros {
   email          String         @db.VarChar(255)
   hashedPassword String         @db.VarChar(255)
   adress         String         @db.Text
+=======
+  brand     Brand       @relation(fields: [id_brand], references: [id_brand])
+  vehicules Vehicules[]
+
+}
+
+model Pros {
+  id_pros        Int            @id @default(autoincrement())
+  name           String         @db.VarChar(255)
+  email          String         @unique(map: "email_UNIQUE") @db.VarChar(255)
+  hashedPassword String         @db.VarChar(255)
+  address         String         @db.Text
+>>>>>>> dd77def71fd2c93437b770af9911f7d8976a6454
   postal_code    Int
   city           String         @db.VarChar(150)
   siret          Int
   phone          String         @db.VarChar(15)
+<<<<<<< HEAD
   service_book   service_book[]
   users_pros     users_pros[]
 }
 
 model service_book {
+=======
+  service_book   Service_Book[]
+  users          Users[]        @relation("prostousers")
+}
+
+model Service_Book {
+>>>>>>> dd77def71fd2c93437b770af9911f7d8976a6454
   id_service_book Int      @id @default(autoincrement())
   date            DateTime @db.Date
   service         String   @db.Text
@@ -48,6 +81,7 @@ model service_book {
   kilometrage     Int
   url_invoice     String?  @db.MediumText
   vehicules_immat String   @db.VarChar(15)
+<<<<<<< HEAD
   pros            pros     @relation(fields: [pros_id_pros], references: [id_pros], onDelete: NoAction, onUpdate: NoAction, map: "fk_service_book_pros1")
 
   @@index([pros_id_pros], map: "fk_service_book_pros1_idx")
@@ -102,3 +136,41 @@ model vehicules {
 }
 
 // hied
+=======
+  pros            Pros     @relation(fields: [pros_id_pros], references: [id_pros])
+
+}
+
+model Types {
+  id_type   Int         @id @default(autoincrement())
+  name_type String      @unique(map: "name_type_UNIQUE") @db.VarChar(100)
+  vehicules Vehicules[]
+}
+
+model Users {
+  id_user        Int         @id @default(autoincrement())
+  firstname      String      @db.VarChar(100)
+  lastname       String      @db.VarChar(100)
+  email          String      @unique(map: "email_UNIQUE") @db.VarChar(255)
+  hashedPassword String?     @db.VarChar(255)
+  address        String      @db.Text
+  phone          String      @db.VarChar(15)
+  postal_code    Int
+  city           String      @db.VarChar(150)
+  vehicules      Vehicules[]
+  pros           Pros[]      @relation("prostousers")
+}
+
+model Vehicules {
+  immat                    String   @id @db.VarChar(15)
+  registration_date        DateTime @db.Date
+  url_vehiculeRegistration String   @db.MediumText
+  id_modelId               Int
+  id_typeId                Int
+  id_userId                Int
+  model                    Models   @relation(fields: [id_modelId], references: [id_model])
+  type                     Types    @relation(fields: [id_typeId], references: [id_type])
+  user                     Users    @relation(fields: [id_userId], references: [id_user])
+
+}
+>>>>>>> dd77def71fd2c93437b770af9911f7d8976a6454

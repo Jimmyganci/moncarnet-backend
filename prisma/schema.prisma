@@ -32,7 +32,7 @@ model Pros {
   address         String         @db.Text
   postal_code    Int
   city           String         @db.VarChar(150)
-  siret          Int
+  siret          String         @db.VarChar(14)
   phone          String         @db.VarChar(15)
   service_book   Service_Book[]
   users          Users[]        @relation("prostousers")
@@ -43,11 +43,12 @@ model Service_Book {
   date            DateTime @db.Date
   service         String   @db.Text
   observations    String?  @db.Text
-  pros_id_pros    Int
   kilometrage     Int
   url_invoice     String?  @db.MediumText
-  vehicules_immat String   @db.VarChar(15)
-  pros            Pros     @relation(fields: [pros_id_pros], references: [id_pros])
+  pros            Pros     @relation(fields: [id_pros], references: [id_pros])
+  vehicule        Vehicules  @relation(fields: [immat], references: [immat])
+  id_pros         Int
+  immat           String
 
 }
 
@@ -81,5 +82,5 @@ model Vehicules {
   model                    Models   @relation(fields: [id_modelId], references: [id_model])
   type                     Types    @relation(fields: [id_typeId], references: [id_type])
   user                     Users    @relation(fields: [id_userId], references: [id_user])
-
+  service_book             Service_Book[]
 }

@@ -11,6 +11,48 @@ make npm start to the console for launch the server.
 <pre>npm start</pre>
 </br>
 
+# <h2>Upload files</h2>
+
+# <h3>//Upload one files on route vehicule, users or pros//</h3>
+
+<pre>.post("api/vehicules/upload")</pre>
+<pre>.post("api/users/upload")</pre>
+<pre>.post("api/pros/upload")</pre>
+
+Result data : https://"your_host_minio"/"your_bucket_minio"//invoice//your_files_name.png
+
+<p>Example client:</p>
+<pre>
+const handleUpload = async (e) => {
+    e.preventDefault();
+    const formData = new FormData();
+    formData.append("file", file);
+    const upload = await axios.post(
+      "http://localhost:8000/api/vehicules/upload",
+      formData,
+      { withCredentials: true }
+    );
+    console.log(upload);
+    if (upload) {
+      const postVehicule = await axios.post(
+        "http://localhost:8000/api/vehicules/",
+        {
+          immat: immat,
+          registration_date: "2015-10-21T00:00:00.000Z",
+          url_vehiculeRegistration: upload.data,
+          id_modelId: parseInt(model),
+          id_typeId: parseInt(type),
+          id_userId: parseInt(user),
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      console.log(postVehicule.data);
+    }
+  };
+</pre>
+
 # <h2>Vehicule</h2>
 
 # <h3>// Get all vehicules //</h3>

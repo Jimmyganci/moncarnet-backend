@@ -5,6 +5,7 @@ const { postPros } = require("../JOI/validate");
 const prosRouter = require("express").Router();
 const UserAuth = require("../helpers/users");
 import ProsInfos from "../interfaces/IProsInfos";
+import upload from "../middleware/fileUpload";
 const prisma = new PrismaClient();
 
 // authorization : admin, user
@@ -31,7 +32,7 @@ prosRouter.get("/:idPros", async (req: Request, res: Response) => {
   }
 });
 // authorization : admin, users
-prosRouter.get("/users/:idPros", async (req: Request, res: Response) => {
+prosRouter.get("/:idPros/users", async (req: Request, res: Response) => {
   const idPros = parseInt(req.params.idPros);
   try {
     const usersPros = await prisma.users.findMany({
@@ -48,6 +49,8 @@ prosRouter.get("/users/:idPros", async (req: Request, res: Response) => {
     res.status(404).send(err);
   }
 });
+
+prosRouter.post("/upload", upload);
 
 // authorization : admin only
 prosRouter.post(

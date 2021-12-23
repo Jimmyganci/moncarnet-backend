@@ -4,6 +4,7 @@ declare global {
   namespace Express {
     interface Request {
       userLogin: IUserLogin;
+      files: any;
     }
   }
 }

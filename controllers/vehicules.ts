@@ -4,6 +4,7 @@ import bodyValidator from "../middleware/bodyValidator";
 const { postVehicule } = require("../JOI/validate");
 const vehiculesRouter = require("express").Router();
 import VehiculeInfos from "../interfaces/IVehiculeInfos";
+import upload from "../middleware/fileUpload";
 
 const prisma = new PrismaClient();
 
@@ -97,6 +98,8 @@ vehiculesRouter.get("/user/:idUser", async (req: Request, res: Response) => {
   });
   res.json(vehicules);
 });
+
+vehiculesRouter.post("/upload", upload);
 // post vehicule (authorization: user, admin)
 vehiculesRouter.post(
   "/",

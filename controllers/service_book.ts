@@ -4,6 +4,7 @@ import bodyValidator from "../middleware/bodyValidator";
 const { postServiceBook } = require("../JOI/validate");
 const service_bookRouter = require("express").Router();
 import ServiceBookInfos from "../interfaces/IServiceBook";
+import upload from "../middleware/fileUpload";
 
 const prisma = new PrismaClient();
 
@@ -11,6 +12,8 @@ service_bookRouter.get("/", async (req: Request, res: Response) => {
   const serviceBook = await prisma.service_Book.findMany();
   res.json(serviceBook);
 });
+
+service_bookRouter.post("/upload", upload);
 
 service_bookRouter.post(
   "/",

@@ -109,7 +109,7 @@ vehiculesRouter.post(
     const vehicules = await prisma.vehicules.create({
       data: {
         immat: vehicule.immat,
-        registration_date: vehicule.registration_date,
+        registration_date: new Date(vehicule.registration_date).toISOString(),
         url_vehiculeRegistration: vehicule.url_vehiculeRegistration,
         model: {
           connect: {
@@ -141,7 +141,7 @@ vehiculesRouter.put("/:immat", async (req: Request, res: Response) => {
     },
     data: {
       immat: vehicule.immat,
-      registration_date: vehicule.registration_date,
+      registration_date: new Date(vehicule.registration_date).toISOString(),
       url_vehiculeRegistration: vehicule.url_vehiculeRegistration,
       model: {
         connect: {

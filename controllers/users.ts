@@ -7,7 +7,6 @@ const UserAuth = require("../helpers/users");
 import IUserInfos from "../interfaces/IuserInfos";
 import checktoken from "../middleware/checkToken";
 import checkRole from "../middleware/checkRole";
-import upload from "../middleware/fileUpload";
 
 const prisma = new PrismaClient();
 
@@ -145,8 +144,6 @@ usersRouter.put(
     }
   }
 );
-
-usersRouter.post("/upload", upload);
 
 // authorization: admin, user
 usersRouter.post(

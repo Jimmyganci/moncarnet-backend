@@ -27,7 +27,7 @@ const postPros = Joi.object().keys({
 
 const postVehicule = Joi.object().keys({
   immat: Joi.string().max(15),
-  registration_date: Joi.date(),
+  registration_date: Joi.date().iso().max("now"),
   url_vehiculeRegistration: Joi.string().allow(null, ""),
   id_modelId: Joi.number(),
   id_typeId: Joi.number(),

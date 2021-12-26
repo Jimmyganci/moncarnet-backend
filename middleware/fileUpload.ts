@@ -1,48 +1,42 @@
 import { Request, Response, NextFunction } from "express";
 require("dotenv").config();
-const Minio = require("minio");
+import minioClient from "../helpers/minio";
+// const Minio = require("minio");
 
-const upload = (req: Request, res: Response, next: NextFunction) => {
+const upload = async (req: Request, res: Response, next: NextFunction) => {
   if (req.files !== null) {
-    const minioClient = new Minio.Client({
-      endPoint: process.env.MINIO_ENDPOINT,
-      useSSL: true,
-      accessKey: process.env.MINIO_ACCESS_KEY,
-      secretKey: process.env.MINIO_SECRET_KEY,
-    });
+    // const minioClient = new Minio.Client({
+    //   endPoint: process.env.MINIO_ENDPOINT,
+    //   useSSL: true,
+    //   accessKey: process.env.MINIO_ACCESS_KEY,
+    //   secretKey: process.env.MINIO_SECRET_KEY,
+    // });
     let objectName = "";
     switch (req.baseUrl) {
       case "/api/vehicules":
-        objectName = "/greenCard/";
+        objectName = `/${req.body.immat}/greenCard/`;
         break;
-      case "/api/users":
-        objectName = "/invoice/";
-        break;
-      case "/api/pros":
-        objectName = "/invoice_quote/";
+      case "/api/service_book":
+        objectName = `/${req.body.immat}/invoice/`;
         break;
       default:
         "";
     }
-    minioClient.putObject(
-      "moncarnet-dev",
-      objectName + req.files.file.name,
-      req.files.file.data,
-      function (error: any) {
-        if (error) {
-          res.status(404).send("error");
-          next(error);
-          return console.log(error);
-        } else {
-          res
-            .status(200)
-            .send(
-              `https://${process.env.MINIO_ENDPOINT}/moncarnet-dev/${objectName}/${req.files.file.name}`
-            );
-          next();
-        }
-      }
-    );
+
+    try {
+      const obj = await minioClient.putObject(
+        process.env.MINIO_BUCKET,
+        "/user/" + req.userLogin.id_user + objectName + req.files.file.name,
+        req.files.file.data
+      );
+      res.status(200).json({
+        etag: obj,
+        url: `https://${process.env.MINIO_ENDPOINT}/${process.env.MINIO_BUCKET}/user/}${req.userLogin.id_user}/${objectName}/${req.files.file.name}`,
+      });
+      next();
+    } catch (err) {
+      res.status(404).send(err);
+    }
   } else {
     res.status(404).send("Need to upload a files!");
   }

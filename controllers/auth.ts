@@ -21,7 +21,7 @@ authRouter.post("/login", async (req: Request, res: Response) => {
             email,
             user.id_user,
             "MonCarnet",
-            Object.keys(user)
+            Object.keys(user).slice(0, 1)
           );
           res.cookie("user_token", token);
           res.status(200).send("User connected");

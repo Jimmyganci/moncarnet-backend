@@ -7,6 +7,7 @@ const UserAuth = require("../helpers/users");
 import IUserInfos from "../interfaces/IuserInfos";
 import checktoken from "../middleware/checkToken";
 import checkRole from "../middleware/checkRole";
+const jwt = require("jsonwebtoken");
 
 const prisma = new PrismaClient();
 
@@ -64,6 +65,15 @@ usersRouter.get(
     }
   }
 );
+usersRouter.get("/login", async (req: Request, res: Response) => {
+  const { user_token } = req.cookies;
+  try {
+    const getUser = await jwt.verify(user_token, process.env.TOKEN as string);
+    res.status(200).json(getUser);
+  } catch (err) {
+    res.status(404).send(err);
+  }
+});
 // authorizations: user, admin, pros
 usersRouter.get("/:idUser", checktoken, async (req: Request, res: Response) => {
   const idUser = parseInt(req.params.idUser);

@@ -59,35 +59,35 @@ vehiculesRouter.get("/:immat", async (req: Request, res: Response) => {
   res.json(vehicules);
 });
 // get model's vehicule (authorization: all)
-vehiculesRouter.get("/model/:idModel", async (req: Request, res: Response) => {
-  const idModel = parseInt(req.params.idModel);
-  const vehicules = await prisma.models.findUnique({
-    where: {
-      id_model: idModel,
-    },
-  });
-  res.json(vehicules);
-});
+// vehiculesRouter.get("/model/:idModel", async (req: Request, res: Response) => {
+//   const idModel = parseInt(req.params.idModel);
+//   const vehicules = await prisma.models.findUnique({
+//     where: {
+//       id_model: idModel,
+//     },
+//   });
+//   res.json(vehicules);
+// });
 // get brand vehicule (authorization: all)
-vehiculesRouter.get(
-  "/model/:idModel/brand",
-  async (req: Request, res: Response) => {
-    const idModel = parseInt(req.params.idModel);
-    const vehicules = await prisma.models.findUnique({
-      where: {
-        id_model: idModel,
-      },
-      select: {
-        brand: {
-          select: {
-            name: true,
-          },
-        },
-      },
-    });
-    res.json(vehicules);
-  }
-);
+// vehiculesRouter.get(
+//   "/model/:idModel/brand",
+//   async (req: Request, res: Response) => {
+//     const idModel = parseInt(req.params.idModel);
+//     const vehicules = await prisma.models.findUnique({
+//       where: {
+//         id_model: idModel,
+//       },
+//       select: {
+//         brand: {
+//           select: {
+//             name: true,
+//           },
+//         },
+//       },
+//     });
+//     res.json(vehicules);
+//   }
+// );
 // get user's vehicule (authorization: pros, admin)
 vehiculesRouter.get("/user/:idUser", async (req: Request, res: Response) => {
   const idUser = parseInt(req.params.idUser);

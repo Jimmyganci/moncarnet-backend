@@ -59,35 +59,59 @@ vehiculesRouter.get("/:immat", async (req: Request, res: Response) => {
   res.json(vehicules);
 });
 // get model's vehicule (authorization: all)
-// vehiculesRouter.get("/model/:idModel", async (req: Request, res: Response) => {
-//   const idModel = parseInt(req.params.idModel);
-//   const vehicules = await prisma.models.findUnique({
-//     where: {
-//       id_model: idModel,
-//     },
-//   });
-//   res.json(vehicules);
-// });
+vehiculesRouter.get("/:immat/model", async (req: Request, res: Response) => {
+  const immat = req.params.immat;
+  try {
+    const vehicules = await prisma.vehicules.findUnique({
+      where: {
+        immat: String(immat),
+      },
+      select: {
+        model: true,
+      },
+    });
+    res.status(200).json(vehicules);
+  } catch (err) {
+    res.status(404).send(err);
+  }
+});
 // get brand vehicule (authorization: all)
-// vehiculesRouter.get(
-//   "/model/:idModel/brand",
-//   async (req: Request, res: Response) => {
-//     const idModel = parseInt(req.params.idModel);
-//     const vehicules = await prisma.models.findUnique({
-//       where: {
-//         id_model: idModel,
-//       },
-//       select: {
-//         brand: {
-//           select: {
-//             name: true,
-//           },
-//         },
-//       },
-//     });
-//     res.json(vehicules);
-//   }
-// );
+vehiculesRouter.get("/:immat/brand", async (req: Request, res: Response) => {
+  const immat = req.params.immat;
+  try {
+    const vehicules = await prisma.vehicules.findUnique({
+      where: {
+        immat: String(immat),
+      },
+      select: {
+        model: {
+          select: {
+            brand: true,
+          },
+        },
+      },
+    });
+    res.status(200).json(vehicules);
+  } catch (err) {
+    res.status(404).send(err);
+  }
+});
+vehiculesRouter.get("/:immat/type", async (req: Request, res: Response) => {
+  const immat = req.params.immat;
+  try {
+    const vehicules = await prisma.vehicules.findUnique({
+      where: {
+        immat: String(immat),
+      },
+      select: {
+        type: true,
+      },
+    });
+    res.status(200).json(vehicules);
+  } catch (err) {
+    res.status(404).send(err);
+  }
+});
 // get user's vehicule (authorization: pros, admin)
 vehiculesRouter.get("/user/:idUser", async (req: Request, res: Response) => {
   const idUser = parseInt(req.params.idUser);

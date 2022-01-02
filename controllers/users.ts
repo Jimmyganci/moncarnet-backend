@@ -137,6 +137,17 @@ usersRouter.put(
   async (req: Request, res: Response) => {
     const { idUser } = req.params;
     const { idPros }: { idPros: number } = req.body;
+    // const getUserPros = await prisma.users.findMany({
+    //   where: {
+    //     pros: {
+    //       some: {
+    //         id_pros: idPros,
+    //       },
+    //     },
+    //     id_user: Number(idUser),
+    //   },
+    // });
+
     try {
       const createProsAndUsers = await prisma.users.update({
         where: {
@@ -148,7 +159,40 @@ usersRouter.put(
           },
         },
       });
-      res.status(200).json(createProsAndUsers);
+      res
+        .status(200)
+        .json(
+          `${createProsAndUsers.firstname} le garage a bien été ajouté à vos favoris`
+        );
+    } catch (err) {
+      res.status(404).send(err);
+    }
+  }
+);
+
+usersRouter.delete(
+  "/:idUser/prosDeleted/:idPros",
+  checktoken,
+  async (req: Request, res: Response) => {
+    const { idUser, idPros } = req.params;
+    try {
+      const deletePros = await prisma.users.update({
+        where: {
+          id_user: Number(idUser),
+        },
+        data: {
+          pros: {
+            disconnect: {
+              id_pros: Number(idPros),
+            },
+          },
+        },
+      });
+      res
+        .status(200)
+        .send(
+          `${deletePros.firstname} le garage a bien été retiré de vos favoris `
+        );
     } catch (err) {
       res.status(404).send(err);
     }

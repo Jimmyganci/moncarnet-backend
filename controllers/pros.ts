@@ -10,11 +10,56 @@ const prisma = new PrismaClient();
 
 // authorization : admin, user
 prosRouter.get("/", async (req: Request, res: Response) => {
-  try {
-    const pros = await prisma.pros.findMany();
-    res.status(200).json(pros);
-  } catch (err) {
-    res.status(404).send(err);
+  const { namePros, city } = req.query;
+  if (req.query.namePros && !req.query.city) {
+    try {
+      const nameFilter = await prisma.pros.findMany({
+        where: {
+          name: {
+            contains: String(namePros),
+          },
+        },
+      });
+      res.status(200).json(nameFilter);
+    } catch (err) {
+      res.status(404).send(err);
+    }
+  } else if (req.query.city && !req.query.namePros) {
+    try {
+      const prosByCity = await prisma.pros.findMany({
+        where: {
+          city: { contains: String(city) },
+        },
+      });
+      res.status(200).json(prosByCity);
+    } catch (err) {
+      res.status(404).send(err);
+    }
+  } else if (req.query.namePros && req.query.city) {
+    try {
+      const prosByNameAndCity = await prisma.pros.findMany({
+        where: {
+          OR: {
+            name: {
+              contains: String(namePros),
+            },
+            city: {
+              contains: String(city),
+            },
+          },
+        },
+      });
+      res.status(200).json(prosByNameAndCity);
+    } catch (err) {
+      res.status(404).send(err);
+    }
+  } else {
+    try {
+      const pros = await prisma.pros.findMany();
+      res.status(200).json(pros);
+    } catch (err) {
+      res.status(404).send(err);
+    }
   }
 });
 // authorization : admin, user, pros

@@ -19,7 +19,10 @@ const postPros = Joi.object().keys({
   phone: Joi.string().min(6).max(20),
   postal_code: Joi.number().integer().min(5),
   city: Joi.string(),
-  siret: Joi.number().integer().min(1).max(99999999999999),
+  siret: Joi.string()
+    .pattern(/^[0-9]+$/, "numbers")
+    .min(14)
+    .max(14),
 });
 
 const postVehicule = Joi.object().keys({
@@ -39,10 +42,10 @@ const postServiceBook = Joi.object().keys({
   date: Joi.date(),
   service: Joi.string(),
   observations: Joi.string(),
-  pros_id_pros: Joi.number().integer(),
+  id_pros: Joi.number().integer(),
   kilometrage: Joi.number().min(1).max(9999999),
   url_invoice: Joi.string().allow(null, ""),
-  vehicules_immat: Joi.string().max(15),
+  immat_vehicule: Joi.string().max(15),
 });
 
 const postModel = Joi.object().keys({

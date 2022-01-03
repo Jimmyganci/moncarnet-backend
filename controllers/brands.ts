@@ -12,7 +12,7 @@ brandsRouter.get("/", async (req: Request, res: Response) => {
 });
 
 // Search a vehicule by id
-brandsRouter.get("/:id", async (req: Request, res: Response) => {
+brandsRouter.get("/:id", async (req: Request, res: Response) => {     
   const id = parseInt(req.params.id);
   const brandsById = await prisma.brand.findUnique({
     where: {
@@ -69,48 +69,44 @@ brandsRouter.get("/:idbrand/users", async (req: Request, res: Response) => {
   res.status(200).json(usersByBrand);
 });   
 
-// brandFilteredByVehiculeName / brandFilteredByUsers / allBrands
-// brandsRouter.get("/all", async (req: Request, res: Response) => {
-//   const nameFilter = String(req.query.name);
-//   const userFilter = String(req.query.city);
 
-//   if (req.query.name) {
-//     const brandFilteredByVehiculeName = await prisma.brand.findUnique({
-//       where: {
-//         vehicules: {
-//           some:{
-//             models:{
-//               brand:{id_brand: Number(idBrand)}
-//             }
-//           }
-//         }
-//       },
-//     });
-//     res.status(200).json(brandFilteredByVehiculeName);
-//   } else if (req.query.city) {
-//     const brandFilteredByUsers = await prisma.users.findMany({
-//       where: {
-//         city: {
-//           contains: userFilter,
-//         },
-//       },
-//     });
-//     res.status(200).json(brandFilteredByUsers);
-//   } else {
-//     const allBrands = await prisma.users.findMany();
-//     res.status(200).json(allBrands);
-//   }
-// });
 
-// brandsRouter.post("/", async (req: Request, res: Response) => {
-//   const addBrands = await prisma.brand.create({
-//     data: {
-//       code: req.body.code,
-//       name: req.body.name,
-//     },
-//   });
-//   res.json(addBrands);
-// });
+brandsRouter.get("/", async (req: Request, res: Response) => {
+  const { name } = req.query;
+  if (req.query.name) {
+    try {
+      const brandsFilteredByName = await prisma.brand.findMany({
+        where:{
+          name: {
+            contains : String(name),
+          },
+        },
+      });
+      res.status(200).json(brandsFilteredByName);
+    }
+    catch (err) {
+      res.status(404).send(err);
+    }
+  } else {
+      try {
+        const brands = await prisma.brand.findMany();
+        res.json(brands);
+      }
+      catch (err) {
+        res.status(404).send(err)
+      }
+    }
+});
+
+brandsRouter.post("/", async (req: Request, res: Response) => {
+  const addBrands = await prisma.brand.create({
+    data: {
+      code: req.body.code,
+      name: req.body.name,
+    },
+  });
+  res.json(addBrands);
+});
 
 
 brandsRouter.post("/", async (req: Request, res: Response) => {

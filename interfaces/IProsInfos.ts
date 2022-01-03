@@ -7,5 +7,5 @@ export default interface ProsInfos {
   phone: string;
   postal_code: number;
   city: string;
-  siret: number;
+  siret: string;
 }

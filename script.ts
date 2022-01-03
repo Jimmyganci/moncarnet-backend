@@ -4,18 +4,24 @@ const cookieParser = require("cookie-parser");
 const cors = require("cors");
 const app: Application = express();
 import { handleError } from "./middleware/errors";
+const fileUpload = require("express-fileupload");
 
 const { setupRoutes } = require("./controllers/index");
+
+app.use(
+  fileUpload({
+    limits: { fileSize: 50 * 1024 * 1024 },
+  })
+);
 
 const port = process.env.PORT || 8000;
 
 const corsOptions = {
-  origin: true, // accept all origin
+  origin: process.env.CORS_ORIGIN,
   credentials: true, // access-control-allow-credentials:true
   optionSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
-
 app.use(express.json());
 app.use(cookieParser());
 setupRoutes(app);

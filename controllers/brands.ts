@@ -5,10 +5,26 @@ const brandsRouter = require("express").Router();
 
 const prisma = new PrismaClient();
 
-// authorization:admin
+// authorization:admin user
 brandsRouter.get("/", async (req: Request, res: Response) => {
-  const brands = await prisma.brand.findMany();
-  res.json(brands);
+  const { name } = req.query;
+  if (req.query.name) {
+    try {
+      const brandByName = await prisma.brand.findMany({
+        where: {
+          name: {
+            contains: String(name),
+          },
+        },
+      });
+      res.status(200).json(brandByName);
+    } catch (err) {
+      res.status(404).send(err);
+    }
+  } else {
+    const brands = await prisma.brand.findMany();
+    res.status(200).json(brands);
+  }
 });
 
 // Search a vehicule by id

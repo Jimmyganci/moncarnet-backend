@@ -4,6 +4,7 @@ import bodyValidator from "../middleware/bodyValidator";
 const { postVehicule } = require("../JOI/validate");
 const vehiculesRouter = require("express").Router();
 import VehiculeInfos from "../interfaces/IVehiculeInfos";
+import upload from "../middleware/fileUpload";
 
 const prisma = new PrismaClient();
 
@@ -58,35 +59,59 @@ vehiculesRouter.get("/:immat", async (req: Request, res: Response) => {
   res.json(vehicules);
 });
 // get model's vehicule (authorization: all)
-vehiculesRouter.get("/model/:idModel", async (req: Request, res: Response) => {
-  const idModel = parseInt(req.params.idModel);
-  const vehicules = await prisma.models.findUnique({
-    where: {
-      id_model: idModel,
-    },
-  });
-  res.json(vehicules);
-});
-// get brand vehicule (authorization: all)
-vehiculesRouter.get(
-  "/model/:idModel/brand",
-  async (req: Request, res: Response) => {
-    const idModel = parseInt(req.params.idModel);
-    const vehicules = await prisma.models.findUnique({
+vehiculesRouter.get("/:immat/model", async (req: Request, res: Response) => {
+  const immat = req.params.immat;
+  try {
+    const vehicules = await prisma.vehicules.findUnique({
       where: {
-        id_model: idModel,
+        immat: String(immat),
       },
       select: {
-        brand: {
+        model: true,
+      },
+    });
+    res.status(200).json(vehicules);
+  } catch (err) {
+    res.status(404).send(err);
+  }
+});
+// get brand vehicule (authorization: all)
+vehiculesRouter.get("/:immat/brand", async (req: Request, res: Response) => {
+  const immat = req.params.immat;
+  try {
+    const vehicules = await prisma.vehicules.findUnique({
+      where: {
+        immat: String(immat),
+      },
+      select: {
+        model: {
           select: {
-            name: true,
+            brand: true,
           },
         },
       },
     });
-    res.json(vehicules);
+    res.status(200).json(vehicules);
+  } catch (err) {
+    res.status(404).send(err);
   }
-);
+});
+vehiculesRouter.get("/:immat/type", async (req: Request, res: Response) => {
+  const immat = req.params.immat;
+  try {
+    const vehicules = await prisma.vehicules.findUnique({
+      where: {
+        immat: String(immat),
+      },
+      select: {
+        type: true,
+      },
+    });
+    res.status(200).json(vehicules);
+  } catch (err) {
+    res.status(404).send(err);
+  }
+});
 // get user's vehicule (authorization: pros, admin)
 vehiculesRouter.get("/user/:idUser", async (req: Request, res: Response) => {
   const idUser = parseInt(req.params.idUser);
@@ -97,6 +122,8 @@ vehiculesRouter.get("/user/:idUser", async (req: Request, res: Response) => {
   });
   res.json(vehicules);
 });
+
+vehiculesRouter.post("/upload", upload);
 // post vehicule (authorization: user, admin)
 vehiculesRouter.post(
   "/",
@@ -106,7 +133,7 @@ vehiculesRouter.post(
     const vehicules = await prisma.vehicules.create({
       data: {
         immat: vehicule.immat,
-        registration_date: vehicule.registration_date,
+        registration_date: new Date(vehicule.registration_date).toISOString(),
         url_vehiculeRegistration: vehicule.url_vehiculeRegistration,
         model: {
           connect: {
@@ -138,7 +165,7 @@ vehiculesRouter.put("/:immat", async (req: Request, res: Response) => {
     },
     data: {
       immat: vehicule.immat,
-      registration_date: vehicule.registration_date,
+      registration_date: new Date(vehicule.registration_date).toISOString(),
       url_vehiculeRegistration: vehicule.url_vehiculeRegistration,
       model: {
         connect: {

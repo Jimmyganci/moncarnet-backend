@@ -1,39 +1,39 @@
-const Minio = require("minio");
+import { Request, Response, NextFunction } from "express";
 require("dotenv").config();
+import minioClient from "../helpers/minio";
+// const Minio = require("minio");
 
-// Instantiate the minio client with the endpoint
-// and access keys as shown below.
-const minioClient = new Minio.Client({
-  endPoint: "minio-s3.basile.vernouillet.dev",
-  port: 9000,
-  useSSL: true,
-  accessKey: process.env.ACCES_KEY,
-  secretKey: process.env.SECRET_KEY,
-});
-
-// File that needs to be uploaded.
-const file = "C:/Users/Jimmy/Pictures/chevronclose.png";
-
-// Make a bucket called europetrip.
-minioClient.makeBucket("moncarnet-dev", "us-east-1", function (err = Error) {
-  if (err) return console.log(err);
-
-  console.log('Bucket created successfully in "us-west-1".');
-
-  const metaData = {
-    "Content-Type": "application/octet-stream",
-    "X-Amz-Meta-Testing": 1234,
-    example: 5678,
-  };
-  // Using fPutObject API upload your file to the bucket europetrip.
-  minioClient.fPutObject(
-    "moncarnet-dev",
-    "error.ts",
-    file,
-    metaData,
-    function (err = Error) {
-      if (err) return console.log(err);
-      console.log("File uploaded successfully.");
+const upload = async (req: Request, res: Response, next: NextFunction) => {
+  if (req.files !== null) {
+    let objectName = "";
+    switch (req.baseUrl) {
+      case "/api/vehicules":
+        objectName = `/${req.body.immat}/greenCard/`;
+        break;
+      case "/api/service_book":
+        objectName = `/${req.body.immat}/invoice/`;
+        break;
+      default:
+        "";
     }
-  );
-});
+
+    try {
+      const obj = await minioClient.putObject(
+        process.env.MINIO_BUCKET,
+        "/user/" + req.userLogin.id_user + objectName + req.files.file.name,
+        req.files.file.data
+      );
+      res.status(200).json({
+        etag: obj,
+        url: `https://${process.env.MINIO_ENDPOINT}/${process.env.MINIO_BUCKET}/user/${req.userLogin.id_user}${objectName}${req.files.file.name}`,
+      });
+      next();
+    } catch (err) {
+      res.status(404).send(err);
+    }
+  } else {
+    res.status(404).send("Need to upload a files!");
+  }
+};
+
+export default upload;

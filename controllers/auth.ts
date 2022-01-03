@@ -12,7 +12,7 @@ authRouter.post("/login", async (req: Request, res: Response) => {
       email: email,
     },
   });
-  if (!user) res.status(401).send("User not Found");
+  if (!user) res.status(404).send("User not Found");
   else {
     UserAuth.verifyPassword(password, user.hashedPassword).then(
       (passwordIsCorrect: boolean) => {
@@ -21,10 +21,10 @@ authRouter.post("/login", async (req: Request, res: Response) => {
             email,
             user.id_user,
             "MonCarnet",
-            Object.keys(user)
+            Object.keys(user).slice(0, 1)
           );
           res.cookie("user_token", token);
-          res.status(200).send("User connected");
+          res.status(200).json(user.id_user);
         } else {
           res.status(401).send("Invalid credentials");
         }

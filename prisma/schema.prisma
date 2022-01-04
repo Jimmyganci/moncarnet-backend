@@ -25,28 +25,29 @@ model Models {
 }
 
 model Pros {
-  id_pros        Int            @id @default(autoincrement())
-  name           String         @db.VarChar(255)
-  email          String         @unique(map: "email_UNIQUE") @db.VarChar(255)
-  hashedPassword String         @db.VarChar(255)
+  id_pros         Int            @id @default(autoincrement())
+  name            String         @db.VarChar(255)
+  email           String         @unique(map: "email_UNIQUE") @db.VarChar(255)
+  hashedPassword  String         @db.VarChar(255)
   address         String         @db.Text
-  postal_code    Int
-  city           String         @db.VarChar(150)
-  siret          String         @db.VarChar(14)
-  phone          String         @db.VarChar(15)
-  service_book   Service_Book[]
-  users          Users[]        @relation("prostousers")
+  postal_code     Int
+  city            String         @db.VarChar(150)
+  siret           String         @db.VarChar(14)
+  phone           String         @db.VarChar(15)
+  service_book    Service_Book[]
+  users           Users[]        @relation("prostousers")
+  appointmentUser Appointment[]
 }
 
 model Service_Book {
-  id_service_book Int      @id @default(autoincrement())
-  date            DateTime @db.Date
-  service         String   @db.Text
-  observations    String?  @db.Text
+  id_service_book Int       @id @default(autoincrement())
+  date            DateTime  @db.Date
+  service         String    @db.Text
+  observations    String?   @db.Text
   kilometrage     Int
-  url_invoice     String?  @db.MediumText
-  pros            Pros     @relation(fields: [id_pros], references: [id_pros])
-  vehicule        Vehicules  @relation(fields: [immat], references: [immat])
+  url_invoice     String?   @db.MediumText
+  pros            Pros      @relation(fields: [id_pros], references: [id_pros])
+  vehicule        Vehicules @relation(fields: [immat], references: [immat])
   id_pros         Int
   immat           String
 
@@ -59,28 +60,40 @@ model Types {
 }
 
 model Users {
-  id_user        Int         @id @default(autoincrement())
-  firstname      String      @db.VarChar(100)
-  lastname       String      @db.VarChar(100)
-  email          String      @unique(map: "email_UNIQUE") @db.VarChar(255)
-  hashedPassword String?     @db.VarChar(255)
-  address        String      @db.Text
-  phone          String      @db.VarChar(15)
-  postal_code    Int
-  city           String      @db.VarChar(150)
-  vehicules      Vehicules[]
-  pros           Pros[]      @relation("prostousers")
+  id_user         Int           @id @default(autoincrement())
+  firstname       String        @db.VarChar(100)
+  lastname        String        @db.VarChar(100)
+  email           String        @unique(map: "email_UNIQUE") @db.VarChar(255)
+  hashedPassword  String?       @db.VarChar(255)
+  address         String        @db.Text
+  phone           String        @db.VarChar(15)
+  postal_code     Int
+  city            String        @db.VarChar(150)
+  vehicules       Vehicules[]
+  pros            Pros[]        @relation("prostousers")
+  appointmentPros Appointment[]
 }
 
 model Vehicules {
-  immat                    String   @id @db.VarChar(15)
-  registration_date        DateTime @db.Date
-  url_vehiculeRegistration String   @db.MediumText
+  immat                    String         @id @db.VarChar(15)
+  registration_date        DateTime       @db.Date
+  url_vehiculeRegistration String         @db.MediumText
   id_modelId               Int
   id_typeId                Int
   id_userId                Int
-  model                    Models   @relation(fields: [id_modelId], references: [id_model])
-  type                     Types    @relation(fields: [id_typeId], references: [id_type])
-  user                     Users    @relation(fields: [id_userId], references: [id_user])
+  model                    Models         @relation(fields: [id_modelId], references: [id_model])
+  type                     Types          @relation(fields: [id_typeId], references: [id_type])
+  user                     Users          @relation(fields: [id_userId], references: [id_user])
   service_book             Service_Book[]
+}
+
+model Appointment {
+  users   Users    @relation(fields: [userId], references: [id_user])
+  userId  Int
+  pros    Pros     @relation(fields: [prosId], references: [id_pros])
+  prosId  Int
+  date    DateTime @db.DateTime
+  comment String   @db.MediumText
+
+  @@id([userId, prosId])
 }

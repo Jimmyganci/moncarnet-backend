@@ -20,6 +20,42 @@ service_bookRouter.get(
   }
 );
 
+service_bookRouter.get(
+  "/:idServiceBook",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { idServiceBook } = req.params;
+    try {
+      const getOneServiceBook = await prisma.service_Book.findUnique({
+        where: {
+          id_service_book: Number(idServiceBook),
+        },
+      });
+      res.status(200).json(getOneServiceBook);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+service_bookRouter.get(
+  "/vehicule/:immat",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { immat } = req.params;
+    try {
+      const getServiceBookByVehicule = await prisma.service_Book.findMany({
+        where: {
+          vehicule: {
+            immat: immat,
+          },
+        },
+      });
+      res.status(200).json(getServiceBookByVehicule);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
 service_bookRouter.post("/upload", upload);
 
 service_bookRouter.post(

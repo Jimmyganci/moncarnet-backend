@@ -6,65 +6,59 @@ const usersRouter = require("express").Router();
 const UserAuth = require("../helpers/users");
 import IUserInfos from "../interfaces/IuserInfos";
 import checktoken from "../middleware/checkToken";
-import checkRole from "../middleware/checkRole";
 const jwt = require("jsonwebtoken");
 
 const prisma = new PrismaClient();
 
 // authorization : admin
-usersRouter.get(
-  "/all",
-  checktoken,
-  checkRole,
-  async (req: Request, res: Response) => {
-    const { lastname, city, postal_code } = req.query;
-    if (req.query.lastname) {
-      try {
-        const usersFilterByLastname = await prisma.users.findMany({
-          where: {
-            lastname: {
-              contains: String(lastname),
-            },
+usersRouter.get("/all", checktoken, async (req: Request, res: Response) => {
+  const { lastname, city, postal_code } = req.query;
+  if (req.query.lastname) {
+    try {
+      const usersFilterByLastname = await prisma.users.findMany({
+        where: {
+          lastname: {
+            contains: String(lastname),
           },
-        });
-        res.status(200).json(usersFilterByLastname);
-      } catch (err) {
-        res.status(404).send(err);
-      }
-    } else if (req.query.postal_code) {
-      try {
-        const userFilterByPostal_code = await prisma.users.findMany({
-          where: {
-            postal_code: { in: Number(postal_code) },
+        },
+      });
+      res.status(200).json(usersFilterByLastname);
+    } catch (err) {
+      res.status(404).send(err);
+    }
+  } else if (req.query.postal_code) {
+    try {
+      const userFilterByPostal_code = await prisma.users.findMany({
+        where: {
+          postal_code: { in: Number(postal_code) },
+        },
+      });
+      res.status(200).json(userFilterByPostal_code);
+    } catch (err) {
+      res.status(404).send(err);
+    }
+  } else if (req.query.city) {
+    try {
+      const userFilterByCity = await prisma.users.findMany({
+        where: {
+          city: {
+            contains: String(city),
           },
-        });
-        res.status(200).json(userFilterByPostal_code);
-      } catch (err) {
-        res.status(404).send(err);
-      }
-    } else if (req.query.city) {
-      try {
-        const userFilterByCity = await prisma.users.findMany({
-          where: {
-            city: {
-              contains: String(city),
-            },
-          },
-        });
-        res.status(200).json(userFilterByCity);
-      } catch (err) {
-        res.status(404).send(err);
-      }
-    } else {
-      try {
-        const allUsers = await prisma.users.findMany();
-        res.status(200).json(allUsers);
-      } catch (err) {
-        res.status(404).send(err);
-      }
+        },
+      });
+      res.status(200).json(userFilterByCity);
+    } catch (err) {
+      res.status(404).send(err);
+    }
+  } else {
+    try {
+      const allUsers = await prisma.users.findMany();
+      res.status(200).json(allUsers);
+    } catch (err) {
+      res.status(404).send(err);
     }
   }
-);
+});
 usersRouter.get("/login", async (req: Request, res: Response) => {
   const { user_token } = req.cookies;
   try {

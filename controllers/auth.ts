@@ -21,10 +21,10 @@ authRouter.post("/particular/login", async (req: Request, res: Response) => {
             email,
             user.id_user,
             "MonCarnet",
-            Object.keys(user).slice(0, 1)
+            Object.keys(user)[0]
           );
           res.cookie("user_token", token);
-          res.status(200).json(`user ${user.id_user} connected`);
+          res.status(200).send(`user ${user.id_user} connected`);
         } else {
           res.status(401).send("Invalid credentials");
         }
@@ -48,7 +48,7 @@ authRouter.post("/pros/login", async (req: Request, res: Response) => {
             email,
             pros.id_pros,
             "MonCarnet",
-            Object.keys(pros).slice(0, 1)
+            Object.keys(pros)[0]
           );
           res.cookie("user_token", token);
           res.status(200).send(`pros with id ${pros.id_pros} connected`);

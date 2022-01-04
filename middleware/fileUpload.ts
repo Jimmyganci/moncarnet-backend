@@ -25,7 +25,11 @@ const upload = async (req: Request, res: Response, next: NextFunction) => {
       );
       res.status(200).json({
         etag: obj,
-        url: `https://${process.env.MINIO_ENDPOINT}/${process.env.MINIO_BUCKET}/user/${req.userLogin.id_user}${objectName}${req.files.file.name}`,
+        url: `https://${process.env.MINIO_ENDPOINT}/${
+          process.env.MINIO_BUCKET
+        }/user/${
+          req.userLogin.id_user
+        }${objectName}${req.files.file.name.replace(/ /g, "")}`,
       });
       next();
     } catch (err) {

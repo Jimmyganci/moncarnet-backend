@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { PrismaClient } from "@prisma/client";
 import bodyValidator from "../middleware/bodyValidator";
 const { postUser } = require("../JOI/validate");
@@ -11,82 +11,94 @@ const jwt = require("jsonwebtoken");
 const prisma = new PrismaClient();
 
 // authorization : admin
-usersRouter.get("/all", checktoken, async (req: Request, res: Response) => {
-  const { lastname, city, postal_code } = req.query;
-  if (req.query.lastname) {
-    try {
-      const usersFilterByLastname = await prisma.users.findMany({
-        where: {
-          lastname: {
-            contains: String(lastname),
+usersRouter.get(
+  "/all",
+  checktoken,
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { lastname, city, postal_code } = req.query;
+    if (req.query.lastname) {
+      try {
+        const usersFilterByLastname = await prisma.users.findMany({
+          where: {
+            lastname: {
+              contains: String(lastname),
+            },
           },
-        },
-      });
-      res.status(200).json(usersFilterByLastname);
-    } catch (err) {
-      res.status(404).send(err);
-    }
-  } else if (req.query.postal_code) {
-    try {
-      const userFilterByPostal_code = await prisma.users.findMany({
-        where: {
-          postal_code: { in: Number(postal_code) },
-        },
-      });
-      res.status(200).json(userFilterByPostal_code);
-    } catch (err) {
-      res.status(404).send(err);
-    }
-  } else if (req.query.city) {
-    try {
-      const userFilterByCity = await prisma.users.findMany({
-        where: {
-          city: {
-            contains: String(city),
+        });
+        res.status(200).json(usersFilterByLastname);
+      } catch (err) {
+        next(err);
+      }
+    } else if (req.query.postal_code) {
+      try {
+        const userFilterByPostal_code = await prisma.users.findMany({
+          where: {
+            postal_code: { in: Number(postal_code) },
           },
-        },
-      });
-      res.status(200).json(userFilterByCity);
-    } catch (err) {
-      res.status(404).send(err);
-    }
-  } else {
-    try {
-      const allUsers = await prisma.users.findMany();
-      res.status(200).json(allUsers);
-    } catch (err) {
-      res.status(404).send(err);
+        });
+        res.status(200).json(userFilterByPostal_code);
+      } catch (err) {
+        next(err);
+      }
+    } else if (req.query.city) {
+      try {
+        const userFilterByCity = await prisma.users.findMany({
+          where: {
+            city: {
+              contains: String(city),
+            },
+          },
+        });
+        res.status(200).json(userFilterByCity);
+      } catch (err) {
+        next(err);
+      }
+    } else {
+      try {
+        const allUsers = await prisma.users.findMany();
+        res.status(200).json(allUsers);
+      } catch (err) {
+        next(err);
+      }
     }
   }
-});
-usersRouter.get("/login", async (req: Request, res: Response) => {
-  const { user_token } = req.cookies;
-  try {
-    const getUser = await jwt.verify(user_token, process.env.TOKEN as string);
-    res.status(200).json(getUser);
-  } catch (err) {
-    res.status(404).send(err);
+);
+
+usersRouter.get(
+  "/login",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { user_token } = req.cookies;
+    try {
+      const getUser = await jwt.verify(user_token, process.env.TOKEN as string);
+      res.status(200).json(getUser);
+    } catch (err) {
+      next(err);
+    }
   }
-});
+);
 // authorizations: user, admin, pros
-usersRouter.get("/:idUser", checktoken, async (req: Request, res: Response) => {
-  const idUser = parseInt(req.params.idUser);
-  try {
-    const user = await prisma.users.findUnique({
-      where: {
-        id_user: idUser,
-      },
-    });
-    res.status(200).json(user);
-  } catch (err) {
-    res.status(404).send(err);
+usersRouter.get(
+  "/:idUser",
+  checktoken,
+  async (req: Request, res: Response, next: NextFunction) => {
+    const idUser = parseInt(req.params.idUser);
+    try {
+      const user = await prisma.users.findUnique({
+        where: {
+          id_user: idUser,
+        },
+      });
+      res.status(200).json(user);
+    } catch (err) {
+      next(err);
+    }
   }
-});
+);
 //  authorizations : admin user
 usersRouter.get(
   "/vehicules/:idUser",
   checktoken,
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     const idUser = parseInt(req.params.idUser);
     try {
       const vehiculeUser = await prisma.vehicules.findMany({
@@ -98,7 +110,7 @@ usersRouter.get(
       });
       res.status(200).json(vehiculeUser);
     } catch (err) {
-      res.status(404).send(err);
+      next(err);
     }
   }
 );
@@ -106,7 +118,7 @@ usersRouter.get(
 usersRouter.get(
   "/pros/:idUser",
   checktoken,
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     const idUser = parseInt(req.params.idUser);
     try {
       const findProsByUser = await prisma.pros.findMany({
@@ -120,7 +132,7 @@ usersRouter.get(
       });
       res.status(200).json(findProsByUser);
     } catch (err) {
-      res.status(404).send(err);
+      next(err);
     }
   }
 );
@@ -128,20 +140,9 @@ usersRouter.get(
 usersRouter.put(
   "/pros/:idUser",
   checktoken,
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     const { idUser } = req.params;
     const { idPros }: { idPros: number } = req.body;
-    // const getUserPros = await prisma.users.findMany({
-    //   where: {
-    //     pros: {
-    //       some: {
-    //         id_pros: idPros,
-    //       },
-    //     },
-    //     id_user: Number(idUser),
-    //   },
-    // });
-
     try {
       const createProsAndUsers = await prisma.users.update({
         where: {
@@ -156,10 +157,10 @@ usersRouter.put(
       res
         .status(200)
         .json(
-          `${createProsAndUsers.firstname} le garage a bien été ajouté à vos favoris`
+          `${createProsAndUsers.firstname} the garage has been added on your favorite`
         );
     } catch (err) {
-      res.status(404).send(err);
+      next(err);
     }
   }
 );
@@ -167,7 +168,7 @@ usersRouter.put(
 usersRouter.delete(
   "/:idUser/prosDeleted/:idPros",
   checktoken,
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     const { idUser, idPros } = req.params;
     try {
       const deletePros = await prisma.users.update({
@@ -185,10 +186,10 @@ usersRouter.delete(
       res
         .status(200)
         .send(
-          `${deletePros.firstname} le garage a bien été retiré de vos favoris `
+          `${deletePros.firstname} the garage has been deleted of your favorite`
         );
     } catch (err) {
-      res.status(404).send(err);
+      next(err);
     }
   }
 );
@@ -197,17 +198,16 @@ usersRouter.delete(
 usersRouter.post(
   "/",
   bodyValidator(postUser),
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     const user: IUserInfos = req.body;
+    try {
+      const emailExisting = await prisma.users.findUnique({
+        where: {
+          email: user.email,
+        },
+      });
 
-    const emailExisting = await prisma.users.findUnique({
-      where: {
-        email: user.email,
-      },
-    });
-
-    if (emailExisting === null) {
-      try {
+      if (emailExisting === null) {
         const hashedPassword = await UserAuth.hashPassword(user.password);
         const createUser = await prisma.users.create({
           data: {
@@ -222,11 +222,11 @@ usersRouter.post(
           },
         });
         res.status(200).json(createUser);
-      } catch (err) {
-        res.status(404).send(err);
+      } else {
+        res.status(409).send("Email already used");
       }
-    } else {
-      res.status(409).send("Email already used");
+    } catch (err) {
+      next(err);
     }
   }
 );
@@ -235,21 +235,20 @@ usersRouter.put(
   "/:idUser",
   bodyValidator(postUser),
   checktoken,
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     const idUser = parseInt(req.params.idUser);
     const user: IUserInfos = req.body;
-
-    const emailExisting = await prisma.users.findMany({
-      where: {
-        email: user.email,
-        NOT: {
-          id_user: idUser,
+    try {
+      const emailExisting = await prisma.users.findMany({
+        where: {
+          email: user.email,
+          NOT: {
+            id_user: idUser,
+          },
         },
-      },
-    });
+      });
 
-    if (emailExisting.length === 0) {
-      try {
+      if (emailExisting.length === 0) {
         const hashedPassword = await UserAuth.hashPassword(user.password);
         const userUpdate = await prisma.users.update({
           where: {
@@ -267,11 +266,11 @@ usersRouter.put(
           },
         });
         res.status(200).json(userUpdate);
-      } catch (err) {
-        res.status(404).send(err);
+      } else {
+        res.status(409).send("Email already used!");
       }
-    } else {
-      res.status(409).send("Email already used!");
+    } catch (err) {
+      next(err);
     }
   }
 );
@@ -279,7 +278,7 @@ usersRouter.put(
 usersRouter.delete(
   "/:idUser",
   checktoken,
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     const idUser: number = parseInt(req.params.idUser);
     try {
       const userDelete = await prisma.users.delete({
@@ -289,7 +288,7 @@ usersRouter.delete(
       });
       res.status(200).send(userDelete.firstname + " deleted");
     } catch (err) {
-      res.status(404).send(err);
+      next(err);
     }
   }
 );

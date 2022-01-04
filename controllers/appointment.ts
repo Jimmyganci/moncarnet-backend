@@ -91,4 +91,28 @@ appointmentRouter.post("/", async (req: Request, res: Response) => {
   }
 });
 
+appointmentRouter.delete(
+  "/user/:idUser/pros/:idPros",
+  async (req: Request, res: Response) => {
+    const { idUser, idPros } = req.params;
+    try {
+      const deleteOneAppointment = await prisma.appointment.delete({
+        where: {
+          userId_prosId: {
+            userId: Number(idUser),
+            prosId: Number(idPros),
+          },
+        },
+      });
+      res
+        .status(200)
+        .send(
+          `Appointment of ${deleteOneAppointment.date} with pros Id ${deleteOneAppointment.prosId} deleted`
+        );
+    } catch (err) {
+      res.status(404).send(err);
+    }
+  }
+);
+
 module.exports = appointmentRouter;

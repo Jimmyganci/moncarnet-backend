@@ -25,7 +25,12 @@
     "dev": "ts-node ./script.ts",
     "start": "nodemon script.ts",
     "ts": "tsc -w",
-    "lint": "eslint . --ext .ts"
+    "lint": "eslint . --ext .ts",
+    "preproduction": "npm run build && npm run migrate:deploy",
+    "production": "NODE_ENV=production node dist/src/index.js",
+    "build": "npm run prisma:generate && tsc",
+    "migrate:deploy": "prisma migrate deploy",
+    "prisma:generate": "prisma generate"
   },
   "dependencies": {
     "@prisma/client": "3.6.0",

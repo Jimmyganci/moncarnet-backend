@@ -6,53 +6,59 @@ const prosRouter = require("express").Router();
 const UserAuth = require("../helpers/users");
 import ProsInfos from "../interfaces/IProsInfos";
 import upload from "../middleware/fileUpload";
+import checktoken from "../middleware/checkToken";
 const prisma = new PrismaClient();
 
 // authorization : admin, user
-prosRouter.get("/", async (req: Request, res: Response, next: NextFunction) => {
-  const { namePros, city } = req.query;
-  try {
-    if (req.query.namePros && !req.query.city) {
-      const nameFilter = await prisma.pros.findMany({
-        where: {
-          name: {
-            contains: String(namePros),
-          },
-        },
-      });
-      res.status(200).json(nameFilter);
-    } else if (req.query.city && !req.query.namePros) {
-      const prosByCity = await prisma.pros.findMany({
-        where: {
-          city: { contains: String(city) },
-        },
-      });
-      res.status(200).json(prosByCity);
-    } else if (req.query.namePros && req.query.city) {
-      const prosByNameAndCity = await prisma.pros.findMany({
-        where: {
-          OR: {
+prosRouter.get(
+  "/",
+  checktoken,
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { namePros, city } = req.query;
+    try {
+      if (req.query.namePros && !req.query.city) {
+        const nameFilter = await prisma.pros.findMany({
+          where: {
             name: {
               contains: String(namePros),
             },
-            city: {
-              contains: String(city),
+          },
+        });
+        res.status(200).json(nameFilter);
+      } else if (req.query.city && !req.query.namePros) {
+        const prosByCity = await prisma.pros.findMany({
+          where: {
+            city: { contains: String(city) },
+          },
+        });
+        res.status(200).json(prosByCity);
+      } else if (req.query.namePros && req.query.city) {
+        const prosByNameAndCity = await prisma.pros.findMany({
+          where: {
+            OR: {
+              name: {
+                contains: String(namePros),
+              },
+              city: {
+                contains: String(city),
+              },
             },
           },
-        },
-      });
-      res.status(200).json(prosByNameAndCity);
-    } else {
-      const pros = await prisma.pros.findMany();
-      res.status(200).json(pros);
+        });
+        res.status(200).json(prosByNameAndCity);
+      } else {
+        const pros = await prisma.pros.findMany();
+        res.status(200).json(pros);
+      }
+    } catch (err) {
+      next(err);
     }
-  } catch (err) {
-    next(err);
   }
-});
+);
 // authorization : admin, user, pros
 prosRouter.get(
   "/:idPros",
+  checktoken,
   async (req: Request, res: Response, next: NextFunction) => {
     const idPros = parseInt(req.params.idPros);
     try {
@@ -71,6 +77,7 @@ prosRouter.get(
 // authorization : admin, users
 prosRouter.get(
   "/:idPros/users",
+  checktoken,
   async (req: Request, res: Response, next: NextFunction) => {
     const idPros = parseInt(req.params.idPros);
     try {
@@ -90,7 +97,7 @@ prosRouter.get(
   }
 );
 
-prosRouter.post("/upload", upload);
+prosRouter.post("/upload", checktoken, upload);
 
 // authorization : admin only
 prosRouter.post(
@@ -130,6 +137,7 @@ prosRouter.post(
 // authorization : admin pros
 prosRouter.put(
   "/:idPros",
+  checktoken,
   async (req: Request, res: Response, next: NextFunction) => {
     const idPros = parseInt(req.params.idPros);
     const pros: ProsInfos = req.body;
@@ -171,6 +179,7 @@ prosRouter.put(
 // authorization : admin
 prosRouter.delete(
   "/:idPros",
+  checktoken,
   async (req: Request, res: Response, next: NextFunction) => {
     const idPros = parseInt(req.params.idPros);
     try {

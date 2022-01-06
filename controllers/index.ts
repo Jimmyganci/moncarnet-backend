@@ -16,7 +16,7 @@ const setupRoutes = (app: express.Application) => {
   // Users routes
   app.use("/api/users", usersRouter);
   // Pros routes
-  app.use("/api/pros", checkToken, prosRouter);
+  app.use("/api/pros", prosRouter);
   // Service_book routes
   app.use("/api/service_book", checkToken, service_bookRouter);
   // Brands routes

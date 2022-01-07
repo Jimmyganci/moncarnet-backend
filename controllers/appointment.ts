@@ -40,15 +40,9 @@ appointmentRouter.get(
   async (req: Request, res: Response, next: NextFunction) => {
     const { idPros } = req.params;
     try {
-      const getOneAppointment = await prisma.users.findMany({
+      const getOneAppointment = await prisma.appointment.findMany({
         where: {
-          appointmentPros: {
-            some: {
-              pros: {
-                id_pros: Number(idPros),
-              },
-            },
-          },
+          prosId: Number(idPros),
         },
       });
       res.status(200).json(getOneAppointment);

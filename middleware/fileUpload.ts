@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 require("dotenv").config();
 import minioClient from "../helpers/minio";
-// const Minio = require("minio");
 
 const upload = async (req: Request, res: Response, next: NextFunction) => {
   if (req.files !== null) {

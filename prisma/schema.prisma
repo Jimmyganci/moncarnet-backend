@@ -88,6 +88,7 @@ model Vehicules {
 }
 
 model Appointment {
+  id_appointment   Int           @id @default(autoincrement())
   users   Users    @relation(fields: [userId], references: [id_user])
   userId  Int
   pros    Pros     @relation(fields: [prosId], references: [id_pros])
@@ -95,5 +96,4 @@ model Appointment {
   date    DateTime @db.DateTime
   comment String   @db.MediumText
 
-  @@id([userId, prosId])
 }

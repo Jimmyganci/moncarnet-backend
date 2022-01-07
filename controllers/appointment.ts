@@ -23,15 +23,9 @@ appointmentRouter.get(
   async (req: Request, res: Response, next: NextFunction) => {
     const { idUser } = req.params;
     try {
-      const getOneAppointment = await prisma.pros.findMany({
+      const getOneAppointment = await prisma.appointment.findMany({
         where: {
-          appointmentUser: {
-            some: {
-              users: {
-                id_user: Number(idUser),
-              },
-            },
-          },
+          userId: Number(idUser),
         },
       });
       res.status(200).json(getOneAppointment);
@@ -65,16 +59,13 @@ appointmentRouter.get(
 );
 
 appointmentRouter.get(
-  "/user/:idUser/pros/:idPros",
+  "/:idAppointment",
   async (req: Request, res: Response, next: NextFunction) => {
-    const { idUser, idPros } = req.params;
+    const { idAppointment } = req.params;
     try {
       const getOneAppointment = await prisma.appointment.findUnique({
         where: {
-          userId_prosId: {
-            userId: Number(idUser),
-            prosId: Number(idPros),
-          },
+          id_appointment: Number(idAppointment),
         },
         rejectOnNotFound: true,
       });
@@ -106,17 +97,14 @@ appointmentRouter.post(
 );
 
 appointmentRouter.put(
-  "/user/:idUser/pros/:idPros",
+  "/:idAppointment",
   async (req: Request, res: Response, next: NextFunction) => {
-    const { idUser, idPros } = req.params;
+    const { idAppointment } = req.params;
     const { userId, prosId, date, comment }: IAppointment = req.body;
     try {
       const updateAppointment = await prisma.appointment.update({
         where: {
-          userId_prosId: {
-            userId: Number(idUser),
-            prosId: Number(idPros),
-          },
+          id_appointment: Number(idAppointment),
         },
         data: {
           userId: userId,
@@ -133,16 +121,13 @@ appointmentRouter.put(
 );
 
 appointmentRouter.delete(
-  "/user/:idUser/pros/:idPros",
+  "/:idAppointment",
   async (req: Request, res: Response, next: NextFunction) => {
-    const { idUser, idPros } = req.params;
+    const { idAppointment } = req.params;
     try {
       const deleteOneAppointment = await prisma.appointment.delete({
         where: {
-          userId_prosId: {
-            userId: Number(idUser),
-            prosId: Number(idPros),
-          },
+          id_appointment: Number(idAppointment),
         },
       });
       res

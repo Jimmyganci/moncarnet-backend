@@ -105,6 +105,33 @@ appointmentRouter.post(
   }
 );
 
+appointmentRouter.put(
+  "/user/:idUser/pros/:idPros",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { idUser, idPros } = req.params;
+    const { userId, prosId, date, comment }: IAppointment = req.body;
+    try {
+      const updateAppointment = await prisma.appointment.update({
+        where: {
+          userId_prosId: {
+            userId: Number(idUser),
+            prosId: Number(idPros),
+          },
+        },
+        data: {
+          userId: userId,
+          prosId: prosId,
+          date: new Date(date),
+          comment: comment,
+        },
+      });
+      res.status(200).json(updateAppointment);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
 appointmentRouter.delete(
   "/user/:idUser/pros/:idPros",
   async (req: Request, res: Response, next: NextFunction) => {

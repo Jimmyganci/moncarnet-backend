@@ -1,10 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../helpers/prisma";
 import { ErrorHandler } from "../middleware/errors";
 const authRouter = require("express").Router();
 const UserAuth = require("../helpers/users");
-
-const prisma = new PrismaClient();
 
 authRouter.post(
   "/particular/login",

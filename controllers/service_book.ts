@@ -1,12 +1,10 @@
 import { Request, Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../helpers/prisma";
 import bodyValidator from "../middleware/bodyValidator";
 const { postServiceBook } = require("../JOI/validate");
 const service_bookRouter = require("express").Router();
 import ServiceBookInfos from "../interfaces/IServiceBook";
 import upload from "../middleware/fileUpload";
-
-const prisma = new PrismaClient();
 
 service_bookRouter.get(
   "/",

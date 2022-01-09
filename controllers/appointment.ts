@@ -1,10 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../helpers/prisma";
 import IAppointment from "../interfaces/IAppointment";
 
 const appointmentRouter = require("express").Router();
-
-const prisma = new PrismaClient();
 
 appointmentRouter.get(
   "/",

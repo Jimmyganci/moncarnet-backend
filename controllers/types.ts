@@ -1,10 +1,8 @@
 import { Request, Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../helpers/prisma";
 import bodyValidator from "../middleware/bodyValidator";
 const { postType } = require("../JOI/validate");
 const typesRouter = require("express").Router();
-
-const prisma = new PrismaClient();
 
 // just admin
 

@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { PrismaClient } from "@prisma/client";
+import prisma from "../helpers/prisma";
 import bodyValidator from "../middleware/bodyValidator";
 const { postUser } = require("../JOI/validate");
 const usersRouter = require("express").Router();
@@ -7,8 +7,6 @@ const UserAuth = require("../helpers/users");
 import IUserInfos from "../interfaces/IuserInfos";
 import checktoken from "../middleware/checkToken";
 const jwt = require("jsonwebtoken");
-
-const prisma = new PrismaClient();
 
 // authorization : admin
 usersRouter.get(

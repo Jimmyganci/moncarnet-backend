@@ -26,6 +26,7 @@ model Models {
 }
 
 model Pros {
+<<<<<<< HEAD
   id_pros        Int            @id @default(autoincrement())
   name           String         @db.VarChar(255)
   email          String         @unique(map: "email_UNIQUE") @db.VarChar(255)
@@ -37,6 +38,20 @@ model Pros {
   phone          String         @db.VarChar(15)
   service_book   Service_Book[]
   users          Users[]        @relation("prostousers")
+=======
+  id_pros         Int            @id @default(autoincrement())
+  name            String         @db.VarChar(255)
+  email           String         @unique(map: "email_UNIQUE") @db.VarChar(255)
+  hashedPassword  String         @db.VarChar(255)
+  address         String         @db.Text
+  postal_code     Int
+  city            String         @db.VarChar(150)
+  siret           String         @db.VarChar(14)
+  phone           String         @db.VarChar(15)
+  service_book    Service_Book[]
+  users           Users[]        @relation("prostousers")
+  appointmentUser Appointment[]
+>>>>>>> eb2f0ab4ef901708de219686151dcf700dd58c6f
 }
 
 model Service_Book {
@@ -62,17 +77,18 @@ model Types {
 }
 
 model Users {
-  id_user        Int         @id @default(autoincrement())
-  firstname      String      @db.VarChar(100)
-  lastname       String      @db.VarChar(100)
-  email          String      @unique(map: "email_UNIQUE") @db.VarChar(255)
-  hashedPassword String?     @db.VarChar(255)
-  address        String      @db.Text
-  phone          String      @db.VarChar(15)
-  postal_code    Int
-  city           String      @db.VarChar(150)
-  vehicules      Vehicules[]
-  pros           Pros[]      @relation("prostousers")
+  id_user         Int           @id @default(autoincrement())
+  firstname       String        @db.VarChar(100)
+  lastname        String        @db.VarChar(100)
+  email           String        @unique(map: "email_UNIQUE") @db.VarChar(255)
+  hashedPassword  String?       @db.VarChar(255)
+  address         String        @db.Text
+  phone           String        @db.VarChar(15)
+  postal_code     Int
+  city            String        @db.VarChar(150)
+  vehicules       Vehicules[]
+  pros            Pros[]        @relation("prostousers")
+  appointmentPros Appointment[]
 }
 
 model Vehicules {
@@ -87,3 +103,17 @@ model Vehicules {
   user                     Users          @relation(fields: [id_userId], references: [id_user])
   service_book             Service_Book[]
 }
+<<<<<<< HEAD
+=======
+
+model Appointment {
+  id_appointment   Int           @id @default(autoincrement())
+  users   Users    @relation(fields: [userId], references: [id_user])
+  userId  Int
+  pros    Pros     @relation(fields: [prosId], references: [id_pros])
+  prosId  Int
+  date    DateTime @db.DateTime
+  comment String   @db.MediumText
+
+}
+>>>>>>> eb2f0ab4ef901708de219686151dcf700dd58c6f

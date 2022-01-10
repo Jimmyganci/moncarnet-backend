@@ -7,6 +7,7 @@ const brandsRouter = require("./brands");
 const modelsRouter = require("./models");
 const authRouter = require("./auth");
 const typesRouter = require("./types");
+const appointmentRouter = require("./appointment");
 import checkToken from "../middleware/checkToken";
 
 const setupRoutes = (app: express.Application) => {
@@ -15,7 +16,7 @@ const setupRoutes = (app: express.Application) => {
   // Users routes
   app.use("/api/users", usersRouter);
   // Pros routes
-  app.use("/api/pros", checkToken, prosRouter);
+  app.use("/api/pros", prosRouter);
   // Service_book routes
   app.use("/api/service_book", checkToken, service_bookRouter);
   // Brands routes
@@ -26,7 +27,8 @@ const setupRoutes = (app: express.Application) => {
   app.use("/api/types", checkToken, typesRouter);
   //   Auth routes
   app.use("/api/auth", authRouter);
-  
+  // Appointment Route
+  app.use("/api/appointment", checkToken, appointmentRouter);
 };
 
 module.exports = {

@@ -113,13 +113,13 @@ const handleUpload = async (e) => {
 
 # <h3>//Get user's vehicule//</h3>
 
-<pre>.get("/api/vehicules/user/:id)</pre>
+<pre>.get("/api/vehicules/user/:idUser)</pre>
 <pre>.get("/api/vehicules/user/2)</pre>
 
 # <h3>//Get model's vehicule//</h3>
 
-<pre>.get("/api/vehicules/model/:id)</pre>
-<pre>.get("/api/vehicules/model/5)</pre>
+<pre>.get("/api/vehicules/:immat/model)</pre>
+<pre>.get("/api/vehicules/HY-567-HY/model)</pre>
 
 <h3>Results :</h3>
 
@@ -133,8 +133,8 @@ const handleUpload = async (e) => {
 
 # <h3>//Get brand's vehicule//</h3>
 
-<pre>.get("/api/vehicules/brand/:id)</pre>
-<pre>.get("/api/vehicules/brand/1)</pre>
+<pre>.get("/api/vehicules/:immat/brand)</pre>
+<pre>.get("/api/vehicules/HY-678-HY/brand)</pre>
 
 <h3>Results:</h3>
 <pre>
@@ -247,6 +247,17 @@ Results:
 
 <pre>.get("api/users/pros/:idUser")</pre>
 <pre>.get("/api/users/pros/1")</pre>
+
+Results:
+
+<pre>{
+    []
+}</pre>
+
+# <h3>//Delete users's pros//</h3>
+
+<pre>.get("api/users/:idUser/prosDeleted/:idPros")</pre>
+<pre>.get("/api/users/2/prosDeleted/1")</pre>
 
 Results:
 
@@ -400,4 +411,145 @@ Results:
 
 <pre>
      "Buddy deleted"
+</pre>
+
+# <h2>Appointment</h2>
+
+# <h3>//Get all appointment//</h3>
+
+<pre>.get("/api/appointment")</pre>
+
+Results:
+
+<pre>
+     [
+    {
+        "userId": 1,
+        "prosId": 2,
+        "date": "2022-03-01T00:00:00.000Z",
+        "comment": "entretien 10000"
+    },
+    {
+        "userId": 1,
+        "prosId": 4,
+        "date": "2022-03-01T00:00:00.000Z",
+        "comment": "entretien 10000"
+    }
+]
+</pre>
+
+# <h3>//Get one appointment//</h3>
+
+<pre>.get("/api/appointment/user/:userId/pros/prosId")</pre>
+<pre>.get("/api/appointment/user/1/pros/4")</pre>
+
+Results:
+
+<pre>
+     {
+    "userId": 1,
+    "prosId": 4,
+    "date": "2022-03-01T00:00:00.000Z",
+    "comment": "entretien 10000"
+}
+</pre>
+
+# <h3>//Get all users's appointment//</h3>
+
+<pre>.get("/api/appointment/user/userId")</pre>
+<pre>.get("/api/appointment/user/1")</pre>
+
+Results:
+
+<pre>
+     [
+    {
+        "id_pros": 2,
+        "name": "Pneu123",
+        "email": "pneu123@gmail.com",
+        "hashedPassword": "$argon2id$v=19$m=65536,t=5,p=1$0OZViyOU5ZO2c23P2lNAew$3KqrgZwFerxgsH7xkC1NXvK3GukRJfUpvhTnV4Wru2E",
+        "address": "78 avenue du pneu",
+        "postal_code": 40130,
+        "city": "Capbreton",
+        "siret": "23456545432334",
+        "phone": "06-90-76-57-76"
+    },
+    {
+        "id_pros": 4,
+        "name": "Garage des Pins",
+        "email": "garagedespins@gmail.com",
+        "hashedPassword": "$argon2id$v=19$m=65536,t=5,p=1$UD6EO+ouPfx7JQyJjRIvow$1joKcpBw9bCupaGiR4Ge7CGl2xBp9Q/jb37ZdGccKdg",
+        "address": "78 avenue des pins",
+        "postal_code": 40130,
+        "city": "Capbreton",
+        "siret": "23456545432334",
+        "phone": "06-90-76-57-76"
+    }
+]
+</pre>
+
+# <h3>//Get all pros's appointment//</h3>
+
+<pre>.get("/api/appointment/pros/prosId")</pre>
+<pre>.get("/api/appointment/pros/4")</pre>
+
+Results:
+
+<pre>
+    [
+    {
+        "id_user": 1,
+        "firstname": "Buddy",
+        "lastname": "Cadet",
+        "email": "buddycadet@gmail.com",
+        "hashedPassword": "$argon2id$v=19$m=65536,t=5,p=1$wQyXp/JtaEONYdoAFu31sA$oC+59EHM3yybccAS9mqtsPVMRZBHd91SiNCf7EGtLno",
+        "address": "Angresse",
+        "phone": "06-78-76-78-76",
+        "postal_code": 40000,
+        "city": "Angresse"
+    }
+]
+</pre>
+
+# <h3>//Post appointment//</h3>
+
+<pre>.get("/api/appointment/pros")</pre>
+<pre>.get("/api/appointment/pros")</pre>
+
+Results:
+
+<pre>
+   {
+    "userId": 1,
+    "prosId": 4,
+    "date": "2022-03-01T00:00:00.000Z",
+    "comment": "entretien 10000"
+}
+</pre>
+
+# <h3>//Post appointment//</h3>
+
+<pre>.get("/api/appointment/pros")</pre>
+<pre>.get("/api/appointment/pros")</pre>
+
+Results:
+
+<pre>
+   {
+    "userId": 1,
+    "prosId": 4,
+    "date": "2022-03-01T00:00:00.000Z",
+    "comment": "entretien 10000"
+}
+</pre>
+
+# <h3>//Delete one appointment//</h3>
+
+<pre>.get("/api/appointment/user/1/pros/1")</pre>
+<pre>.get("/api/appointment/user/userId/pros/prosId")</pre>
+
+Results:
+
+<pre>
+   Appointment of Tue Mar 01 2022 01:00:00 GMT+0100 (heure normale d’Europe centrale) with pros Id 1 deleted
 </pre>

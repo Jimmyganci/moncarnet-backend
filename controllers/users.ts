@@ -61,6 +61,20 @@ usersRouter.get(
   }
 );
 
+usersRouter.get(
+  "/login",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { user_token } = req.cookies;
+    console.log('VALID TOKEN?');
+    console.log({user_token});
+    try {
+      const getUser = await jwt.verify(user_token, process.env.TOKEN as string);
+      res.status(200).json(getUser);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 // authorizations: user, admin, pros
 usersRouter.get(
   "/:idUser",

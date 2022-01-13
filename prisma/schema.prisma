@@ -22,6 +22,7 @@ model Models {
   brand     Brand       @relation(fields: [id_brand], references: [id_brand])
   vehicules Vehicules[]
 
+  //   @@index([id_brand], map: "fk_models_brands1_idx")
 }
 
 model Pros {
@@ -51,6 +52,8 @@ model Service_Book {
   id_pros         Int
   immat           String
 
+  //   @@index([pros_id_pros], map: "fk_service_book_pros1_idx")
+  //   @@index([vehicules_immat], map: "fk_service_book_vehicules1_idx")
 }
 
 model Types {
@@ -88,12 +91,12 @@ model Vehicules {
 }
 
 model Appointment {
-  id_appointment   Int           @id @default(autoincrement())
-  users   Users    @relation(fields: [userId], references: [id_user])
-  userId  Int
-  pros    Pros     @relation(fields: [prosId], references: [id_pros])
-  prosId  Int
-  date    DateTime @db.DateTime
-  comment String   @db.MediumText
+  id_appointment Int      @id @default(autoincrement())
+  users          Users    @relation(fields: [userId], references: [id_user])
+  userId         Int
+  pros           Pros     @relation(fields: [prosId], references: [id_pros])
+  prosId         Int
+  date           DateTime @db.DateTime
+  comment        String   @db.MediumText
 
 }

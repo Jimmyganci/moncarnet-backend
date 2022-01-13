@@ -73,6 +73,19 @@ prosRouter.get(
     }
   }
 );
+
+// prosRouter.get(
+//   "/login",
+//   async (req: Request, res: Response, next: NextFunction) => {
+//     const { user_token } = req.cookies;
+//     try {
+//       const getUser = await jwt.verify(user_token, process.env.TOKEN as string);
+//       res.status(200).json(getUser);
+//     } catch (err) {
+//       next(err);
+//     }
+//   }
+// );
 // authorization : admin, users
 prosRouter.get(
   "/:idPros/users",

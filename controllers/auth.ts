@@ -1,49 +1,102 @@
-import { Request, Response } from "express";
-import { PrismaClient } from "@prisma/client";
+import { Request, Response, NextFunction } from "express";
+import prisma from "../helpers/prisma";
+import { ErrorHandler } from "../middleware/errors";
 const authRouter = require("express").Router();
 const UserAuth = require("../helpers/users");
+const jwt = require("jsonwebtoken");
 
-const prisma = new PrismaClient();
 
-authRouter.post("/login", async (req: Request, res: Response) => {
-  const { email, password } = req.body;
-  const user = await prisma.users.findUnique({
-    where: {
-      email: email,
-    },
-  });
-  if (!user) res.status(401).send("User not Found");
-  else {
-    UserAuth.verifyPassword(password, user.hashedPassword).then(
-      (passwordIsCorrect: boolean) => {
-        if (passwordIsCorrect) {
-          const token = UserAuth.calculateToken(email, user.id_user);
-          res.cookie("user_token", token);
-          res.send();
-        } else {
-          res.status(401).send("Invalid credentials");
-        }
-      }
-    );
+authRouter.post(
+  "/logout",
+  async (req: Request, res: Response, next: NextFunction) => {
+    console.log ('LOGGING OUT');
+    // The cookie will be deleted !
+    res.status(200).clearCookie('user_token').send(`user is NOT connected`);
   }
-});
+)
 
-// authRouter.post("/login", (req, res) => {
-//   const { email, password } = req.body;
-//   User.findByEmail(email).then((user) => {
-//     if (!user) res.status(401).send("Invalid credentials");
-//     else {
-//       User.verifyPassword(password, user.hashedPassword).then(
-//         (passwordIsCorrect) => {
-//           if (passwordIsCorrect) {
-//             const token = calculateToken(email, user.id);
-//             res.cookie("user_token", token);
-//             res.send();
-//           } else res.status(401).send("Invalid credentials");
-//         }
-//       );
-//     }
-//   });
-// });
+authRouter.post(
+  "/particular/login",
+  async (req: Request, res: Response, next: NextFunction) => { 
+    const { email, password } = req.body;
+    try {
+      const user = await prisma.users.findUnique({
+        where: {
+          email: email,
+        },
+      });
+      if (!user) res.status(401).send("User not Found");
+      else {
+        UserAuth.verifyPassword(password, user.hashedPassword).then(
+          (passwordIsCorrect: boolean) => {
+            if (passwordIsCorrect) {
+              const token = UserAuth.calculateToken(
+                email,
+                user.id_user,
+                "MonCarnet",
+                Object.keys(user)[0]
+              );
+              res.cookie("user_token", token);
+              res.clearCookie('cookie_test').status(200).send(`user ${user.id_user} connected`);
+            } else {
+              //   res.status(401).send("Invalid credentials");
+              throw new ErrorHandler(401, "Invalid Credentials");
+            }
+          }
+        );
+      }
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+authRouter.post(
+  "/pros/login",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { email, password } = req.body;
+    try {
+      const pros = await prisma.pros.findUnique({
+        where: {
+          email: email,
+        },
+      });
+      if (!pros) res.status(404).send("User pros not Found");
+      else {
+        UserAuth.verifyPassword(password, pros.hashedPassword).then(
+          (passwordIsCorrect: boolean) => {
+            if (passwordIsCorrect) {
+              const token = UserAuth.calculateToken(
+                email,
+                pros.id_pros,
+                "MonCarnet",
+                Object.keys(pros)[0]
+              );
+              res.cookie("user_token", token);
+              res.status(200).send(`pros with id ${pros.id_pros} connected`);
+            } else {
+              res.status(401).send("Invalid credentials");
+            }
+          }
+        );
+      }
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+authRouter.get(
+  "/login",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { user_token } = req.cookies;
+    try {
+      const getUser = await jwt.verify(user_token, process.env.TOKEN as string);
+      res.status(200).json(getUser);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
 module.exports = authRouter;

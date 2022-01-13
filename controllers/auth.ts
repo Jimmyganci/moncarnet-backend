@@ -4,9 +4,19 @@ import { ErrorHandler } from "../middleware/errors";
 const authRouter = require("express").Router();
 const UserAuth = require("../helpers/users");
 
+
+authRouter.post(
+  "/logout",
+  async (req: Request, res: Response, next: NextFunction) => {
+    console.log ('LOGGING OUT');
+    // The cookie will be deleted !
+    res.status(200).clearCookie('user_token').send(`user is NOT connected`);
+  }
+)
+
 authRouter.post(
   "/particular/login",
-  async (req: Request, res: Response, next: NextFunction) => {
+  async (req: Request, res: Response, next: NextFunction) => { 
     const { email, password } = req.body;
     try {
       const user = await prisma.users.findUnique({
@@ -26,7 +36,7 @@ authRouter.post(
                 Object.keys(user)[0]
               );
               res.cookie("user_token", token);
-              res.status(200).send(`user ${user.id_user} connected`);
+              res.clearCookie('cookie_test').status(200).send(`user ${user.id_user} connected`);
             } else {
               //   res.status(401).send("Invalid credentials");
               throw new ErrorHandler(401, "Invalid Credentials");

@@ -19,7 +19,10 @@ const upload = async (req: Request, res: Response, next: NextFunction) => {
     try {
       const obj = await minioClient.putObject(
         process.env.MINIO_BUCKET,
-        "/user/" + req.userLogin.id_user + objectName + req.files.file.name,
+        "/user/" +
+          req.userLogin.id_user +
+          objectName +
+          req.files.file.name.replace(/ /g, ""),
         req.files.file.data
       );
       res.status(200).json({

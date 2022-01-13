@@ -3,6 +3,7 @@ import prisma from "../helpers/prisma";
 import { ErrorHandler } from "../middleware/errors";
 const authRouter = require("express").Router();
 const UserAuth = require("../helpers/users");
+const jwt = require("jsonwebtoken");
 
 
 authRouter.post(
@@ -79,6 +80,19 @@ authRouter.post(
           }
         );
       }
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+authRouter.get(
+  "/login",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { user_token } = req.cookies;
+    try {
+      const getUser = await jwt.verify(user_token, process.env.TOKEN as string);
+      res.status(200).json(getUser);
     } catch (err) {
       next(err);
     }

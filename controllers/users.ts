@@ -6,7 +6,6 @@ const usersRouter = require("express").Router();
 const UserAuth = require("../helpers/users");
 import IUserInfos from "../interfaces/IuserInfos";
 import checktoken from "../middleware/checkToken";
-const jwt = require("jsonwebtoken");
 
 // authorization : admin
 usersRouter.get(

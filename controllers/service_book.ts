@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import prisma from "../helpers/prisma";
 import bodyValidator from "../middleware/bodyValidator";
-const { postServiceBook } = require("../JOI/validate");
+import { postServiceBook } from "../JOI/validate";
 const service_bookRouter = require("express").Router();
 import ServiceBookInfos from "../interfaces/IServiceBook";
 import upload from "../middleware/fileUpload";

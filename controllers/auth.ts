@@ -3,7 +3,7 @@ import prisma from "../helpers/prisma";
 import { ErrorHandler } from "../middleware/errors";
 const authRouter = require("express").Router();
 const UserAuth = require("../helpers/users");
-const jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken";
 
 authRouter.post(
   "/logout",

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import prisma from "../helpers/prisma";
 import bodyValidator from "../middleware/bodyValidator";
-const { postVehicule } = require("../JOI/validate");
+import { postVehicule } from "../JOI/validate";
 const vehiculesRouter = require("express").Router();
 import VehiculeInfos from "../interfaces/IVehiculeInfos";
 import upload from "../middleware/fileUpload";

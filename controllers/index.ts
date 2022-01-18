@@ -6,8 +6,8 @@ const service_bookRouter = require("./service_book");
 const brandsRouter = require("./brands");
 const modelsRouter = require("./models");
 const authRouter = require("./auth");
-const typesRouter = require("./types");
-const appointmentRouter = require("./appointment");
+import typesRouter from "./types";
+import appointmentRouter from "./appointment";
 import checkToken from "../middleware/checkToken";
 
 const setupRoutes = (app: express.Application) => {

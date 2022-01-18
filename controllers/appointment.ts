@@ -133,4 +133,4 @@ appointmentRouter.delete(
   }
 );
 
-module.exports = appointmentRouter;
+export default appointmentRouter;

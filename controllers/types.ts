@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import prisma from "../helpers/prisma";
 import bodyValidator from "../middleware/bodyValidator";
-const { postType } = require("../JOI/validate");
+import { postType } from "../JOI/validate";
 const typesRouter = require("express").Router();
 
 // just admin
@@ -127,4 +127,4 @@ typesRouter.delete(
   }
 );
 
-module.exports = typesRouter;
+export default typesRouter;

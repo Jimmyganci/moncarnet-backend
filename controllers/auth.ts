@@ -3,7 +3,7 @@ import prisma from "../helpers/prisma";
 import { ErrorHandler } from "../middleware/errors";
 const authRouter = require("express").Router();
 const UserAuth = require("../helpers/users");
-const jwt = require("jsonwebtoken");
+import jwt from "jsonwebtoken";
 
 authRouter.post(
   "/logout",
@@ -36,10 +36,7 @@ authRouter.post(
                 Object.keys(user)[0]
               );
               res.cookie("user_token", token);
-              res
-                .clearCookie("cookie_test")
-                .status(200)
-                .send(`user ${user.id_user} connected`);
+              res.status(200).send(`user ${user.id_user} connected`);
             } else {
               //   res.status(401).send("Invalid credentials");
               throw new ErrorHandler(401, "Invalid Credentials");
@@ -78,6 +75,42 @@ authRouter.post(
               res.status(200).send(`pros with id ${pros.id_pros} connected`);
             } else {
               res.status(401).send("Invalid credentials");
+            }
+          }
+        );
+      }
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+authRouter.post(
+  "/admin/login",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { email, password } = req.body;
+    try {
+      const admin = await prisma.admin.findUnique({
+        where: {
+          email: email,
+        },
+      });
+      if (!admin) res.status(401).send("User not Found");
+      else {
+        UserAuth.verifyPassword(password, admin.hashedPassword).then(
+          (passwordIsCorrect: boolean) => {
+            if (passwordIsCorrect) {
+              const token = UserAuth.calculateToken(
+                email,
+                admin.id_admin,
+                "MonCarnet",
+                Object.keys(admin)[0]
+              );
+              res.cookie("user_token", token);
+              res.status(200).send(`Admin ${admin.id_admin} connected`);
+            } else {
+              //   res.status(401).send("Invalid credentials");
+              throw new ErrorHandler(401, "Invalid Credentials");
             }
           }
         );

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import prisma from "../helpers/prisma";
 import bodyValidator from "../middleware/bodyValidator";
-const { postPros } = require("../JOI/validate");
+import { postPros } from "../JOI/validate";
 const prosRouter = require("express").Router();
 const UserAuth = require("../helpers/users");
 import ProsInfos from "../interfaces/IProsInfos";

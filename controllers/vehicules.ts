@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import prisma from "../helpers/prisma";
 import bodyValidator from "../middleware/bodyValidator";
-const { postVehicule } = require("../JOI/validate");
+import { postVehicule } from "../JOI/validate";
 const vehiculesRouter = require("express").Router();
 import VehiculeInfos from "../interfaces/IVehiculeInfos";
 import upload from "../middleware/fileUpload";
@@ -10,7 +10,7 @@ import upload from "../middleware/fileUpload";
 vehiculesRouter.get(
   "/all",
   async (req: Request, res: Response, next: NextFunction) => {
-    const { brand, model } = req.query;
+    const { brand, model, validate, noValidate } = req.query;
     try {
       if (req.query.brand) {
         const vehiculeByBrand = await prisma.vehicules.findMany({
@@ -36,6 +36,24 @@ vehiculesRouter.get(
           },
         });
         res.status(200).json(vehiculeByModel);
+      } else if (validate) {
+        const vehiculeByValidate = await prisma.vehicules.findMany({
+          where: {
+            validate: {
+              equals: true,
+            },
+          },
+        });
+        res.status(200).json(vehiculeByValidate);
+      } else if (noValidate) {
+        const vehiculeByValidate = await prisma.vehicules.findMany({
+          where: {
+            validate: {
+              equals: false,
+            },
+          },
+        });
+        res.status(200).json(vehiculeByValidate);
       } else {
         const vehicules = await prisma.vehicules.findMany();
         res.json(vehicules);
@@ -194,6 +212,7 @@ vehiculesRouter.put(
           immat: vehicule.immat,
           registration_date: new Date(vehicule.registration_date).toISOString(),
           url_vehiculeRegistration: vehicule.url_vehiculeRegistration,
+          validate: vehicule.validate,
           model: {
             connect: {
               id_model: vehicule.id_modelId,

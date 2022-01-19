@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import prisma from "../helpers/prisma";
 import bodyValidator from "../middleware/bodyValidator";
-const { postUser } = require("../JOI/validate");
+import { postUser } from "../JOI/validate";
 const usersRouter = require("express").Router();
 const UserAuth = require("../helpers/users");
 import IUserInfos from "../interfaces/IuserInfos";

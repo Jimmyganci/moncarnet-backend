@@ -21,8 +21,6 @@ model Models {
   id_brand  Int
   brand     Brand       @relation(fields: [id_brand], references: [id_brand])
   vehicules Vehicules[]
-
-  //   @@index([id_brand], map: "fk_models_brands1_idx")
 }
 
 model Pros {
@@ -51,9 +49,6 @@ model Service_Book {
   vehicule        Vehicules @relation(fields: [immat], references: [immat])
   id_pros         Int
   immat           String
-
-  //   @@index([pros_id_pros], map: "fk_service_book_pros1_idx")
-  //   @@index([vehicules_immat], map: "fk_service_book_vehicules1_idx")
 }
 
 model Types {
@@ -87,6 +82,8 @@ model Vehicules {
   model                    Models         @relation(fields: [id_modelId], references: [id_model])
   type                     Types          @relation(fields: [id_typeId], references: [id_type])
   user                     Users          @relation(fields: [id_userId], references: [id_user])
+  validate                 Boolean        @default(false)
+  active                   Boolean        @default(true)
   service_book             Service_Book[]
 }
 
@@ -99,4 +96,12 @@ model Appointment {
   date           DateTime @db.DateTime
   comment        String   @db.MediumText
 
+}
+
+model Admin {
+  id_admin       Int     @id @default(autoincrement())
+  firstname      String  @db.VarChar(100)
+  lastname       String  @db.VarChar(100)
+  email          String  @unique(map: "email_UNIQUE") @db.VarChar(255)
+  hashedPassword String? @db.VarChar(255)
 }

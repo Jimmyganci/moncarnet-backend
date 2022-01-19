@@ -10,6 +10,12 @@ export const postUser = Joi.object().keys({
   postal_code: Joi.number().integer().min(1).max(99999),
   city: Joi.string().max(150),
 });
+export const postAdmin = Joi.object().keys({
+  firstname: Joi.string().min(3).max(100),
+  lastname: Joi.string().min(3).max(100),
+  email: Joi.string().email({ allowUnicode: false }).required(),
+  password: Joi.string().min(7).max(255).required(),
+});
 
 export const postPros = Joi.object().keys({
   name: Joi.string().max(255),

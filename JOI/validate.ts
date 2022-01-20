@@ -38,6 +38,8 @@ export const postVehicule = Joi.object().keys({
   id_modelId: Joi.number(),
   id_typeId: Joi.number(),
   id_userId: Joi.number(),
+  active: Joi.boolean(),
+  validate: Joi.boolean(),
 });
 
 export const postType = Joi.object().keys({

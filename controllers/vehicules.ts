@@ -200,6 +200,7 @@ vehiculesRouter.post(
 // update vehicule (authorization: user, admin)
 vehiculesRouter.put(
   "/:immat",
+  bodyValidator(postVehicule),
   async (req: Request, res: Response, next: NextFunction) => {
     const immat: string = req.params.immat;
     const vehicule: VehiculeInfos = req.body;
@@ -230,7 +231,7 @@ vehiculesRouter.put(
           },
         },
       });
-      res.status(200).json(vehiculeUpdate);
+      res.status(204).json(vehiculeUpdate.immat);
     } catch (err) {
       next(err);
     }

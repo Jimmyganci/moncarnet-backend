@@ -38,8 +38,7 @@ authRouter.post(
               res.cookie("user_token", token);
               res.status(200).send(`user ${user.id_user} connected`);
             } else {
-              //   res.status(401).send("Invalid credentials");
-              throw new ErrorHandler(401, "Invalid Credentials");
+              res.status(401).send("Invalid credentials");
             }
           }
         );
@@ -109,8 +108,7 @@ authRouter.post(
               res.cookie("user_token", token);
               res.status(200).send(`Admin ${admin.id_admin} connected`);
             } else {
-              //   res.status(401).send("Invalid credentials");
-              throw new ErrorHandler(401, "Invalid Credentials");
+              res.status(401).send("Invalid credentials");
             }
           }
         );

@@ -60,6 +60,19 @@ usersRouter.get(
     }
   }
 );
+
+usersRouter.get(
+  "/withOutAppointment",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const getUserWithoutAppointent =
+        await prisma.$queryRaw`SELECT * FROM users as u LEFT JOIN appointment as a on u.id_user = a.userId WHERE a.userId IS NULL`;
+      res.status(200).json(getUserWithoutAppointent);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 // authorizations: user, admin, pros
 usersRouter.get(
   "/:idUser",

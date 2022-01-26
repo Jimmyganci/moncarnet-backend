@@ -187,6 +187,8 @@ vehiculesRouter.post(
           immat: vehicule.immat,
           registration_date: new Date(vehicule.registration_date).toISOString(),
           url_vehiculeRegistration: vehicule.url_vehiculeRegistration,
+          validate: vehicule.validate,
+          active: vehicule.active,
           model: {
             connect: {
               id_model: vehicule.id_modelId,
@@ -227,6 +229,7 @@ vehiculesRouter.put(
           registration_date: new Date(vehicule.registration_date).toISOString(),
           url_vehiculeRegistration: vehicule.url_vehiculeRegistration,
           validate: vehicule.validate,
+          active: vehicule.active,
           model: {
             connect: {
               id_model: vehicule.id_modelId,

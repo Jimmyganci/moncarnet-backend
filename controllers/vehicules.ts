@@ -63,6 +63,19 @@ vehiculesRouter.get(
     }
   }
 );
+
+vehiculesRouter.get(
+  "/withoutServiceBook",
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const getVehiculeWIthoutServiceBook =
+        await prisma.$queryRaw`SELECT v.* FROM vehicules as v LEFT JOIN service_book as sb on v.immat = sb.immat WHERE sb.immat IS NULL`;
+      res.status(200).json(getVehiculeWIthoutServiceBook);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 // get one vehicule (authorization: all)
 vehiculesRouter.get(
   "/:immat",

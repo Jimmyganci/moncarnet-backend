@@ -10,6 +10,17 @@ export const postUser = Joi.object().keys({
   postal_code: Joi.number().integer().min(1).max(99999),
   city: Joi.string().max(150),
 });
+
+export const putUser = Joi.object().keys({
+  firstname: Joi.string().min(3).max(100),
+  lastname: Joi.string().min(3).max(100),
+  email: Joi.string().email({ allowUnicode: false }).required(),
+  address: Joi.string().min(5),
+  phone: Joi.string().min(6).max(20),
+  postal_code: Joi.number().integer().min(1).max(99999),
+  city: Joi.string().max(150),
+});
+
 export const postAdmin = Joi.object().keys({
   firstname: Joi.string().min(3).max(100),
   lastname: Joi.string().min(3).max(100),
@@ -21,6 +32,19 @@ export const postPros = Joi.object().keys({
   name: Joi.string().max(255),
   email: Joi.string().email({ allowUnicode: false }).required(),
   password: Joi.string().min(7).max(255).required(),
+  address: Joi.string().min(5),
+  phone: Joi.string().min(6).max(20),
+  postal_code: Joi.number().integer().min(5),
+  city: Joi.string(),
+  siret: Joi.string()
+    .pattern(/^[0-9]+$/, "numbers")
+    .min(14)
+    .max(14),
+});
+
+export const putPros = Joi.object().keys({
+  name: Joi.string().max(255),
+  email: Joi.string().email({ allowUnicode: false }).required(),
   address: Joi.string().min(5),
   phone: Joi.string().min(6).max(20),
   postal_code: Joi.number().integer().min(5),

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import prisma from "../helpers/prisma";
 import bodyValidator from "../middleware/bodyValidator";
-import { postPros } from "../JOI/validate";
+import { postPros, putPros } from "../JOI/validate";
 const prosRouter = require("express").Router();
 const UserAuth = require("../helpers/users");
 import ProsInfos from "../interfaces/IProsInfos";
@@ -74,19 +74,6 @@ prosRouter.get(
   }
 );
 
-// prosRouter.get(
-//   "/login",
-//   async (req: Request, res: Response, next: NextFunction) => {
-//     const { user_token } = req.cookies;
-//     try {
-//       const getUser = await jwt.verify(user_token, process.env.TOKEN as string);
-//       res.status(200).json(getUser);
-//     } catch (err) {
-//       next(err);
-//     }
-//   }
-// );
-// authorization : admin, users
 prosRouter.get(
   "/:idPros/users",
   checktoken,
@@ -150,6 +137,7 @@ prosRouter.post(
 prosRouter.put(
   "/:idPros",
   checktoken,
+  bodyValidator(putPros),
   async (req: Request, res: Response, next: NextFunction) => {
     const idPros = parseInt(req.params.idPros);
     const pros: ProsInfos = req.body;
@@ -163,7 +151,7 @@ prosRouter.put(
         },
       });
       if (emailExisting.length === 0) {
-        const hashedPassword = await UserAuth.hashPassword(pros.password);
+        // const hashedPassword = await UserAuth.hashPassword(pros.password);
         const prosUpdate = await prisma.pros.update({
           where: {
             id_pros: idPros,
@@ -171,7 +159,7 @@ prosRouter.put(
           data: {
             name: pros.name,
             email: pros.email,
-            hashedPassword: hashedPassword,
+            // hashedPassword: hashedPassword,
             address: pros.address,
             phone: pros.phone,
             postal_code: pros.postal_code,

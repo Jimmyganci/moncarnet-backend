@@ -10,7 +10,7 @@ service_bookRouter.get(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const serviceBook = await prisma.service_Book.findMany();
+      const serviceBook = await prisma.service_book.findMany();
       res.status(200).json(serviceBook);
     } catch (err) {
       next(err);
@@ -23,7 +23,7 @@ service_bookRouter.get(
   async (req: Request, res: Response, next: NextFunction) => {
     const { idServiceBook } = req.params;
     try {
-      const getOneServiceBook = await prisma.service_Book.findUnique({
+      const getOneServiceBook = await prisma.service_book.findUnique({
         where: {
           id_service_book: Number(idServiceBook),
         },
@@ -40,9 +40,9 @@ service_bookRouter.get(
   async (req: Request, res: Response, next: NextFunction) => {
     const { immat } = req.params;
     try {
-      const getServiceBookByVehicule = await prisma.service_Book.findMany({
+      const getServiceBookByVehicule = await prisma.service_book.findMany({
         where: {
-          vehicule: {
+          vehicules: {
             immat: immat,
           },
         },
@@ -62,7 +62,7 @@ service_bookRouter.post(
   async (req: Request, res: Response, next: NextFunction) => {
     const pros: ServiceBookInfos = req.body;
     try {
-      const addServiceBook = await prisma.service_Book.create({
+      const addServiceBook = await prisma.service_book.create({
         data: {
           date: new Date(pros.date),
           service: pros.service,
@@ -74,7 +74,7 @@ service_bookRouter.post(
               id_pros: pros.id_pros,
             },
           },
-          vehicule: {
+          vehicules: {
             connect: {
               immat: pros.immat_vehicule,
             },
@@ -93,7 +93,7 @@ service_bookRouter.put(
     const idServiceBook = parseInt(req.params.idServiceBook);
     const pros: ServiceBookInfos = req.body;
     try {
-      const userUpdate = await prisma.service_Book.update({
+      const userUpdate = await prisma.service_book.update({
         where: {
           id_service_book: idServiceBook,
         },
@@ -117,7 +117,7 @@ service_bookRouter.delete(
   async (req: Request, res: Response, next: NextFunction) => {
     const idServiceBook = parseInt(req.params.idServiceBook);
     try {
-      const deleteService_book = await prisma.service_Book.delete({
+      const deleteService_book = await prisma.service_book.delete({
         where: {
           id_service_book: idServiceBook,
         },

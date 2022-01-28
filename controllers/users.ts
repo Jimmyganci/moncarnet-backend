@@ -100,7 +100,7 @@ usersRouter.get(
     try {
       const vehiculeUser = await prisma.vehicules.findMany({
         where: {
-          user: {
+          users: {
             id_user: idUser,
           },
         },
@@ -216,6 +216,7 @@ usersRouter.post(
             phone: user.phone,
             postal_code: user.postal_code,
             city: user.city,
+            active: user.active,
           },
         });
         res.status(200).json(createUser);
@@ -260,6 +261,7 @@ usersRouter.put(
             phone: user.phone,
             postal_code: user.postal_code,
             city: user.city,
+            active: user.active,
           },
         });
         res.status(200).json(userUpdate);

@@ -71,7 +71,7 @@ brandsRouter.get(
     try {
       const vehiculeByBrand = await prisma.vehicules.findMany({
         where: {
-          model: {
+          models: {
             brand: {
               id_brand: Number(idBrand),
             },
@@ -96,7 +96,7 @@ brandsRouter.get(
         where: {
           vehicules: {
             some: {
-              model: {
+              models: {
                 brand: {
                   id_brand: Number(idBrand),
                 },

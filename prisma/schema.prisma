@@ -7,101 +7,117 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Brand {
+model admin {
+  id_admin       Int     @id @default(autoincrement())
+  firstname      String  @db.VarChar(100)
+  lastname       String  @db.VarChar(100)
+  email          String  @unique(map: "email_UNIQUE") @db.VarChar(255)
+  hashedPassword String? @db.VarChar(255)
+}
+
+model appointment {
+  id_appointment Int       @id @default(autoincrement())
+  userId         Int
+  prosId         Int
+  date           DateTime  @db.DateTime(0)
+  comment        String    @db.MediumText
+  immat          String
+  vehicules      vehicules @relation(fields: [immat], references: [immat], map: "Appointment_immat_fkey")
+  pros           pros      @relation(fields: [prosId], references: [id_pros], map: "Appointment_prosId_fkey")
+  users          users     @relation(fields: [userId], references: [id_user], map: "Appointment_userId_fkey")
+
+  @@index([prosId], map: "Appointment_prosId_fkey")
+  @@index([userId], map: "Appointment_userId_fkey")
+  @@index([immat], map: "Appointments_immat_fkey")
+}
+
+model brand {
   id_brand Int      @id @default(autoincrement())
   code     String?  @db.VarChar(45)
   name     String   @db.VarChar(100)
-  models   Models[]
+  models   models[]
 }
 
-model Models {
+model models {
   id_model  Int         @id @default(autoincrement())
   code      String?     @db.VarChar(45)
   name      String?     @db.VarChar(100)
   id_brand  Int
-  brand     Brand       @relation(fields: [id_brand], references: [id_brand])
-  vehicules Vehicules[]
+  brand     brand       @relation(fields: [id_brand], references: [id_brand], map: "Models_id_brand_fkey")
+  vehicules vehicules[]
+
+  @@index([id_brand], map: "Models_id_brand_fkey")
 }
 
-model Pros {
-  id_pros         Int            @id @default(autoincrement())
-  name            String         @db.VarChar(255)
-  email           String         @unique(map: "email_UNIQUE") @db.VarChar(255)
-  hashedPassword  String         @db.VarChar(255)
-  address         String         @db.Text
-  postal_code     Int
-  city            String         @db.VarChar(150)
-  siret           String         @db.VarChar(14)
-  phone           String         @db.VarChar(15)
-  service_book    Service_Book[]
-  users           Users[]        @relation("prostousers")
-  appointmentUser Appointment[]
+model pros {
+  id_pros        Int            @id @default(autoincrement())
+  name           String         @db.VarChar(255)
+  email          String         @unique(map: "email_UNIQUE") @db.VarChar(255)
+  hashedPassword String         @db.VarChar(255)
+  address        String         @db.Text
+  postal_code    Int
+  city           String         @db.VarChar(150)
+  siret          String         @db.VarChar(14)
+  phone          String         @db.VarChar(15)
+  appointment    appointment[]
+  service_book   service_book[]
+  users          users[]        @relation("prostousers")
 }
 
-model Service_Book {
+model service_book {
   id_service_book Int       @id @default(autoincrement())
   date            DateTime  @db.Date
   service         String    @db.Text
   observations    String?   @db.Text
   kilometrage     Int
   url_invoice     String?   @db.MediumText
-  pros            Pros      @relation(fields: [id_pros], references: [id_pros])
-  vehicule        Vehicules @relation(fields: [immat], references: [immat])
   id_pros         Int
   immat           String
+  pros            pros      @relation(fields: [id_pros], references: [id_pros], map: "Service_Book_id_pros_fkey")
+  vehicules       vehicules @relation(fields: [immat], references: [immat], map: "Service_Book_immat_fkey")
+
+  @@index([id_pros], map: "Service_Book_id_pros_fkey")
+  @@index([immat], map: "Service_Book_immat_fkey")
 }
 
-model Types {
+model types {
   id_type   Int         @id @default(autoincrement())
   name_type String      @unique(map: "name_type_UNIQUE") @db.VarChar(100)
-  vehicules Vehicules[]
+  vehicules vehicules[]
 }
 
-model Users {
-  id_user         Int           @id @default(autoincrement())
-  firstname       String        @db.VarChar(100)
-  lastname        String        @db.VarChar(100)
-  email           String        @unique(map: "email_UNIQUE") @db.VarChar(255)
-  hashedPassword  String?       @db.VarChar(255)
-  address         String        @db.Text
-  phone           String        @db.VarChar(15)
-  postal_code     Int
-  city            String        @db.VarChar(150)
-  vehicules       Vehicules[]
-  pros            Pros[]        @relation("prostousers")
-  appointmentPros Appointment[]
+model users {
+  id_user        Int           @id @default(autoincrement())
+  firstname      String        @db.VarChar(100)
+  lastname       String        @db.VarChar(100)
+  email          String        @unique(map: "email_UNIQUE") @db.VarChar(255)
+  hashedPassword String?       @db.VarChar(255)
+  address        String        @db.Text
+  phone          String        @db.VarChar(15)
+  postal_code    Int
+  city           String        @db.VarChar(150)
+  active         Boolean       @default(false)
+  appointment    appointment[]
+  vehicules      vehicules[]
+  pros           pros[]        @relation("prostousers")
 }
 
-model Vehicules {
+model vehicules {
   immat                    String         @id @db.VarChar(15)
   registration_date        DateTime       @db.Date
   url_vehiculeRegistration String         @db.MediumText
   id_modelId               Int
   id_typeId                Int
   id_userId                Int
-  model                    Models         @relation(fields: [id_modelId], references: [id_model])
-  type                     Types          @relation(fields: [id_typeId], references: [id_type])
-  user                     Users          @relation(fields: [id_userId], references: [id_user])
-  validate                 Boolean        @default(false)
   active                   Boolean        @default(true)
-  service_book             Service_Book[]
-}
+  validate                 Boolean        @default(false)
+  models                   models         @relation(fields: [id_modelId], references: [id_model], map: "Vehicules_id_modelId_fkey")
+  types                    types          @relation(fields: [id_typeId], references: [id_type], map: "Vehicules_id_typeId_fkey")
+  users                    users          @relation(fields: [id_userId], references: [id_user], map: "Vehicules_id_userId_fkey")
+  appointments             appointment[]
+  service_book             service_book[]
 
-model Appointment {
-  id_appointment Int      @id @default(autoincrement())
-  users          Users    @relation(fields: [userId], references: [id_user])
-  userId         Int
-  pros           Pros     @relation(fields: [prosId], references: [id_pros])
-  prosId         Int
-  date           DateTime @db.DateTime
-  comment        String   @db.MediumText
-
-}
-
-model Admin {
-  id_admin       Int     @id @default(autoincrement())
-  firstname      String  @db.VarChar(100)
-  lastname       String  @db.VarChar(100)
-  email          String  @unique(map: "email_UNIQUE") @db.VarChar(255)
-  hashedPassword String? @db.VarChar(255)
+  @@index([id_modelId], map: "Vehicules_id_modelId_fkey")
+  @@index([id_typeId], map: "Vehicules_id_typeId_fkey")
+  @@index([id_userId], map: "Vehicules_id_userId_fkey")
 }

@@ -9,6 +9,7 @@ export const postUser = Joi.object().keys({
   phone: Joi.string().min(6).max(20),
   postal_code: Joi.number().integer().min(1).max(99999),
   city: Joi.string().max(150),
+  active: Joi.boolean(),
 });
 
 export const putUser = Joi.object().keys({

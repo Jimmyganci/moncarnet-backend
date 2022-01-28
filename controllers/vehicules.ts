@@ -15,7 +15,7 @@ vehiculesRouter.get(
       if (req.query.brand) {
         const vehiculeByBrand = await prisma.vehicules.findMany({
           where: {
-            model: {
+            models: {
               brand: {
                 name: {
                   contains: String(brand),
@@ -28,7 +28,7 @@ vehiculesRouter.get(
       } else if (req.query.model) {
         const vehiculeByModel = await prisma.vehicules.findMany({
           where: {
-            model: {
+            models: {
               name: {
                 contains: String(model),
               },
@@ -104,7 +104,7 @@ vehiculesRouter.get(
           immat: String(immat),
         },
         select: {
-          model: true,
+          models: true,
         },
       });
       res.status(200).json(vehicules);
@@ -124,7 +124,7 @@ vehiculesRouter.get(
           immat: String(immat),
         },
         select: {
-          model: {
+          models: {
             select: {
               brand: true,
             },
@@ -147,7 +147,7 @@ vehiculesRouter.get(
           immat: String(immat),
         },
         select: {
-          type: true,
+          types: true,
         },
       });
       res.status(200).json(vehicules);
@@ -189,17 +189,17 @@ vehiculesRouter.post(
           url_vehiculeRegistration: vehicule.url_vehiculeRegistration,
           validate: vehicule.validate,
           active: vehicule.active,
-          model: {
+          models: {
             connect: {
               id_model: vehicule.id_modelId,
             },
           },
-          type: {
+          types: {
             connect: {
               id_type: vehicule.id_typeId,
             },
           },
-          user: {
+          users: {
             connect: {
               id_user: vehicule.id_userId,
             },
@@ -230,17 +230,17 @@ vehiculesRouter.put(
           url_vehiculeRegistration: vehicule.url_vehiculeRegistration,
           validate: vehicule.validate,
           active: vehicule.active,
-          model: {
+          models: {
             connect: {
               id_model: vehicule.id_modelId,
             },
           },
-          type: {
+          types: {
             connect: {
               id_type: vehicule.id_typeId,
             },
           },
-          user: {
+          users: {
             connect: {
               id_user: vehicule.id_userId,
             },

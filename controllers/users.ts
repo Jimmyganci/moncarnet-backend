@@ -260,6 +260,7 @@ usersRouter.put(
             lastname: user.lastname,
             email: user.email,
             address: user.address,
+            // hashedPassword: user.password,
             phone: user.phone,
             postal_code: user.postal_code,
             city: user.city,

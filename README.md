@@ -6,6 +6,9 @@ copy ".env.sample" file and add your mysql login
 
 Don't forget to add port for localhost
 
+<pre>npx prisma deb push</pre>
+<h2>Restart your IDE</h2>
+
 make npm start to the console for launch the server.
 
 <pre>npm start</pre>

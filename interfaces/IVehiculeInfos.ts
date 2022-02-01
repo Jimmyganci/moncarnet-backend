@@ -6,4 +6,5 @@ export default interface VehiculeInfos {
   id_typeId: number;
   id_userId: number;
   validate: boolean;
+  active: boolean;
 }

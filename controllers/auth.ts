@@ -8,8 +8,6 @@ import jwt from "jsonwebtoken";
 authRouter.post(
   "/logout",
   async (req: Request, res: Response, next: NextFunction) => {
-    console.log("LOGGING OUT");
-    // The cookie will be deleted !
     res.status(200).clearCookie("user_token").send(`user is NOT connected`);
   }
 );
@@ -25,8 +23,9 @@ authRouter.post(
         },
       });
       if (!user) res.status(401).send("User not Found");
+      if (user && user.active === false) res.status(403).send("User account has been deleted");
       else {
-        UserAuth.verifyPassword(password, user.hashedPassword).then(
+        user && UserAuth.verifyPassword(password, user.hashedPassword).then(
           (passwordIsCorrect: boolean) => {
             if (passwordIsCorrect) {
               const token = UserAuth.calculateToken(

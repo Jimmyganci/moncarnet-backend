@@ -71,7 +71,7 @@ appointmentRouter.get(
 appointmentRouter.post(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {
-    const { userId, prosId, date, comment }: IAppointment = req.body;
+    const { userId, prosId, date, comment, immat }: IAppointment = req.body;
     try {
       const postAppointment = await prisma.appointment.create({
         data: {
@@ -79,6 +79,7 @@ appointmentRouter.post(
           prosId: prosId,
           date: new Date(date),
           comment: comment,
+          immat: immat,
         },
       });
       res.status(200).send(postAppointment);

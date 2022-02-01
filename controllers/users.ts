@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import prisma from "../helpers/prisma";
 import bodyValidator from "../middleware/bodyValidator";
-import { postUser } from "../JOI/validate";
+import { postUser, putUser } from "../JOI/validate";
 const usersRouter = require("express").Router();
 const UserAuth = require("../helpers/users");
 import IUserInfos from "../interfaces/IuserInfos";
@@ -73,6 +73,7 @@ usersRouter.get(
     }
   }
 );
+
 // authorizations: user, admin, pros
 usersRouter.get(
   "/:idUser",
@@ -91,6 +92,7 @@ usersRouter.get(
     }
   }
 );
+
 //  authorizations : admin user
 usersRouter.get(
   "/vehicules/:idUser",
@@ -100,7 +102,7 @@ usersRouter.get(
     try {
       const vehiculeUser = await prisma.vehicules.findMany({
         where: {
-          user: {
+          users: {
             id_user: idUser,
           },
         },
@@ -111,6 +113,7 @@ usersRouter.get(
     }
   }
 );
+
 // authorization: admin, user
 usersRouter.get(
   "/pros/:idUser",
@@ -216,6 +219,7 @@ usersRouter.post(
             phone: user.phone,
             postal_code: user.postal_code,
             city: user.city,
+            active: user.active,
           },
         });
         res.status(200).json(createUser);
@@ -227,10 +231,11 @@ usersRouter.post(
     }
   }
 );
+
 // authorization: admin, user
 usersRouter.put(
   "/:idUser",
-  bodyValidator(postUser),
+  bodyValidator(putUser),
   checktoken,
   async (req: Request, res: Response, next: NextFunction) => {
     const idUser = parseInt(req.params.idUser);
@@ -246,7 +251,6 @@ usersRouter.put(
       });
 
       if (emailExisting.length === 0) {
-        const hashedPassword = await UserAuth.hashPassword(user.password);
         const userUpdate = await prisma.users.update({
           where: {
             id_user: idUser,
@@ -255,11 +259,12 @@ usersRouter.put(
             firstname: user.firstname,
             lastname: user.lastname,
             email: user.email,
-            hashedPassword: hashedPassword,
             address: user.address,
+            // hashedPassword: user.password,
             phone: user.phone,
             postal_code: user.postal_code,
             city: user.city,
+            active: user.active,
           },
         });
         res.status(200).json(userUpdate);
@@ -271,6 +276,7 @@ usersRouter.put(
     }
   }
 );
+
 // authorization: admin, user
 usersRouter.delete(
   "/:idUser",

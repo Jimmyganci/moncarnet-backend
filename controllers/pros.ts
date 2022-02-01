@@ -195,4 +195,4 @@ prosRouter.delete(
   }
 );
 
-module.exports = prosRouter;
+export default prosRouter;

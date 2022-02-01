@@ -134,4 +134,4 @@ adminRouter.delete(
   }
 );
 
-module.exports = adminRouter;
+export default adminRouter;

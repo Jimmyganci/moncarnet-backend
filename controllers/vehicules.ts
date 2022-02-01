@@ -271,4 +271,4 @@ vehiculesRouter.delete(
   }
 );
 
-module.exports = vehiculesRouter;
+export default vehiculesRouter;

@@ -9,10 +9,25 @@ Don't forget to add port for localhost
 <pre>npx prisma deb push</pre>
 <h2>Restart your IDE</h2>
 
+<h2>Use reset-data.sql to your console sql</h2>
+
 make npm start to the console for launch the server.
 
 <pre>npm start</pre>
 </br>
+
+<h2>Connection</h2>
+<h3>ADMIN</h3>
+email:jimmy@ganci.fr
+password: JimmyGanci
+
+<h3>PARTICULIER</h3>
+email: bastien@moncarnet.fr
+password: BastienT
+
+<h3>PROS</h3>
+email:autorepare24@gmail.com	
+password:autorepare24
 
 # <h2>Upload files</h2>
 

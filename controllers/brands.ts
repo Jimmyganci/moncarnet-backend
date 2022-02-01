@@ -167,4 +167,4 @@ brandsRouter.delete(
   }
 );
 
-module.exports = brandsRouter;
+export default brandsRouter;

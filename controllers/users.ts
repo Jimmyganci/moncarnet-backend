@@ -296,4 +296,4 @@ usersRouter.delete(
   }
 );
 
-module.exports = usersRouter;
+export default usersRouter;

@@ -1,12 +1,12 @@
 import express from "express";
-const vehiculesRouter = require("./vehicules");
-const usersRouter = require("./users");
-const prosRouter = require("./pros");
-const service_bookRouter = require("./service_book");
-const brandsRouter = require("./brands");
-const modelsRouter = require("./models");
-const authRouter = require("./auth");
-const adminRouter = require("./admin");
+import vehiculesRouter from "./vehicules";
+import usersRouter from "./users";
+import prosRouter from "./pros";
+import service_bookRouter from "./service_book";
+import brandsRouter from "./brands";
+import modelsRouter from "./models";
+import authRouter from "./auth";
+import adminRouter from "./admin";
 import typesRouter from "./types";
 import appointmentRouter from "./appointment";
 import checkToken from "../middleware/checkToken";
@@ -34,6 +34,4 @@ const setupRoutes = (app: express.Application) => {
   app.use("/api/admin", adminRouter);
 };
 
-module.exports = {
-  setupRoutes,
-};
+export default setupRoutes;

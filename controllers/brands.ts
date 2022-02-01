@@ -9,7 +9,7 @@ brandsRouter.get(
     const { name } = req.query;
     try {
       if (req.query.name) {
-        const brandByName = await prisma.brand.findMany({
+        const brandByName = await prisma.brands.findMany({
           where: {
             name: {
               contains: String(name),
@@ -18,7 +18,7 @@ brandsRouter.get(
         });
         res.status(200).json(brandByName);
       } else {
-        const brands = await prisma.brand.findMany();
+        const brands = await prisma.brands.findMany();
         res.status(200).json(brands);
       }
     } catch (err) {
@@ -33,7 +33,7 @@ brandsRouter.get(
   async (req: Request, res: Response, next: NextFunction) => {
     const id = parseInt(req.params.id);
     try {
-      const brandsById = await prisma.brand.findUnique({
+      const brandsById = await prisma.brands.findUnique({
         where: {
           id_brand: id,
         },
@@ -116,7 +116,7 @@ brandsRouter.post(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const addBrands = await prisma.brand.create({
+      const addBrands = await prisma.brands.create({
         data: {
           code: req.body.code,
           name: req.body.name,
@@ -134,7 +134,7 @@ brandsRouter.put(
   async (req: Request, res: Response, next: NextFunction) => {
     const id: number = parseInt(req.params.id);
     try {
-      const brandUpdate = await prisma.brand.update({
+      const brandUpdate = await prisma.brands.update({
         where: {
           id_brand: id,
         },
@@ -155,7 +155,7 @@ brandsRouter.delete(
   async (req: Request, res: Response, next: NextFunction) => {
     const id: number = parseInt(req.params.id);
     try {
-      const brandDeleted = await prisma.brand.delete({
+      const brandDeleted = await prisma.brands.delete({
         where: {
           id_brand: id,
         },

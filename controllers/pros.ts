@@ -81,6 +81,9 @@ prosRouter.get(
   }
 );
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 prosRouter.get(
   "/:idPros/users",
   checktoken,
@@ -97,6 +100,26 @@ prosRouter.get(
         },
       });
       res.status(200).json(usersPros);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
+prosRouter.get(
+  "/:idConnected/appointments",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { idConnected } = req.params;
+    try {
+      const getOneAppointment = await prisma.appointments.findMany({
+        where: {
+          prosId: Number(idConnected),
+        },
+      });
+      res.status(200).json(getOneAppointment);
     } catch (err) {
       next(err);
     }

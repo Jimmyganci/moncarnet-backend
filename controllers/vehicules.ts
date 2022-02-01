@@ -8,7 +8,7 @@ import upload from "../middleware/fileUpload";
 
 // get many vehicules (authorization: admin)
 vehiculesRouter.get(
-  "/all",
+  "/",
   async (req: Request, res: Response, next: NextFunction) => {
     const { brand, model, validate, noValidate } = req.query;
     try {
@@ -54,6 +54,13 @@ vehiculesRouter.get(
           },
         });
         res.status(200).json(vehiculeByValidate);
+      } else if (req.query.service_book) {
+        try {
+          const vehiculesWithoutServiceBook = await prisma.$queryRaw`SELECT v.* FROM vehicules as v LEFT JOIN service_books as sb on v.immat = sb.immat WHERE sb.immat IS NULL`;
+          res.status(200).json(vehiculesWithoutServiceBook);
+        } catch (err) {
+        next(err);
+      }
       } else {
         const vehicules = await prisma.vehicules.findMany();
         res.json(vehicules);
@@ -64,18 +71,6 @@ vehiculesRouter.get(
   }
 );
 
-vehiculesRouter.get(
-  "/withoutServiceBook",
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const getVehiculeWIthoutServiceBook =
-        await prisma.$queryRaw`SELECT v.* FROM vehicules as v LEFT JOIN service_book as sb on v.immat = sb.immat WHERE sb.immat IS NULL`;
-      res.status(200).json(getVehiculeWIthoutServiceBook);
-    } catch (err) {
-      next(err);
-    }
-  }
-);
 // get one vehicule (authorization: all)
 vehiculesRouter.get(
   "/:immat",
@@ -165,7 +160,7 @@ vehiculesRouter.get(
   async (req: Request, res: Response, next: NextFunction) => {
     const { immat } = req.params;
     try {
-      const getServiceBookByVehicule = await prisma.service_book.findMany({
+      const getServiceBookByVehicule = await prisma.service_books.findMany({
         where: {
           vehicules: {
             immat: immat,

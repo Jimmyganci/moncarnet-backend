@@ -7,12 +7,23 @@ const UserAuth = require("../helpers/users");
 import IUserInfos from "../interfaces/IuserInfos";
 import checktoken from "../middleware/checkToken";
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 // authorization : admin
 usersRouter.get(
-  "/all",
+  "/",
   checktoken,
   async (req: Request, res: Response, next: NextFunction) => {
     const { lastname, city, postal_code } = req.query;
+    if (req.query.appointments) {
+      try {
+        const usersWithoutAppointments = await prisma.$queryRaw`SELECT * FROM users as u LEFT JOIN appointments as a on u.id_user = a.userId WHERE a.userId IS NULL`;
+      res.status(200).json(usersWithoutAppointments);
+    } catch (err) {
+      next(err);
+      }
+    }
     if (req.query.lastname) {
       try {
         const usersFilterByLastname = await prisma.users.findMany({
@@ -57,19 +68,6 @@ usersRouter.get(
       } catch (err) {
         next(err);
       }
-    }
-  }
-);
-
-usersRouter.get(
-  "/withOutAppointment",
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const getUserWithoutAppointent =
-        await prisma.$queryRaw`SELECT * FROM users as u LEFT JOIN appointment as a on u.id_user = a.userId WHERE a.userId IS NULL`;
-      res.status(200).json(getUserWithoutAppointent);
-    } catch (err) {
-      next(err);
     }
   }
 );
@@ -176,7 +174,7 @@ usersRouter.get(
   async (req: Request, res: Response, next: NextFunction) => {
     const { idUser } = req.params;
     try {
-      const getOneAppointment = await prisma.appointment.findMany({
+      const getOneAppointment = await prisma.appointments.findMany({
         where: {
           userId: Number(idUser),
         },

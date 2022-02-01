@@ -15,7 +15,7 @@ model admin {
   hashedPassword String? @db.VarChar(255)
 }
 
-model appointment {
+model appointments {
   id_appointment Int       @id @default(autoincrement())
   userId         Int
   prosId         Int
@@ -31,7 +31,7 @@ model appointment {
   @@index([immat], map: "Appointments_immat_fkey")
 }
 
-model brand {
+model brands {
   id_brand Int      @id @default(autoincrement())
   code     String?  @db.VarChar(45)
   name     String   @db.VarChar(100)
@@ -43,28 +43,28 @@ model models {
   code      String?     @db.VarChar(45)
   name      String?     @db.VarChar(100)
   id_brand  Int
-  brand     brand       @relation(fields: [id_brand], references: [id_brand], map: "Models_id_brand_fkey")
+  brand     brands      @relation(fields: [id_brand], references: [id_brand], map: "Models_id_brand_fkey")
   vehicules vehicules[]
 
   @@index([id_brand], map: "Models_id_brand_fkey")
 }
 
 model pros {
-  id_pros        Int            @id @default(autoincrement())
-  name           String         @db.VarChar(255)
-  email          String         @unique(map: "email_UNIQUE") @db.VarChar(255)
-  hashedPassword String         @db.VarChar(255)
-  address        String         @db.Text
+  id_pros        Int             @id @default(autoincrement())
+  name           String          @db.VarChar(255)
+  email          String          @unique(map: "email_UNIQUE") @db.VarChar(255)
+  hashedPassword String          @db.VarChar(255)
+  address        String          @db.Text
   postal_code    Int
-  city           String         @db.VarChar(150)
-  siret          String         @db.VarChar(14)
-  phone          String         @db.VarChar(15)
-  appointment    appointment[]
-  service_book   service_book[]
-  users          users[]        @relation("prostousers")
+  city           String          @db.VarChar(150)
+  siret          String          @db.VarChar(14)
+  phone          String          @db.VarChar(15)
+  appointments   appointments[]
+  service_books  service_books[]
+  users          users[]         @relation("prostousers")
 }
 
-model service_book {
+model service_books {
   id_service_book Int       @id @default(autoincrement())
   date            DateTime  @db.Date
   service         String    @db.Text
@@ -87,35 +87,35 @@ model types {
 }
 
 model users {
-  id_user        Int           @id @default(autoincrement())
-  firstname      String        @db.VarChar(100)
-  lastname       String        @db.VarChar(100)
-  email          String        @unique(map: "email_UNIQUE") @db.VarChar(255)
-  hashedPassword String?       @db.VarChar(255)
-  address        String        @db.Text
-  phone          String        @db.VarChar(15)
+  id_user        Int            @id @default(autoincrement())
+  firstname      String         @db.VarChar(100)
+  lastname       String         @db.VarChar(100)
+  email          String         @unique(map: "email_UNIQUE") @db.VarChar(255)
+  hashedPassword String?        @db.VarChar(255)
+  address        String         @db.Text
+  phone          String         @db.VarChar(15)
   postal_code    Int
-  city           String        @db.VarChar(150)
-  active         Boolean       @default(true)
-  appointment    appointment[]
+  city           String         @db.VarChar(150)
+  active         Boolean        @default(true)
+  appointments   appointments[]
   vehicules      vehicules[]
-  pros           pros[]        @relation("prostousers")
+  pros           pros[]         @relation("prostousers")
 }
 
 model vehicules {
-  immat                    String         @id @db.VarChar(15)
-  registration_date        DateTime       @db.Date
-  url_vehiculeRegistration String         @db.MediumText
+  immat                    String          @id @db.VarChar(15)
+  registration_date        DateTime        @db.Date
+  url_vehiculeRegistration String          @db.MediumText
   id_modelId               Int
   id_typeId                Int
   id_userId                Int
-  active                   Boolean        @default(true)
-  validate                 Boolean        @default(false)
-  models                   models         @relation(fields: [id_modelId], references: [id_model], map: "Vehicules_id_modelId_fkey")
-  types                    types          @relation(fields: [id_typeId], references: [id_type], map: "Vehicules_id_typeId_fkey")
-  users                    users          @relation(fields: [id_userId], references: [id_user], map: "Vehicules_id_userId_fkey")
-  appointments             appointment[]
-  service_book             service_book[]
+  active                   Boolean         @default(true)
+  validate                 Boolean         @default(false)
+  models                   models          @relation(fields: [id_modelId], references: [id_model], map: "Vehicules_id_modelId_fkey")
+  types                    types           @relation(fields: [id_typeId], references: [id_type], map: "Vehicules_id_typeId_fkey")
+  users                    users           @relation(fields: [id_userId], references: [id_user], map: "Vehicules_id_userId_fkey")
+  appointments             appointments[]
+  service_books            service_books[]
 
   @@index([id_modelId], map: "Vehicules_id_modelId_fkey")
   @@index([id_typeId], map: "Vehicules_id_typeId_fkey")

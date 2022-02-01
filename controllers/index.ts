@@ -2,13 +2,13 @@ import express from "express";
 const vehiculesRouter = require("./vehicules");
 const usersRouter = require("./users");
 const prosRouter = require("./pros");
-const service_bookRouter = require("./service_book");
+const service_bookRouter = require("./service_books");
 const brandsRouter = require("./brands");
 const modelsRouter = require("./models");
 const authRouter = require("./auth");
 const adminRouter = require("./admin");
 import typesRouter from "./types";
-import appointmentRouter from "./appointment";
+import appointmentRouter from "./appointments";
 import checkToken from "../middleware/checkToken";
 
 const setupRoutes = (app: express.Application) => {
@@ -19,7 +19,7 @@ const setupRoutes = (app: express.Application) => {
   // Pros routes
   app.use("/api/pros", prosRouter);
   // Service_book routes
-  app.use("/api/service_book", checkToken, service_bookRouter);
+  app.use("/api/service_books", checkToken, service_bookRouter);
   // Brands routes
   app.use("/api/brands", checkToken, brandsRouter);
   // Models routes
@@ -29,7 +29,7 @@ const setupRoutes = (app: express.Application) => {
   //   Auth routes
   app.use("/api", authRouter);
   // Appointment Route
-  app.use("/api/appointment", checkToken, appointmentRouter);
+  app.use("/api/appointments", checkToken, appointmentRouter);
   // Admin Route
   app.use("/api/admin", adminRouter);
 };

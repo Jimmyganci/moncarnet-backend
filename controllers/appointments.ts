@@ -4,29 +4,15 @@ import IAppointment from "../interfaces/IAppointment";
 
 const appointmentRouter = require("express").Router();
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 appointmentRouter.get(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const getAllAppointment = await prisma.appointment.findMany();
+      const getAllAppointment = await prisma.appointments.findMany();
       res.status(200).json(getAllAppointment);
-    } catch (err) {
-      next(err);
-    }
-  }
-);
-
-appointmentRouter.get(
-  "/pros/:idPros",
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { idPros } = req.params;
-    try {
-      const getOneAppointment = await prisma.appointment.findMany({
-        where: {
-          prosId: Number(idPros),
-        },
-      });
-      res.status(200).json(getOneAppointment);
     } catch (err) {
       next(err);
     }
@@ -38,7 +24,7 @@ appointmentRouter.get(
   async (req: Request, res: Response, next: NextFunction) => {
     const { idAppointment } = req.params;
     try {
-      const getOneAppointment = await prisma.appointment.findUnique({
+      const getOneAppointment = await prisma.appointments.findUnique({
         where: {
           id_appointment: Number(idAppointment),
         },
@@ -51,12 +37,15 @@ appointmentRouter.get(
   }
 );
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 appointmentRouter.post(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {
     const { userId, prosId, date, comment, immat }: IAppointment = req.body;
     try {
-      const postAppointment = await prisma.appointment.create({
+      const postAppointment = await prisma.appointments.create({
         data: {
           userId: userId,
           prosId: prosId,
@@ -72,13 +61,16 @@ appointmentRouter.post(
   }
 );
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 appointmentRouter.put(
   "/:idAppointment",
   async (req: Request, res: Response, next: NextFunction) => {
     const { idAppointment } = req.params;
     const { userId, prosId, date, comment }: IAppointment = req.body;
     try {
-      const updateAppointment = await prisma.appointment.update({
+      const updateAppointment = await prisma.appointments.update({
         where: {
           id_appointment: Number(idAppointment),
         },
@@ -96,12 +88,15 @@ appointmentRouter.put(
   }
 );
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 appointmentRouter.delete(
   "/:idAppointment",
   async (req: Request, res: Response, next: NextFunction) => {
     const { idAppointment } = req.params;
     try {
-      const deleteOneAppointment = await prisma.appointment.delete({
+      const deleteOneAppointment = await prisma.appointments.delete({
         where: {
           id_appointment: Number(idAppointment),
         },

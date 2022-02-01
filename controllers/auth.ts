@@ -5,6 +5,9 @@ const authRouter = require("express").Router();
 const UserAuth = require("../helpers/users");
 import jwt from "jsonwebtoken";
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 authRouter.post(
   "/logout",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -12,8 +15,11 @@ authRouter.post(
   }
 );
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 authRouter.post(
-  "/particular/login",
+  "/login_user",
   async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
     try {
@@ -48,8 +54,11 @@ authRouter.post(
   }
 );
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 authRouter.post(
-  "/pros/login",
+  "/login_pro",
   async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
     try {
@@ -83,8 +92,11 @@ authRouter.post(
   }
 );
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 authRouter.post(
-  "/admin/login",
+  "login_admin",
   async (req: Request, res: Response, next: NextFunction) => {
     const { email, password } = req.body;
     try {
@@ -118,8 +130,11 @@ authRouter.post(
   }
 );
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 authRouter.get(
-  "/login",
+  "/connected",
   async (req: Request, res: Response, next: NextFunction) => {
     const { user_token } = req.cookies;
     try {

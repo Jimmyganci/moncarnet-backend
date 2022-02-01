@@ -114,9 +114,12 @@ usersRouter.get(
   }
 );
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 // authorization: admin, user
 usersRouter.get(
-  "/pros/:idUser",
+  "/:idUser/pros",
   checktoken,
   async (req: Request, res: Response, next: NextFunction) => {
     const idUser = parseInt(req.params.idUser);
@@ -165,6 +168,29 @@ usersRouter.put(
   }
 );
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
+usersRouter.get(
+  "/:idUser/appointments",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { idUser } = req.params;
+    try {
+      const getOneAppointment = await prisma.appointment.findMany({
+        where: {
+          userId: Number(idUser),
+        },
+      });
+      res.status(200).json(getOneAppointment);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 usersRouter.delete(
   "/:idUser/prosDeleted/:idPros",
   checktoken,
@@ -194,6 +220,9 @@ usersRouter.delete(
   }
 );
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 // authorization: admin, user
 usersRouter.post(
   "/",
@@ -290,6 +319,29 @@ usersRouter.delete(
         },
       });
       res.status(200).send(userDelete.firstname + " deleted");
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
+// get user's vehicule (authorization: pros, admin)
+usersRouter.get(
+  "/:idUser/vehicules",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const idUser:number = parseInt(req.params.idUser);
+    try {
+      const vehicules = await prisma.vehicules.findMany({
+        where:{
+         users: {
+           id_user: idUser,
+         }
+        }
+      });
+      res.status(200).json(vehicules);
     } catch (err) {
       next(err);
     }

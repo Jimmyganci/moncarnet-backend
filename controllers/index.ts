@@ -27,7 +27,7 @@ const setupRoutes = (app: express.Application) => {
   // Types routes
   app.use("/api/types", checkToken, typesRouter);
   //   Auth routes
-  app.use("/api/auth", authRouter);
+  app.use("/api", authRouter);
   // Appointment Route
   app.use("/api/appointment", checkToken, appointmentRouter);
   // Admin Route

@@ -96,7 +96,7 @@ model users {
   phone          String        @db.VarChar(15)
   postal_code    Int
   city           String        @db.VarChar(150)
-  active         Boolean       @default(false)
+  active         Boolean       @default(true)
   appointment    appointment[]
   vehicules      vehicules[]
   pros           pros[]        @relation("prostousers")

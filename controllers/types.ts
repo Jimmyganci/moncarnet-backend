@@ -7,7 +7,7 @@ const typesRouter = require("express").Router();
 // just admin
 
 typesRouter.get(
-  "/all",
+  "/",
   async (req: Request, res: Response, next: NextFunction) => {
     const { name } = req.query;
     try {

@@ -35,25 +35,6 @@ service_bookRouter.get(
   }
 );
 
-service_bookRouter.get(
-  "/vehicule/:immat",
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { immat } = req.params;
-    try {
-      const getServiceBookByVehicule = await prisma.service_book.findMany({
-        where: {
-          vehicules: {
-            immat: immat,
-          },
-        },
-      });
-      res.status(200).json(getServiceBookByVehicule);
-    } catch (err) {
-      next(err);
-    }
-  }
-);
-
 service_bookRouter.post("/upload", upload);
 
 service_bookRouter.post(

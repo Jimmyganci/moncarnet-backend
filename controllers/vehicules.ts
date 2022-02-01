@@ -156,18 +156,23 @@ vehiculesRouter.get(
     }
   }
 );
-// get user's vehicule (authorization: pros, admin)
+
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 vehiculesRouter.get(
-  "/user/:idUser",
+  "/:immat/service_book",
   async (req: Request, res: Response, next: NextFunction) => {
-    const idUser = parseInt(req.params.idUser);
+    const { immat } = req.params;
     try {
-      const vehicules = await prisma.users.findUnique({
+      const getServiceBookByVehicule = await prisma.service_book.findMany({
         where: {
-          id_user: idUser,
+          vehicules: {
+            immat: immat,
+          },
         },
       });
-      res.status(200).json(vehicules);
+      res.status(200).json(getServiceBookByVehicule);
     } catch (err) {
       next(err);
     }

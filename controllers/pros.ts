@@ -8,6 +8,9 @@ import ProsInfos from "../interfaces/IProsInfos";
 import upload from "../middleware/fileUpload";
 import checktoken from "../middleware/checkToken";
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 // authorization : admin, user
 prosRouter.get(
   "/",
@@ -54,6 +57,10 @@ prosRouter.get(
     }
   }
 );
+
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 // authorization : admin, user, pros
 prosRouter.get(
   "/:idPros",

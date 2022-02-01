@@ -17,23 +17,6 @@ appointmentRouter.get(
 );
 
 appointmentRouter.get(
-  "/user/:idUser",
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { idUser } = req.params;
-    try {
-      const getOneAppointment = await prisma.appointment.findMany({
-        where: {
-          userId: Number(idUser),
-        },
-      });
-      res.status(200).json(getOneAppointment);
-    } catch (err) {
-      next(err);
-    }
-  }
-);
-
-appointmentRouter.get(
   "/pros/:idPros",
   async (req: Request, res: Response, next: NextFunction) => {
     const { idPros } = req.params;

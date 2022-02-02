@@ -3,6 +3,9 @@ import prisma from "../helpers/prisma";
 
 const brandsRouter = Router();
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 // authorization:admin user
 brandsRouter.get(
   "/",
@@ -28,6 +31,9 @@ brandsRouter.get(
   }
 );
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 // Search one vehicule
 brandsRouter.get(
   "/:id",
@@ -64,54 +70,7 @@ brandsRouter.get(
   }
 );
 
-// search/obtain  vehicules for a specific brand (for pros)search/obtain  vehicules for a specific brand (for pros)
-brandsRouter.get(
-  "/vehicules/:idbrand",
-  async (req: Request, res: Response, next: NextFunction) => {
-    const idBrand = req.params.idbrand;
-    try {
-      const vehiculeByBrand = await prisma.vehicules.findMany({
-        where: {
-          models: {
-            brand: {
-              id_brand: Number(idBrand),
-            },
-          },
-        },
-      });
-      res.status(200).json(vehiculeByBrand);
-    } catch (err) {
-      next(err);
-    }
-  }
-);
-
 // serach/obtain users by brand
-
-brandsRouter.get(
-  "/:idbrand/users",
-  async (req: Request, res: Response, next: NextFunction) => {
-    const idBrand = req.params.idbrand;
-    try {
-      const usersByBrand = await prisma.users.findMany({
-        where: {
-          vehicules: {
-            some: {
-              models: {
-                brand: {
-                  id_brand: Number(idBrand),
-                },
-              },
-            },
-          },
-        },
-      });
-      res.status(200).json(usersByBrand);
-    } catch (err) {
-      next(err);
-    }
-  }
-);
 
 brandsRouter.post(
   "/",

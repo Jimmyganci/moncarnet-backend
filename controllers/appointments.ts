@@ -19,6 +19,9 @@ appointmentRouter.get(
   }
 );
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 appointmentRouter.get(
   "/:idAppointment",
   async (req: Request, res: Response, next: NextFunction) => {

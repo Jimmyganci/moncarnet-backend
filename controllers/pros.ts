@@ -4,7 +4,6 @@ import bodyValidator from "../middleware/bodyValidator";
 import { postPros, putPros } from "../JOI/validate";
 import UserAuth from "../helpers/users";
 import ProsInfos from "../interfaces/IProsInfos";
-import upload from "../middleware/fileUpload";
 import checktoken from "../middleware/checkToken";
 
 /*//////////////////////////////////////////////////////////////
@@ -127,9 +126,10 @@ prosRouter.get(
   }
 );
 
-prosRouter.post("/upload", checktoken, upload);
-
 // authorization : admin only
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 prosRouter.post(
   "/",
   bodyValidator(postPros),
@@ -165,6 +165,9 @@ prosRouter.post(
   }
 );
 // authorization : admin pros
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 prosRouter.put(
   "/:idPros",
   checktoken,
@@ -182,7 +185,6 @@ prosRouter.put(
         },
       });
       if (emailExisting.length === 0) {
-        // const hashedPassword = await UserAuth.hashPassword(pros.password);
         const prosUpdate = await prisma.pros.update({
           where: {
             id_pros: idPros,
@@ -190,7 +192,6 @@ prosRouter.put(
           data: {
             name: pros.name,
             email: pros.email,
-            // hashedPassword: hashedPassword,
             address: pros.address,
             phone: pros.phone,
             postal_code: pros.postal_code,
@@ -208,6 +209,9 @@ prosRouter.put(
   }
 );
 // authorization : admin
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 prosRouter.delete(
   "/:idPros",
   checktoken,

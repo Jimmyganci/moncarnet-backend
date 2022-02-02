@@ -3,10 +3,12 @@ import prisma from "../helpers/prisma";
 import bodyValidator from "../middleware/bodyValidator";
 import { postServiceBook } from "../JOI/validate";
 import ServiceBookInfos from "../interfaces/IServiceBook";
-import upload from "../middleware/fileUpload";
 
 const service_bookRouter = Router();
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 service_bookRouter.get(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -19,6 +21,9 @@ service_bookRouter.get(
   }
 );
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 service_bookRouter.get(
   "/:idServiceBook",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -36,8 +41,9 @@ service_bookRouter.get(
   }
 );
 
-service_bookRouter.post("/upload", upload);
-
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 service_bookRouter.post(
   "/",
   bodyValidator(postServiceBook),
@@ -69,6 +75,10 @@ service_bookRouter.post(
     }
   }
 );
+
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 service_bookRouter.put(
   "/:idServiceBook",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -94,6 +104,9 @@ service_bookRouter.put(
   }
 );
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 service_bookRouter.delete(
   "/:idServiceBook",
   async (req: Request, res: Response, next: NextFunction) => {

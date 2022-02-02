@@ -11,42 +11,9 @@ const vehiculesRouter = Router();
 vehiculesRouter.get(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {
-    const { brand, model, validate, noValidate } = req.query;
+    const { noValidate } = req.query;
     try {
-      if (req.query.brand) {
-        const vehiculeByBrand = await prisma.vehicules.findMany({
-          where: {
-            models: {
-              brand: {
-                name: {
-                  contains: String(brand),
-                },
-              },
-            },
-          },
-        });
-        res.status(200).json(vehiculeByBrand);
-      } else if (req.query.model) {
-        const vehiculeByModel = await prisma.vehicules.findMany({
-          where: {
-            models: {
-              name: {
-                contains: String(model),
-              },
-            },
-          },
-        });
-        res.status(200).json(vehiculeByModel);
-      } else if (validate) {
-        const vehiculeByValidate = await prisma.vehicules.findMany({
-          where: {
-            validate: {
-              equals: true,
-            },
-          },
-        });
-        res.status(200).json(vehiculeByValidate);
-      } else if (noValidate) {
+      if (noValidate) {
         const vehiculeByValidate = await prisma.vehicules.findMany({
           where: {
             validate: {
@@ -57,11 +24,12 @@ vehiculesRouter.get(
         res.status(200).json(vehiculeByValidate);
       } else if (req.query.service_book) {
         try {
-          const vehiculesWithoutServiceBook = await prisma.$queryRaw`SELECT v.* FROM vehicules as v LEFT JOIN service_books as sb on v.immat = sb.immat WHERE sb.immat IS NULL`;
+          const vehiculesWithoutServiceBook =
+            await prisma.$queryRaw`SELECT v.* FROM vehicules as v LEFT JOIN service_books as sb on v.immat = sb.immat WHERE sb.immat IS NULL`;
           res.status(200).json(vehiculesWithoutServiceBook);
         } catch (err) {
-        next(err);
-      }
+          next(err);
+        }
       } else {
         const vehicules = await prisma.vehicules.findMany();
         res.json(vehicules);
@@ -175,7 +143,7 @@ vehiculesRouter.get(
   }
 );
 
-vehiculesRouter.post("/upload", upload);
+vehiculesRouter.post("/:immat/upload", upload);
 // post vehicule (authorization: user, admin)
 vehiculesRouter.post(
   "/",

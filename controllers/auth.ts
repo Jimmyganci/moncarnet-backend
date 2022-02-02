@@ -8,12 +8,9 @@ import jwt from "jsonwebtoken";
 /////////////////////////////////////////////////////////////*/
 const authRouter = Router();
 
-authRouter.post(
-  "/logout",
-  async (req: Request, res: Response, next: NextFunction) => {
-    res.status(200).clearCookie("user_token").send(`user is NOT connected`);
-  }
-);
+authRouter.post("/logout", async (req: Request, res: Response) => {
+  res.status(200).clearCookie("user_token").send(`user is NOT connected`);
+});
 
 /*//////////////////////////////////////////////////////////////
                         ROUTE IS USED

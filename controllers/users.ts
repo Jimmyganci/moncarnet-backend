@@ -93,27 +93,6 @@ usersRouter.get(
   }
 );
 
-//  authorizations : admin user
-usersRouter.get(
-  "/vehicules/:idUser",
-  checktoken,
-  async (req: Request, res: Response, next: NextFunction) => {
-    const idUser = parseInt(req.params.idUser);
-    try {
-      const vehiculeUser = await prisma.vehicules.findMany({
-        where: {
-          users: {
-            id_user: idUser,
-          },
-        },
-      });
-      res.status(200).json(vehiculeUser);
-    } catch (err) {
-      next(err);
-    }
-  }
-);
-
 /*//////////////////////////////////////////////////////////////
                         ROUTE IS USED
 /////////////////////////////////////////////////////////////*/
@@ -141,11 +120,10 @@ usersRouter.get(
 );
 
 usersRouter.put(
-  "/pros/:idUser",
+  "/:idUser/pros/:idPros",
   checktoken,
   async (req: Request, res: Response, next: NextFunction) => {
-    const { idUser } = req.params;
-    const { idPros }: { idPros: number } = req.body;
+    const { idUser, idPros } = req.params;
     try {
       const createProsAndUsers = await prisma.users.update({
         where: {
@@ -153,12 +131,12 @@ usersRouter.put(
         },
         data: {
           pros: {
-            connect: { id_pros: idPros },
+            connect: { id_pros: Number(idPros) },
           },
         },
       });
       res
-        .status(200)
+        .status(204)
         .json(
           `${createProsAndUsers.firstname} the garage has been added on your favorite`
         );
@@ -261,6 +239,10 @@ usersRouter.post(
   }
 );
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
+
 // authorization: admin, user
 usersRouter.put(
   "/:idUser",
@@ -289,7 +271,6 @@ usersRouter.put(
             lastname: user.lastname,
             email: user.email,
             address: user.address,
-            // hashedPassword: user.password,
             phone: user.phone,
             postal_code: user.postal_code,
             city: user.city,

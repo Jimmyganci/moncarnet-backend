@@ -7,14 +7,11 @@ import ProsInfos from "../interfaces/IProsInfos";
 import upload from "../middleware/fileUpload";
 import checktoken from "../middleware/checkToken";
 
-<<<<<<< Updated upstream
 /*//////////////////////////////////////////////////////////////
                         ROUTE IS USED
 /////////////////////////////////////////////////////////////*/
-=======
 const prosRouter = Router();
 
->>>>>>> Stashed changes
 // authorization : admin, user
 prosRouter.get(
   "/",

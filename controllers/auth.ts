@@ -1,13 +1,13 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, Router } from "express";
 import prisma from "../helpers/prisma";
-import { ErrorHandler } from "../middleware/errors";
-const authRouter = require("express").Router();
-const UserAuth = require("../helpers/users");
+import UserAuth from "../helpers/users";
 import jwt from "jsonwebtoken";
 
 /*//////////////////////////////////////////////////////////////
                         ROUTE IS USED
 /////////////////////////////////////////////////////////////*/
+const authRouter = Router();
+
 authRouter.post(
   "/logout",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -29,24 +29,26 @@ authRouter.post(
         },
       });
       if (!user) res.status(401).send("User not Found");
-      if (user && user.active === false) res.status(403).send("User account has been deleted");
+      if (user && user.active === false)
+        res.status(403).send("User account has been deleted");
       else {
-        user && UserAuth.verifyPassword(password, user.hashedPassword).then(
-          (passwordIsCorrect: boolean) => {
-            if (passwordIsCorrect) {
-              const token = UserAuth.calculateToken(
-                email,
-                user.id_user,
-                "MonCarnet",
-                Object.keys(user)[0]
-              );
-              res.cookie("user_token", token);
-              res.status(200).send(`user ${user.id_user} connected`);
-            } else {
-              res.status(401).send("Invalid credentials");
+        user?.hashedPassword &&
+          UserAuth.verifyPassword(password, user.hashedPassword).then(
+            (passwordIsCorrect: boolean) => {
+              if (passwordIsCorrect) {
+                const token = UserAuth.calculateToken(
+                  email,
+                  user.id_user,
+                  "MonCarnet",
+                  Object.keys(user)[0]
+                );
+                res.cookie("user_token", token);
+                res.status(200).send(`user ${user.id_user} connected`);
+              } else {
+                res.status(401).send("Invalid credentials");
+              }
             }
-          }
-        );
+          );
       }
     } catch (err) {
       next(err);
@@ -107,22 +109,23 @@ authRouter.post(
       });
       if (!admin) res.status(401).send("User not Found");
       else {
-        UserAuth.verifyPassword(password, admin.hashedPassword).then(
-          (passwordIsCorrect: boolean) => {
-            if (passwordIsCorrect) {
-              const token = UserAuth.calculateToken(
-                email,
-                admin.id_admin,
-                "MonCarnet",
-                Object.keys(admin)[0]
-              );
-              res.cookie("user_token", token);
-              res.status(200).send(`Admin ${admin.id_admin} connected`);
-            } else {
-              res.status(401).send("Invalid credentials");
+        admin?.hashedPassword &&
+          UserAuth.verifyPassword(password, admin.hashedPassword).then(
+            (passwordIsCorrect: boolean) => {
+              if (passwordIsCorrect) {
+                const token = UserAuth.calculateToken(
+                  email,
+                  admin.id_admin,
+                  "MonCarnet",
+                  Object.keys(admin)[0]
+                );
+                res.cookie("user_token", token);
+                res.status(200).send(`Admin ${admin.id_admin} connected`);
+              } else {
+                res.status(401).send("Invalid credentials");
+              }
             }
-          }
-        );
+          );
       }
     } catch (err) {
       next(err);

@@ -1,8 +1,9 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, Router } from "express";
 import prisma from "../helpers/prisma";
 import bodyValidator from "../middleware/bodyValidator";
 import { postType } from "../JOI/validate";
-const typesRouter = require("express").Router();
+
+const typesRouter = Router();
 
 // just admin
 

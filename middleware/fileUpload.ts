@@ -1,9 +1,13 @@
 import { Request, Response, NextFunction } from "express";
-require("dotenv").config();
+import "dotenv/config";
 import minioClient from "../helpers/minio";
 
 const upload = async (req: Request, res: Response, next: NextFunction) => {
+  const { file }: any = req.files;
+  console.log(file);
+
   if (req.files !== null) {
+    const minioBucket = process.env.MINIO_BUCKET || "";
     let objectName = "";
     switch (req.baseUrl) {
       case "/api/vehicules":
@@ -18,20 +22,21 @@ const upload = async (req: Request, res: Response, next: NextFunction) => {
 
     try {
       const obj = await minioClient.putObject(
-        process.env.MINIO_BUCKET,
+        minioBucket,
         "/user/" +
           req.userLogin.id_user +
           objectName +
-          req.files.file.name.replace(/ /g, ""),
-        req.files.file.data
+          file.name.replace(/ /g, ""),
+        file.data
       );
       res.status(200).json({
         etag: obj,
         url: `https://${process.env.MINIO_ENDPOINT}/${
           process.env.MINIO_BUCKET
-        }/user/${
-          req.userLogin.id_user
-        }${objectName}${req.files.file.name.replace(/ /g, "")}`,
+        }/user/${req.userLogin.id_user}${objectName}${file.name.replace(
+          / /g,
+          ""
+        )}`,
       });
       next();
     } catch (err) {

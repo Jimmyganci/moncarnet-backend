@@ -1,10 +1,11 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, Router } from "express";
 import prisma from "../helpers/prisma";
 import bodyValidator from "../middleware/bodyValidator";
 import { postVehicule } from "../JOI/validate";
-const vehiculesRouter = require("express").Router();
 import VehiculeInfos from "../interfaces/IVehiculeInfos";
 import upload from "../middleware/fileUpload";
+
+const vehiculesRouter = Router();
 
 // get many vehicules (authorization: admin)
 vehiculesRouter.get(

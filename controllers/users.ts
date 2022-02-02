@@ -1,15 +1,16 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, Router } from "express";
 import prisma from "../helpers/prisma";
 import bodyValidator from "../middleware/bodyValidator";
 import { postUser, putUser } from "../JOI/validate";
-const usersRouter = require("express").Router();
-const UserAuth = require("../helpers/users");
+import UserAuth from "../helpers/users";
 import IUserInfos from "../interfaces/IuserInfos";
 import checktoken from "../middleware/checkToken";
 
 /*//////////////////////////////////////////////////////////////
                         ROUTE IS USED
 /////////////////////////////////////////////////////////////*/
+const usersRouter = Router();
+
 // authorization : admin
 usersRouter.get(
   "/",
@@ -18,10 +19,11 @@ usersRouter.get(
     const { lastname, city, postal_code } = req.query;
     if (req.query.appointments) {
       try {
-        const usersWithoutAppointments = await prisma.$queryRaw`SELECT * FROM users as u LEFT JOIN appointments as a on u.id_user = a.userId WHERE a.userId IS NULL`;
-      res.status(200).json(usersWithoutAppointments);
-    } catch (err) {
-      next(err);
+        const usersWithoutAppointments =
+          await prisma.$queryRaw`SELECT * FROM users as u LEFT JOIN appointments as a on u.id_user = a.userId WHERE a.userId IS NULL`;
+        res.status(200).json(usersWithoutAppointments);
+      } catch (err) {
+        next(err);
       }
     }
     if (req.query.lastname) {
@@ -330,14 +332,14 @@ usersRouter.delete(
 usersRouter.get(
   "/:idUser/vehicules",
   async (req: Request, res: Response, next: NextFunction) => {
-    const idUser:number = parseInt(req.params.idUser);
+    const idUser: number = parseInt(req.params.idUser);
     try {
       const vehicules = await prisma.vehicules.findMany({
-        where:{
-         users: {
-           id_user: idUser,
-         }
-        }
+        where: {
+          users: {
+            id_user: idUser,
+          },
+        },
       });
       res.status(200).json(vehicules);
     } catch (err) {

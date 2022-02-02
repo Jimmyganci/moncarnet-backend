@@ -1,8 +1,8 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, Router } from "express";
 import prisma from "../helpers/prisma";
 import IAppointment from "../interfaces/IAppointment";
 
-const appointmentRouter = require("express").Router();
+const appointmentRouter = Router();
 
 /*//////////////////////////////////////////////////////////////
                         ROUTE IS USED

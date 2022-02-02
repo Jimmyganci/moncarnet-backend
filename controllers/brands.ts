@@ -1,6 +1,7 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, Router } from "express";
 import prisma from "../helpers/prisma";
-const brandsRouter = require("express").Router();
+
+const brandsRouter = Router();
 
 // authorization:admin user
 brandsRouter.get(

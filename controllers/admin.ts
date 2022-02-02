@@ -1,12 +1,13 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, Router } from "express";
 import prisma from "../helpers/prisma";
 import bodyValidator from "../middleware/bodyValidator";
 import { postAdmin } from "../JOI/validate";
 import AdminInfos from "../interfaces/IAdminInfos";
-const UserAuth = require("../helpers/users");
-const adminRouter = require("express").Router();
+import UserAuth from "../helpers/users";
 import checktoken from "../middleware/checkToken";
 import checkRole from "../middleware/checkRole";
+
+const adminRouter = Router();
 
 adminRouter.get(
   "/",

@@ -19,14 +19,18 @@ usersRouter.get(
     const { lastname, city, postal_code } = req.query;
     if (req.query.appointments) {
       try {
-        const usersWithoutAppointments =
-          await prisma.$queryRaw`SELECT * FROM users as u LEFT JOIN appointments as a on u.id_user = a.userId WHERE a.userId IS NULL`;
+        const usersWithoutAppointments = await prisma.users.findMany({
+          where: {
+            appointments: {
+              none: {},
+            },
+          },
+        });
         res.status(200).json(usersWithoutAppointments);
       } catch (err) {
         next(err);
       }
-    }
-    if (req.query.lastname) {
+    } else if (req.query.lastname) {
       try {
         const usersFilterByLastname = await prisma.users.findMany({
           where: {

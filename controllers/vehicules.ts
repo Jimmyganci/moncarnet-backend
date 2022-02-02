@@ -24,8 +24,13 @@ vehiculesRouter.get(
         res.status(200).json(vehiculeByValidate);
       } else if (req.query.service_book) {
         try {
-          const vehiculesWithoutServiceBook =
-            await prisma.$queryRaw`SELECT v.* FROM vehicules as v LEFT JOIN service_books as sb on v.immat = sb.immat WHERE sb.immat IS NULL`;
+          const vehiculesWithoutServiceBook = await prisma.vehicules.findMany({
+            where: {
+              service_books: {
+                none: {},
+              },
+            },
+          });
           res.status(200).json(vehiculesWithoutServiceBook);
         } catch (err) {
           next(err);

@@ -1,13 +1,18 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, Router } from "express";
 import prisma from "../helpers/prisma";
 import bodyValidator from "../middleware/bodyValidator";
 import { postType } from "../JOI/validate";
-const typesRouter = require("express").Router();
+
+const typesRouter = Router();
 
 // just admin
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
+
 typesRouter.get(
-  "/all",
+  "/",
   async (req: Request, res: Response, next: NextFunction) => {
     const { name } = req.query;
     try {
@@ -29,6 +34,10 @@ typesRouter.get(
     }
   }
 );
+
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 typesRouter.get(
   "/:idType",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -46,23 +55,9 @@ typesRouter.get(
   }
 );
 
-typesRouter.get(
-  "/vehicules/:idType",
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { idType } = req.params;
-    try {
-      const findVehiculeByType = await prisma.vehicules.findMany({
-        where: {
-          id_typeId: Number(idType),
-        },
-      });
-      res.status(200).send(findVehiculeByType);
-    } catch (err) {
-      next(err);
-    }
-  }
-);
-
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 typesRouter.post(
   "/",
   bodyValidator(postType),

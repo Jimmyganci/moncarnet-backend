@@ -1,7 +1,11 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, Router } from "express";
 import prisma from "../helpers/prisma";
-const modelsRouter = require("express").Router();
 
+const modelsRouter = Router();
+
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 modelsRouter.get(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -14,6 +18,9 @@ modelsRouter.get(
   }
 );
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 modelsRouter.get(
   "/:idModel",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -31,6 +38,9 @@ modelsRouter.get(
   }
 );
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 modelsRouter.post(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -49,6 +59,9 @@ modelsRouter.post(
   }
 );
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 modelsRouter.put(
   "/:id",
   async (req: Request, res: Response, next: NextFunction) => {
@@ -70,6 +83,10 @@ modelsRouter.put(
     }
   }
 );
+
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 
 modelsRouter.delete(
   "/:id",

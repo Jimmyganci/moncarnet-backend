@@ -1,6 +1,6 @@
 require("dotenv").config();
-const argon2 = require("argon2");
-const jwt = require("jsonwebtoken");
+import argon2 from "argon2";
+import jwt from "jsonwebtoken";
 
 const PRIVATE_KEY = process.env.TOKEN;
 
@@ -10,7 +10,10 @@ const calculateToken = (
   origin = "",
   roleId = ""
 ) => {
-  return jwt.sign({ email: userEmail, id_user, origin, roleId }, PRIVATE_KEY);
+  return jwt.sign(
+    { email: userEmail, id_user, origin, roleId },
+    String(PRIVATE_KEY)
+  );
 };
 
 const hashingOptions = {
@@ -28,4 +31,4 @@ const verifyPassword = (plainPassword: string, hashedPassword: string) => {
   return argon2.verify(hashedPassword, plainPassword, hashingOptions);
 };
 
-module.exports = { calculateToken, hashPassword, verifyPassword };
+export = { calculateToken, hashPassword, verifyPassword };

@@ -29,11 +29,7 @@ authRouter.post(
       if (user && user.active === false)
         res.status(403).send("User account has been deleted");
       else {
-<<<<<<< HEAD
-        user &&
-=======
         user?.hashedPassword &&
->>>>>>> cbb3fe7052b7171019cdcdfff1af6c0ed2ddb377
           UserAuth.verifyPassword(password, user.hashedPassword).then(
             (passwordIsCorrect: boolean) => {
               if (passwordIsCorrect) {

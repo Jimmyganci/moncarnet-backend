@@ -1,51 +1,19 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, Router } from "express";
 import prisma from "../helpers/prisma";
 import bodyValidator from "../middleware/bodyValidator";
 import { postVehicule } from "../JOI/validate";
-const vehiculesRouter = require("express").Router();
 import VehiculeInfos from "../interfaces/IVehiculeInfos";
 import upload from "../middleware/fileUpload";
 
+const vehiculesRouter = Router();
+
 // get many vehicules (authorization: admin)
 vehiculesRouter.get(
-  "/all",
+  "/",
   async (req: Request, res: Response, next: NextFunction) => {
-    const { brand, model, validate, noValidate } = req.query;
+    const { noValidate } = req.query;
     try {
-      if (req.query.brand) {
-        const vehiculeByBrand = await prisma.vehicules.findMany({
-          where: {
-            models: {
-              brand: {
-                name: {
-                  contains: String(brand),
-                },
-              },
-            },
-          },
-        });
-        res.status(200).json(vehiculeByBrand);
-      } else if (req.query.model) {
-        const vehiculeByModel = await prisma.vehicules.findMany({
-          where: {
-            models: {
-              name: {
-                contains: String(model),
-              },
-            },
-          },
-        });
-        res.status(200).json(vehiculeByModel);
-      } else if (validate) {
-        const vehiculeByValidate = await prisma.vehicules.findMany({
-          where: {
-            validate: {
-              equals: true,
-            },
-          },
-        });
-        res.status(200).json(vehiculeByValidate);
-      } else if (noValidate) {
+      if (noValidate) {
         const vehiculeByValidate = await prisma.vehicules.findMany({
           where: {
             validate: {
@@ -54,6 +22,19 @@ vehiculesRouter.get(
           },
         });
         res.status(200).json(vehiculeByValidate);
+      } else if (req.query.service_book) {
+        try {
+          const vehiculesWithoutServiceBook = await prisma.vehicules.findMany({
+            where: {
+              service_books: {
+                none: {},
+              },
+            },
+          });
+          res.status(200).json(vehiculesWithoutServiceBook);
+        } catch (err) {
+          next(err);
+        }
       } else {
         const vehicules = await prisma.vehicules.findMany();
         res.json(vehicules);
@@ -64,18 +45,6 @@ vehiculesRouter.get(
   }
 );
 
-vehiculesRouter.get(
-  "/withoutServiceBook",
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const getVehiculeWIthoutServiceBook =
-        await prisma.$queryRaw`SELECT v.* FROM vehicules as v LEFT JOIN service_book as sb on v.immat = sb.immat WHERE sb.immat IS NULL`;
-      res.status(200).json(getVehiculeWIthoutServiceBook);
-    } catch (err) {
-      next(err);
-    }
-  }
-);
 // get one vehicule (authorization: all)
 vehiculesRouter.get(
   "/:immat",
@@ -156,25 +125,30 @@ vehiculesRouter.get(
     }
   }
 );
-// get user's vehicule (authorization: pros, admin)
+
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 vehiculesRouter.get(
-  "/user/:idUser",
+  "/:immat/service_book",
   async (req: Request, res: Response, next: NextFunction) => {
-    const idUser = parseInt(req.params.idUser);
+    const { immat } = req.params;
     try {
-      const vehicules = await prisma.users.findUnique({
+      const getServiceBookByVehicule = await prisma.service_books.findMany({
         where: {
-          id_user: idUser,
+          vehicules: {
+            immat: immat,
+          },
         },
       });
-      res.status(200).json(vehicules);
+      res.status(200).json(getServiceBookByVehicule);
     } catch (err) {
       next(err);
     }
   }
 );
 
-vehiculesRouter.post("/upload", upload);
+vehiculesRouter.post("/:immat/upload", upload);
 // post vehicule (authorization: user, admin)
 vehiculesRouter.post(
   "/",

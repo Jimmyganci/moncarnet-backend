@@ -1,12 +1,15 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, Router } from "express";
 import prisma from "../helpers/prisma";
 import bodyValidator from "../middleware/bodyValidator";
 import { postPros, putPros } from "../JOI/validate";
-const prosRouter = require("express").Router();
-const UserAuth = require("../helpers/users");
+import UserAuth from "../helpers/users";
 import ProsInfos from "../interfaces/IProsInfos";
-import upload from "../middleware/fileUpload";
 import checktoken from "../middleware/checkToken";
+
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
+const prosRouter = Router();
 
 // authorization : admin, user
 prosRouter.get(
@@ -54,6 +57,10 @@ prosRouter.get(
     }
   }
 );
+
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 // authorization : admin, user, pros
 prosRouter.get(
   "/:idPros",
@@ -74,6 +81,9 @@ prosRouter.get(
   }
 );
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 prosRouter.get(
   "/:idPros/users",
   checktoken,
@@ -96,9 +106,30 @@ prosRouter.get(
   }
 );
 
-prosRouter.post("/upload", checktoken, upload);
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
+prosRouter.get(
+  "/:idConnected/appointments",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { idConnected } = req.params;
+    try {
+      const getOneAppointment = await prisma.appointments.findMany({
+        where: {
+          prosId: Number(idConnected),
+        },
+      });
+      res.status(200).json(getOneAppointment);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
 
 // authorization : admin only
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 prosRouter.post(
   "/",
   bodyValidator(postPros),
@@ -134,6 +165,9 @@ prosRouter.post(
   }
 );
 // authorization : admin pros
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 prosRouter.put(
   "/:idPros",
   checktoken,
@@ -151,7 +185,6 @@ prosRouter.put(
         },
       });
       if (emailExisting.length === 0) {
-        // const hashedPassword = await UserAuth.hashPassword(pros.password);
         const prosUpdate = await prisma.pros.update({
           where: {
             id_pros: idPros,
@@ -159,7 +192,6 @@ prosRouter.put(
           data: {
             name: pros.name,
             email: pros.email,
-            // hashedPassword: hashedPassword,
             address: pros.address,
             phone: pros.phone,
             postal_code: pros.postal_code,
@@ -177,6 +209,9 @@ prosRouter.put(
   }
 );
 // authorization : admin
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 prosRouter.delete(
   "/:idPros",
   checktoken,

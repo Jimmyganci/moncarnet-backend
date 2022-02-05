@@ -1,19 +1,36 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, Router } from "express";
 import prisma from "../helpers/prisma";
 import bodyValidator from "../middleware/bodyValidator";
 import { postUser, putUser } from "../JOI/validate";
-const usersRouter = require("express").Router();
-const UserAuth = require("../helpers/users");
+import UserAuth from "../helpers/users";
 import IUserInfos from "../interfaces/IuserInfos";
 import checktoken from "../middleware/checkToken";
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
+const usersRouter = Router();
+
 // authorization : admin
 usersRouter.get(
-  "/all",
+  "/",
   checktoken,
   async (req: Request, res: Response, next: NextFunction) => {
     const { lastname, city, postal_code } = req.query;
-    if (req.query.lastname) {
+    if (req.query.appointments) {
+      try {
+        const usersWithoutAppointments = await prisma.users.findMany({
+          where: {
+            appointments: {
+              none: {},
+            },
+          },
+        });
+        res.status(200).json(usersWithoutAppointments);
+      } catch (err) {
+        next(err);
+      }
+    } else if (req.query.lastname) {
       try {
         const usersFilterByLastname = await prisma.users.findMany({
           where: {
@@ -61,19 +78,6 @@ usersRouter.get(
   }
 );
 
-usersRouter.get(
-  "/withOutAppointment",
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const getUserWithoutAppointent =
-        await prisma.$queryRaw`SELECT * FROM users as u LEFT JOIN appointment as a on u.id_user = a.userId WHERE a.userId IS NULL`;
-      res.status(200).json(getUserWithoutAppointent);
-    } catch (err) {
-      next(err);
-    }
-  }
-);
-
 // authorizations: user, admin, pros
 usersRouter.get(
   "/:idUser",
@@ -93,30 +97,12 @@ usersRouter.get(
   }
 );
 
-//  authorizations : admin user
-usersRouter.get(
-  "/vehicules/:idUser",
-  checktoken,
-  async (req: Request, res: Response, next: NextFunction) => {
-    const idUser = parseInt(req.params.idUser);
-    try {
-      const vehiculeUser = await prisma.vehicules.findMany({
-        where: {
-          users: {
-            id_user: idUser,
-          },
-        },
-      });
-      res.status(200).json(vehiculeUser);
-    } catch (err) {
-      next(err);
-    }
-  }
-);
-
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 // authorization: admin, user
 usersRouter.get(
-  "/pros/:idUser",
+  "/:idUser/pros",
   checktoken,
   async (req: Request, res: Response, next: NextFunction) => {
     const idUser = parseInt(req.params.idUser);
@@ -138,11 +124,10 @@ usersRouter.get(
 );
 
 usersRouter.put(
-  "/pros/:idUser",
+  "/:idUser/pros/:idPros",
   checktoken,
   async (req: Request, res: Response, next: NextFunction) => {
-    const { idUser } = req.params;
-    const { idPros }: { idPros: number } = req.body;
+    const { idUser, idPros } = req.params;
     try {
       const createProsAndUsers = await prisma.users.update({
         where: {
@@ -150,12 +135,12 @@ usersRouter.put(
         },
         data: {
           pros: {
-            connect: { id_pros: idPros },
+            connect: { id_pros: Number(idPros) },
           },
         },
       });
       res
-        .status(200)
+        .status(204)
         .json(
           `${createProsAndUsers.firstname} the garage has been added on your favorite`
         );
@@ -165,6 +150,29 @@ usersRouter.put(
   }
 );
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
+usersRouter.get(
+  "/:idUser/appointments",
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { idUser } = req.params;
+    try {
+      const getOneAppointment = await prisma.appointments.findMany({
+        where: {
+          userId: Number(idUser),
+        },
+      });
+      res.status(200).json(getOneAppointment);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 usersRouter.delete(
   "/:idUser/prosDeleted/:idPros",
   checktoken,
@@ -194,6 +202,9 @@ usersRouter.delete(
   }
 );
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 // authorization: admin, user
 usersRouter.post(
   "/",
@@ -232,6 +243,10 @@ usersRouter.post(
   }
 );
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
+
 // authorization: admin, user
 usersRouter.put(
   "/:idUser",
@@ -260,7 +275,6 @@ usersRouter.put(
             lastname: user.lastname,
             email: user.email,
             address: user.address,
-            // hashedPassword: user.password,
             phone: user.phone,
             postal_code: user.postal_code,
             city: user.city,

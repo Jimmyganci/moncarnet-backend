@@ -1,10 +1,10 @@
 import { Application } from "express";
-const express = require("express");
-const cookieParser = require("cookie-parser");
-const cors = require("cors");
+import express from "express";
+import cookieParser from "cookie-parser";
+import cors from "cors";
 const app: Application = express();
 import { handleError } from "./middleware/errors";
-const fileUpload = require("express-fileupload");
+import fileUpload from "express-fileupload";
 
 import setupRoutes from "./controllers/index";
 

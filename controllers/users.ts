@@ -310,27 +310,4 @@ usersRouter.delete(
   }
 );
 
-/*//////////////////////////////////////////////////////////////
-                        ROUTE IS USED
-/////////////////////////////////////////////////////////////*/
-// get user's vehicule (authorization: pros, admin)
-usersRouter.get(
-  "/:idUser/vehicules",
-  async (req: Request, res: Response, next: NextFunction) => {
-    const idUser: number = parseInt(req.params.idUser);
-    try {
-      const vehicules = await prisma.vehicules.findMany({
-        where: {
-          users: {
-            id_user: idUser,
-          },
-        },
-      });
-      res.status(200).json(vehicules);
-    } catch (err) {
-      next(err);
-    }
-  }
-);
-
-module.exports = usersRouter;
+export default usersRouter;

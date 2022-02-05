@@ -105,4 +105,4 @@ modelsRouter.delete(
   }
 );
 
-module.exports = modelsRouter;
+export default modelsRouter;

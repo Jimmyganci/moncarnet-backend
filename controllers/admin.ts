@@ -55,9 +55,9 @@ adminRouter.post(
         },
       });
 
-      if (emailExisting === null) {
+      if (!emailExisting) {
         const hashedPassword = await UserAuth.hashPassword(admin.password);
-        const createAdmin = await prisma.admin.create({
+        const createdAdmin = await prisma.admin.create({
           data: {
             firstname: admin.firstname,
             lastname: admin.lastname,
@@ -65,7 +65,7 @@ adminRouter.post(
             hashedPassword: hashedPassword,
           },
         });
-        res.status(200).json(createAdmin);
+        res.status(200).json(createdAdmin);
       } else {
         res.status(409).send("Email already used");
       }
@@ -93,9 +93,9 @@ adminRouter.put(
         },
       });
 
-      if (emailExisting.length === 0) {
+      if (!emailExisting.length) {
         const hashedPassword = await UserAuth.hashPassword(admin.password);
-        const adminUpdate = await prisma.admin.update({
+        const updatedAdmin = await prisma.admin.update({
           where: {
             id_admin: Number(idAdmin),
           },
@@ -106,7 +106,7 @@ adminRouter.put(
             hashedPassword: hashedPassword,
           },
         });
-        if (adminUpdate) res.status(204).send("Admin updated");
+        if (updatedAdmin) res.status(204).send("Admin updated");
       } else {
         res.status(409).send("Email already used!");
       }
@@ -123,16 +123,16 @@ adminRouter.delete(
   async (req: Request, res: Response, next: NextFunction) => {
     const { idAdmin } = req.params;
     try {
-      const deleteAdmin = await prisma.admin.delete({
+      const deletedAdmin = await prisma.admin.delete({
         where: {
           id_admin: Number(idAdmin),
         },
       });
-      if (deleteAdmin) res.status(204).send("Admin deleted");
+      if (deletedAdmin) res.status(204).send("Admin deleted");
     } catch (err) {
       next(err);
     }
   }
 );
 
-module.exports = adminRouter;
+export default adminRouter;

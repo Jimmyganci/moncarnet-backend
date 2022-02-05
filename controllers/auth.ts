@@ -146,4 +146,4 @@ authRouter.get(
   }
 );
 
-module.exports = authRouter;
+export default authRouter;

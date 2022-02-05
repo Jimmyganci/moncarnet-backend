@@ -6,7 +6,7 @@ const app: Application = express();
 import { handleError } from "./middleware/errors";
 import fileUpload from "express-fileupload";
 
-const { setupRoutes } = require("./controllers/index");
+import setupRoutes from "./controllers/index";
 
 app.use(
   fileUpload({

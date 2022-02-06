@@ -4,7 +4,6 @@ import minioClient from "../helpers/minio";
 
 const upload = async (req: Request, res: Response, next: NextFunction) => {
   const { file }: any = req.files;
-  console.log(file);
 
   if (req.files !== null) {
     const minioBucket = process.env.MINIO_BUCKET || "";

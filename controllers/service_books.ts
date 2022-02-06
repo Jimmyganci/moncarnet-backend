@@ -2,7 +2,7 @@ import { Request, Response, NextFunction, Router } from "express";
 import prisma from "../helpers/prisma";
 import bodyValidator from "../middleware/bodyValidator";
 import { postServiceBook } from "../JOI/validate";
-import ServiceBookInfos from "../interfaces/IServiceBook";
+import IServiceBook from "../interfaces/IServiceBook";
 
 const service_bookRouter = Router();
 
@@ -13,8 +13,8 @@ service_bookRouter.get(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const serviceBooks = await prisma.service_books.findMany();
-      res.status(200).json(serviceBooks);
+      const getAllServiceBooks = await prisma.service_books.findMany();
+      res.status(200).json(getAllServiceBooks);
     } catch (err) {
       next(err);
     }
@@ -48,9 +48,9 @@ service_bookRouter.post(
   "/",
   bodyValidator(postServiceBook),
   async (req: Request, res: Response, next: NextFunction) => {
-    const pros: ServiceBookInfos = req.body;
+    const pros: IServiceBook = req.body;
     try {
-      const addServiceBook = await prisma.service_books.create({
+      const createdServiceBook = await prisma.service_books.create({
         data: {
           date: new Date(pros.date),
           service: pros.service,
@@ -69,7 +69,7 @@ service_bookRouter.post(
           },
         },
       });
-      res.status(200).json(addServiceBook);
+      res.status(200).json(createdServiceBook);
     } catch (err) {
       next(err);
     }
@@ -83,9 +83,9 @@ service_bookRouter.put(
   "/:idServiceBook",
   async (req: Request, res: Response, next: NextFunction) => {
     const idServiceBook = parseInt(req.params.idServiceBook);
-    const pros: ServiceBookInfos = req.body;
+    const pros: IServiceBook = req.body;
     try {
-      const userUpdate = await prisma.service_books.update({
+      const updatedServiceBook = await prisma.service_books.update({
         where: {
           id_service_book: idServiceBook,
         },
@@ -97,7 +97,7 @@ service_bookRouter.put(
           url_invoice: pros.url_invoice,
         },
       });
-      res.status(200).json(userUpdate);
+      res.status(200).json(updatedServiceBook);
     } catch (err) {
       next(err);
     }
@@ -112,7 +112,7 @@ service_bookRouter.delete(
   async (req: Request, res: Response, next: NextFunction) => {
     const idServiceBook = parseInt(req.params.idServiceBook);
     try {
-      const deleteService_book = await prisma.service_books.delete({
+      const deletedServiceBook = await prisma.service_books.delete({
         where: {
           id_service_book: idServiceBook,
         },
@@ -120,7 +120,7 @@ service_bookRouter.delete(
       res
         .status(200)
         .send(
-          `Sercie Book with id ${deleteService_book.id_service_book} deleted`
+          `Sercie Book with id ${deletedServiceBook.id_service_book} deleted`
         );
     } catch (err) {
       next(err);

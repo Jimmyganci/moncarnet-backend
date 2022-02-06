@@ -17,17 +17,17 @@ typesRouter.get(
     const { name } = req.query;
     try {
       if (req.query.name) {
-        const nameFilter = await prisma.types.findMany({
+        const findTypeByName = await prisma.types.findMany({
           where: {
             name_type: {
               contains: String(name),
             },
           },
         });
-        res.status(200).send(nameFilter);
+        res.status(200).send(findTypeByName);
       } else {
-        const types = await prisma.types.findMany();
-        res.status(200).send(types);
+        const getAllTypes = await prisma.types.findMany();
+        res.status(200).send(getAllTypes);
       }
     } catch (err) {
       next(err);
@@ -43,12 +43,12 @@ typesRouter.get(
   async (req: Request, res: Response, next: NextFunction) => {
     const { idType } = req.params;
     try {
-      const type = await prisma.types.findUnique({
+      const getOneType = await prisma.types.findUnique({
         where: {
           id_type: Number(idType),
         },
       });
-      res.status(200).send(type);
+      res.status(200).send(getOneType);
     } catch (err) {
       next(err);
     }
@@ -70,12 +70,12 @@ typesRouter.post(
         },
       });
       if (!existingType) {
-        const createTypes = await prisma.types.create({
+        const createdType = await prisma.types.create({
           data: {
             name_type: name_type,
           },
         });
-        res.status(200).json(createTypes);
+        res.status(200).json(createdType);
       } else {
         res.status(202).send("already used in the database");
       }
@@ -91,7 +91,7 @@ typesRouter.put(
     const { idType } = req.params;
     const { name_type }: { name_type: string } = req.body;
     try {
-      const updateTypes = await prisma.types.update({
+      const updatedType = await prisma.types.update({
         where: {
           id_type: Number(idType),
         },
@@ -99,7 +99,7 @@ typesRouter.put(
           name_type: name_type,
         },
       });
-      res.status(200).json(updateTypes);
+      res.status(200).json(updatedType);
     } catch (err) {
       next(err);
     }
@@ -110,12 +110,12 @@ typesRouter.delete(
   async (req: Request, res: Response, next: NextFunction) => {
     const { idType } = req.params;
     try {
-      const deleteType = await prisma.types.delete({
+      const deletedType = await prisma.types.delete({
         where: {
           id_type: Number(idType),
         },
       });
-      res.status(200).json(deleteType.name_type + " deleted");
+      res.status(200).json(deletedType.name_type + " deleted");
     } catch (err) {
       next(err);
     }

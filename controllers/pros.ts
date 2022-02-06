@@ -3,7 +3,7 @@ import prisma from "../helpers/prisma";
 import bodyValidator from "../middleware/bodyValidator";
 import { postPros, putPros } from "../JOI/validate";
 import UserAuth from "../helpers/users";
-import ProsInfos from "../interfaces/IProsInfos";
+import IPros from "../interfaces/IPros";
 import checktoken from "../middleware/checkToken";
 
 /*//////////////////////////////////////////////////////////////
@@ -19,14 +19,14 @@ prosRouter.get(
     const { namePros, city } = req.query;
     try {
       if (req.query.namePros && !req.query.city) {
-        const nameFilter = await prisma.pros.findMany({
+        const prosByName = await prisma.pros.findMany({
           where: {
             name: {
               contains: String(namePros),
             },
           },
         });
-        res.status(200).json(nameFilter);
+        res.status(200).json(prosByName);
       } else if (req.query.city && !req.query.namePros) {
         const prosByCity = await prisma.pros.findMany({
           where: {
@@ -49,8 +49,8 @@ prosRouter.get(
         });
         res.status(200).json(prosByNameAndCity);
       } else {
-        const pros = await prisma.pros.findMany();
-        res.status(200).json(pros);
+        const getAllPros = await prisma.pros.findMany();
+        res.status(200).json(getAllPros);
       }
     } catch (err) {
       next(err);
@@ -90,7 +90,7 @@ prosRouter.get(
   async (req: Request, res: Response, next: NextFunction) => {
     const idPros = parseInt(req.params.idPros);
     try {
-      const usersPros = await prisma.users.findMany({
+      const getProsUsers = await prisma.users.findMany({
         where: {
           pros: {
             some: {
@@ -99,7 +99,7 @@ prosRouter.get(
           },
         },
       });
-      res.status(200).json(usersPros);
+      res.status(200).json(getProsUsers);
     } catch (err) {
       next(err);
     }
@@ -114,12 +114,12 @@ prosRouter.get(
   async (req: Request, res: Response, next: NextFunction) => {
     const { idConnected } = req.params;
     try {
-      const getOneAppointment = await prisma.appointments.findMany({
+      const getProsAppointments = await prisma.appointments.findMany({
         where: {
           prosId: Number(idConnected),
         },
       });
-      res.status(200).json(getOneAppointment);
+      res.status(200).json(getProsAppointments);
     } catch (err) {
       next(err);
     }
@@ -134,7 +134,7 @@ prosRouter.post(
   "/",
   bodyValidator(postPros),
   async (req: Request, res: Response, next: NextFunction) => {
-    const pros: ProsInfos = req.body;
+    const pros: IPros = req.body;
     try {
       const emailExisting = await prisma.pros.findUnique({
         where: {
@@ -143,7 +143,7 @@ prosRouter.post(
       });
       if (!emailExisting) {
         const hashedPassword = await UserAuth.hashPassword(pros.password);
-        const createPros = await prisma.pros.create({
+        const createdPros = await prisma.pros.create({
           data: {
             name: pros.name,
             email: pros.email,
@@ -155,7 +155,7 @@ prosRouter.post(
             siret: pros.siret,
           },
         });
-        res.status(200).json(createPros);
+        res.status(200).json(createdPros);
       } else {
         res.status(409).send("Email already used");
       }
@@ -174,7 +174,7 @@ prosRouter.put(
   bodyValidator(putPros),
   async (req: Request, res: Response, next: NextFunction) => {
     const idPros = parseInt(req.params.idPros);
-    const pros: ProsInfos = req.body;
+    const pros: IPros = req.body;
     try {
       const emailExisting = await prisma.pros.findMany({
         where: {
@@ -185,7 +185,7 @@ prosRouter.put(
         },
       });
       if (emailExisting.length === 0) {
-        const prosUpdate = await prisma.pros.update({
+        const updatedPros = await prisma.pros.update({
           where: {
             id_pros: idPros,
           },
@@ -199,7 +199,7 @@ prosRouter.put(
             siret: pros.siret,
           },
         });
-        res.status(200).json(prosUpdate);
+        res.status(200).json(updatedPros);
       } else {
         res.status(409).send("Email already used");
       }

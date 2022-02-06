@@ -2,16 +2,16 @@ import { Request, Response, NextFunction, Router } from "express";
 import prisma from "../helpers/prisma";
 import bodyValidator from "../middleware/bodyValidator";
 import { postAdmin } from "../JOI/validate";
-import AdminInfos from "../interfaces/IAdminInfos";
+import IAdmin from "../interfaces/IAdmin";
 import UserAuth from "../helpers/users";
-import checktoken from "../middleware/checkToken";
+import checkToken from "../middleware/checkToken";
 import checkRole from "../middleware/checkRole";
 
 const adminRouter = Router();
 
 adminRouter.get(
   "/",
-  checktoken,
+  checkToken,
   checkRole,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -25,7 +25,7 @@ adminRouter.get(
 
 adminRouter.get(
   "/:idAdmin",
-  checktoken,
+  checkToken,
   checkRole,
   async (req: Request, res: Response, next: NextFunction) => {
     const { idAdmin } = req.params;
@@ -47,7 +47,7 @@ adminRouter.post(
   "/",
   bodyValidator(postAdmin),
   async (req: Request, res: Response, next: NextFunction) => {
-    const admin: AdminInfos = req.body;
+    const admin: IAdmin = req.body;
     try {
       const emailExisting = await prisma.admin.findUnique({
         where: {
@@ -78,11 +78,11 @@ adminRouter.post(
 adminRouter.put(
   "/:idAdmin",
   bodyValidator(postAdmin),
-  checktoken,
+  checkToken,
   checkRole,
   async (req: Request, res: Response, next: NextFunction) => {
     const { idAdmin } = req.params;
-    const admin: AdminInfos = req.body;
+    const admin: IAdmin = req.body;
     try {
       const emailExisting = await prisma.admin.findMany({
         where: {
@@ -118,7 +118,7 @@ adminRouter.put(
 
 adminRouter.delete(
   "/:idAdmin",
-  checktoken,
+  checkToken,
   checkRole,
   async (req: Request, res: Response, next: NextFunction) => {
     const { idAdmin } = req.params;

@@ -10,8 +10,8 @@ modelsRouter.get(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const models = await prisma.models.findMany();
-      res.status(200).json(models);
+      const getAllModels = await prisma.models.findMany();
+      res.status(200).json(getAllModels);
     } catch (err) {
       next(err);
     }
@@ -26,12 +26,12 @@ modelsRouter.get(
   async (req: Request, res: Response, next: NextFunction) => {
     const idModel = parseInt(req.params.idModel);
     try {
-      const models = await prisma.models.findUnique({
+      const getOneModel = await prisma.models.findUnique({
         where: {
           id_model: idModel,
         },
       });
-      res.status(200).json(models);
+      res.status(200).json(getOneModel);
     } catch (err) {
       next(err);
     }
@@ -45,14 +45,14 @@ modelsRouter.post(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const addModels = await prisma.models.create({
+      const createdModel = await prisma.models.create({
         data: {
           code: req.body.code,
           name: req.body.name,
           id_brand: req.body.id_brand,
         },
       });
-      res.status(200).json(addModels);
+      res.status(200).json(createdModel);
     } catch (err) {
       next(err);
     }
@@ -67,7 +67,7 @@ modelsRouter.put(
   async (req: Request, res: Response, next: NextFunction) => {
     const id: number = parseInt(req.params.id);
     try {
-      const modelUpdate = await prisma.models.update({
+      const updatedModel = await prisma.models.update({
         where: {
           id_model: id,
         },
@@ -77,7 +77,7 @@ modelsRouter.put(
           id_brand: req.body.id_brand,
         },
       });
-      res.status(200).json(modelUpdate);
+      res.status(200).json(updatedModel);
     } catch (err) {
       next(err);
     }
@@ -93,12 +93,12 @@ modelsRouter.delete(
   async (req: Request, res: Response, next: NextFunction) => {
     const id: number = parseInt(req.params.id);
     try {
-      const modelDeleted = await prisma.models.delete({
+      const deletedModel = await prisma.models.delete({
         where: {
           id_model: id,
         },
       });
-      res.status(200).send(`${modelDeleted.name} deleted`);
+      res.status(200).send(`${deletedModel.name} deleted`);
     } catch (err) {
       next(err);
     }

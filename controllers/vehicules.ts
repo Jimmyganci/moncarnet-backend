@@ -2,7 +2,7 @@ import { Request, Response, NextFunction, Router } from "express";
 import prisma from "../helpers/prisma";
 import bodyValidator from "../middleware/bodyValidator";
 import { postVehicule } from "../JOI/validate";
-import VehiculeInfos from "../interfaces/IVehiculeInfos";
+import IVehicule from "../interfaces/IVehicule";
 import upload from "../middleware/fileUpload";
 
 const vehiculesRouter = Router();
@@ -14,30 +14,31 @@ vehiculesRouter.get(
     const { noValidate } = req.query;
     try {
       if (noValidate) {
-        const vehiculeByValidate = await prisma.vehicules.findMany({
+        const findVehiculeByValidate = await prisma.vehicules.findMany({
           where: {
             validate: {
               equals: false,
             },
           },
         });
-        res.status(200).json(vehiculeByValidate);
+        res.status(200).json(findVehiculeByValidate);
       } else if (req.query.service_book) {
         try {
-          const vehiculesWithoutServiceBook = await prisma.vehicules.findMany({
-            where: {
-              service_books: {
-                none: {},
+          const findVehiculesWithoutServiceBook =
+            await prisma.vehicules.findMany({
+              where: {
+                service_books: {
+                  none: {},
+                },
               },
-            },
-          });
-          res.status(200).json(vehiculesWithoutServiceBook);
+            });
+          res.status(200).json(findVehiculesWithoutServiceBook);
         } catch (err) {
           next(err);
         }
       } else {
-        const vehicules = await prisma.vehicules.findMany();
-        res.json(vehicules);
+        const getAllVehicules = await prisma.vehicules.findMany();
+        res.json(getAllVehicules);
       }
     } catch (err) {
       next(err);
@@ -51,12 +52,12 @@ vehiculesRouter.get(
   async (req: Request, res: Response, next: NextFunction) => {
     const immat = String(req.params.immat);
     try {
-      const vehicules = await prisma.vehicules.findUnique({
+      const getOneVehicule = await prisma.vehicules.findUnique({
         where: {
           immat: immat,
         },
       });
-      res.status(200).json(vehicules);
+      res.status(200).json(getOneVehicule);
     } catch (err) {
       next(err);
     }
@@ -68,7 +69,7 @@ vehiculesRouter.get(
   async (req: Request, res: Response, next: NextFunction) => {
     const immat = req.params.immat;
     try {
-      const vehicules = await prisma.vehicules.findUnique({
+      const findModelVehicule = await prisma.vehicules.findUnique({
         where: {
           immat: String(immat),
         },
@@ -76,7 +77,7 @@ vehiculesRouter.get(
           models: true,
         },
       });
-      res.status(200).json(vehicules);
+      res.status(200).json(findModelVehicule);
     } catch (err) {
       next(err);
     }
@@ -88,7 +89,7 @@ vehiculesRouter.get(
   async (req: Request, res: Response, next: NextFunction) => {
     const immat = req.params.immat;
     try {
-      const vehicules = await prisma.vehicules.findUnique({
+      const findBrandVehicule = await prisma.vehicules.findUnique({
         where: {
           immat: String(immat),
         },
@@ -100,7 +101,7 @@ vehiculesRouter.get(
           },
         },
       });
-      res.status(200).json(vehicules);
+      res.status(200).json(findBrandVehicule);
     } catch (err) {
       next(err);
     }
@@ -111,7 +112,7 @@ vehiculesRouter.get(
   async (req: Request, res: Response, next: NextFunction) => {
     const immat = req.params.immat;
     try {
-      const vehicules = await prisma.vehicules.findUnique({
+      const findTypeVehicule = await prisma.vehicules.findUnique({
         where: {
           immat: String(immat),
         },
@@ -119,7 +120,7 @@ vehiculesRouter.get(
           types: true,
         },
       });
-      res.status(200).json(vehicules);
+      res.status(200).json(findTypeVehicule);
     } catch (err) {
       next(err);
     }
@@ -134,14 +135,14 @@ vehiculesRouter.get(
   async (req: Request, res: Response, next: NextFunction) => {
     const { immat } = req.params;
     try {
-      const getServiceBookByVehicule = await prisma.service_books.findMany({
+      const findServiceBookByVehicule = await prisma.service_books.findMany({
         where: {
           vehicules: {
             immat: immat,
           },
         },
       });
-      res.status(200).json(getServiceBookByVehicule);
+      res.status(200).json(findServiceBookByVehicule);
     } catch (err) {
       next(err);
     }
@@ -154,9 +155,9 @@ vehiculesRouter.post(
   "/",
   bodyValidator(postVehicule),
   async (req: Request, res: Response, next: NextFunction) => {
-    const vehicule: VehiculeInfos = req.body;
+    const vehicule: IVehicule = req.body;
     try {
-      const vehicules = await prisma.vehicules.create({
+      const createdVehicule = await prisma.vehicules.create({
         data: {
           immat: vehicule.immat,
           registration_date: new Date(vehicule.registration_date).toISOString(),
@@ -180,7 +181,7 @@ vehiculesRouter.post(
           },
         },
       });
-      res.status(200).json(vehicules);
+      res.status(200).json(createdVehicule);
     } catch (err) {
       next(err);
     }
@@ -192,9 +193,9 @@ vehiculesRouter.put(
   bodyValidator(postVehicule),
   async (req: Request, res: Response, next: NextFunction) => {
     const immat: string = req.params.immat;
-    const vehicule: VehiculeInfos = req.body;
+    const vehicule: IVehicule = req.body;
     try {
-      const vehiculeUpdate = await prisma.vehicules.update({
+      const updatedVehicule = await prisma.vehicules.update({
         where: {
           immat: immat,
         },
@@ -221,7 +222,7 @@ vehiculesRouter.put(
           },
         },
       });
-      res.status(204).json(vehiculeUpdate.immat);
+      res.status(204).json(updatedVehicule.immat);
     } catch (err) {
       next(err);
     }
@@ -233,12 +234,12 @@ vehiculesRouter.delete(
   async (req: Request, res: Response, next: NextFunction) => {
     const immat: string = req.params.immat;
     try {
-      const vehiculeDeleted = await prisma.vehicules.delete({
+      const deletedVehicule = await prisma.vehicules.delete({
         where: {
           immat: immat,
         },
       });
-      res.status(200).send(`${vehiculeDeleted.immat} deleted`);
+      res.status(200).send(`${deletedVehicule.immat} deleted`);
     } catch (err) {
       next(err);
     }

@@ -73,7 +73,7 @@ appointmentRouter.put(
     const { idAppointment } = req.params;
     const { userId, prosId, date, comment }: IAppointment = req.body;
     try {
-      const updateAppointment = await prisma.appointments.update({
+      const updatedAppointment = await prisma.appointments.update({
         where: {
           id_appointment: Number(idAppointment),
         },
@@ -84,7 +84,7 @@ appointmentRouter.put(
           comment: comment,
         },
       });
-      res.status(200).json(updateAppointment);
+      res.status(200).json(updatedAppointment);
     } catch (err) {
       next(err);
     }
@@ -99,7 +99,7 @@ appointmentRouter.delete(
   async (req: Request, res: Response, next: NextFunction) => {
     const { idAppointment } = req.params;
     try {
-      const deleteOneAppointment = await prisma.appointments.delete({
+      const deletedOneAppointment = await prisma.appointments.delete({
         where: {
           id_appointment: Number(idAppointment),
         },
@@ -107,7 +107,7 @@ appointmentRouter.delete(
       res
         .status(200)
         .send(
-          `Appointment of ${deleteOneAppointment.date} with pros Id ${deleteOneAppointment.prosId} deleted`
+          `Appointment of ${deletedOneAppointment.date} with pros Id ${deletedOneAppointment.prosId} deleted`
         );
     } catch (err) {
       next(err);

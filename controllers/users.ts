@@ -129,21 +129,37 @@ usersRouter.put(
   async (req: Request, res: Response, next: NextFunction) => {
     const { idUser, idPros } = req.params;
     try {
-      const createProsAndUsers = await prisma.users.update({
+      const existingFavorite = await prisma.users.findUnique({
         where: {
           id_user: Number(idUser),
         },
-        data: {
+        select: {
           pros: {
-            connect: { id_pros: Number(idPros) },
+            where: {
+              id_pros: Number(idPros),
+            },
           },
         },
       });
-      res
-        .status(204)
-        .json(
-          `${createProsAndUsers.firstname} the garage has been added on your favorite`
-        );
+      if (existingFavorite && existingFavorite.pros.length === 0) {
+        const createProsAndUsers = await prisma.users.update({
+          where: {
+            id_user: Number(idUser),
+          },
+          data: {
+            pros: {
+              connect: { id_pros: Number(idPros) },
+            },
+          },
+        });
+        res
+          .status(204)
+          .json(
+            `${createProsAndUsers.firstname} the garage has been added on your favorite`
+          );
+      } else {
+        res.status(409).send("This garage is already in your favorite!");
+      }
     } catch (err) {
       next(err);
     }
@@ -317,14 +333,14 @@ usersRouter.delete(
 usersRouter.get(
   "/:idUser/vehicules",
   async (req: Request, res: Response, next: NextFunction) => {
-    const idUser:number = parseInt(req.params.idUser);
+    const idUser: number = parseInt(req.params.idUser);
     try {
       const vehicules = await prisma.vehicules.findMany({
-        where:{
-         users: {
-           id_user: idUser,
-         }
-        }
+        where: {
+          users: {
+            id_user: idUser,
+          },
+        },
       });
       res.status(200).json(vehicules);
     } catch (err) {

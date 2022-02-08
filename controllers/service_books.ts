@@ -1,29 +1,35 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, Router } from "express";
 import prisma from "../helpers/prisma";
 import bodyValidator from "../middleware/bodyValidator";
 import { postServiceBook } from "../JOI/validate";
-const service_bookRouter = require("express").Router();
-import ServiceBookInfos from "../interfaces/IServiceBook";
-import upload from "../middleware/fileUpload";
+import IServiceBook from "../interfaces/IServiceBook";
 
+const service_bookRouter = Router();
+
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 service_bookRouter.get(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const serviceBook = await prisma.service_book.findMany();
-      res.status(200).json(serviceBook);
+      const getAllServiceBooks = await prisma.service_books.findMany();
+      res.status(200).json(getAllServiceBooks);
     } catch (err) {
       next(err);
     }
   }
 );
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 service_bookRouter.get(
   "/:idServiceBook",
   async (req: Request, res: Response, next: NextFunction) => {
     const { idServiceBook } = req.params;
     try {
-      const getOneServiceBook = await prisma.service_book.findUnique({
+      const getOneServiceBook = await prisma.service_books.findUnique({
         where: {
           id_service_book: Number(idServiceBook),
         },
@@ -35,34 +41,16 @@ service_bookRouter.get(
   }
 );
 
-service_bookRouter.get(
-  "/vehicule/:immat",
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { immat } = req.params;
-    try {
-      const getServiceBookByVehicule = await prisma.service_book.findMany({
-        where: {
-          vehicules: {
-            immat: immat,
-          },
-        },
-      });
-      res.status(200).json(getServiceBookByVehicule);
-    } catch (err) {
-      next(err);
-    }
-  }
-);
-
-service_bookRouter.post("/upload", upload);
-
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 service_bookRouter.post(
   "/",
   bodyValidator(postServiceBook),
   async (req: Request, res: Response, next: NextFunction) => {
-    const pros: ServiceBookInfos = req.body;
+    const pros: IServiceBook = req.body;
     try {
-      const addServiceBook = await prisma.service_book.create({
+      const createdServiceBook = await prisma.service_books.create({
         data: {
           date: new Date(pros.date),
           service: pros.service,
@@ -81,19 +69,23 @@ service_bookRouter.post(
           },
         },
       });
-      res.status(200).json(addServiceBook);
+      res.status(200).json(createdServiceBook);
     } catch (err) {
       next(err);
     }
   }
 );
+
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 service_bookRouter.put(
   "/:idServiceBook",
   async (req: Request, res: Response, next: NextFunction) => {
     const idServiceBook = parseInt(req.params.idServiceBook);
-    const pros: ServiceBookInfos = req.body;
+    const pros: IServiceBook = req.body;
     try {
-      const userUpdate = await prisma.service_book.update({
+      const updatedServiceBook = await prisma.service_books.update({
         where: {
           id_service_book: idServiceBook,
         },
@@ -105,19 +97,22 @@ service_bookRouter.put(
           url_invoice: pros.url_invoice,
         },
       });
-      res.status(200).json(userUpdate);
+      res.status(200).json(updatedServiceBook);
     } catch (err) {
       next(err);
     }
   }
 );
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 service_bookRouter.delete(
   "/:idServiceBook",
   async (req: Request, res: Response, next: NextFunction) => {
     const idServiceBook = parseInt(req.params.idServiceBook);
     try {
-      const deleteService_book = await prisma.service_book.delete({
+      const deletedServiceBook = await prisma.service_books.delete({
         where: {
           id_service_book: idServiceBook,
         },
@@ -125,7 +120,7 @@ service_bookRouter.delete(
       res
         .status(200)
         .send(
-          `Sercie Book with id ${deleteService_book.id_service_book} deleted`
+          `Sercie Book with id ${deletedServiceBook.id_service_book} deleted`
         );
     } catch (err) {
       next(err);
@@ -133,4 +128,4 @@ service_bookRouter.delete(
   }
 );
 
-module.exports = service_bookRouter;
+export default service_bookRouter;

@@ -1,7 +1,11 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, Router } from "express";
 import prisma from "../helpers/prisma";
-const brandsRouter = require("express").Router();
 
+const brandsRouter = Router();
+
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 // authorization:admin user
 brandsRouter.get(
   "/",
@@ -9,16 +13,16 @@ brandsRouter.get(
     const { name } = req.query;
     try {
       if (req.query.name) {
-        const brandByName = await prisma.brand.findMany({
+        const findBrandByName = await prisma.brands.findMany({
           where: {
             name: {
               contains: String(name),
             },
           },
         });
-        res.status(200).json(brandByName);
+        res.status(200).json(findBrandByName);
       } else {
-        const brands = await prisma.brand.findMany();
+        const brands = await prisma.brands.findMany();
         res.status(200).json(brands);
       }
     } catch (err) {
@@ -27,18 +31,21 @@ brandsRouter.get(
   }
 );
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 // Search one vehicule
 brandsRouter.get(
   "/:id",
   async (req: Request, res: Response, next: NextFunction) => {
     const id = parseInt(req.params.id);
     try {
-      const brandsById = await prisma.brand.findUnique({
+      const findBrandById = await prisma.brands.findUnique({
         where: {
           id_brand: id,
         },
       });
-      res.json(brandsById);
+      res.json(findBrandById);
     } catch (err) {
       next(err);
     }
@@ -63,66 +70,19 @@ brandsRouter.get(
   }
 );
 
-// search/obtain  vehicules for a specific brand (for pros)search/obtain  vehicules for a specific brand (for pros)
-brandsRouter.get(
-  "/vehicules/:idbrand",
-  async (req: Request, res: Response, next: NextFunction) => {
-    const idBrand = req.params.idbrand;
-    try {
-      const vehiculeByBrand = await prisma.vehicules.findMany({
-        where: {
-          models: {
-            brand: {
-              id_brand: Number(idBrand),
-            },
-          },
-        },
-      });
-      res.status(200).json(vehiculeByBrand);
-    } catch (err) {
-      next(err);
-    }
-  }
-);
-
 // serach/obtain users by brand
-
-brandsRouter.get(
-  "/:idbrand/users",
-  async (req: Request, res: Response, next: NextFunction) => {
-    const idBrand = req.params.idbrand;
-    try {
-      const usersByBrand = await prisma.users.findMany({
-        where: {
-          vehicules: {
-            some: {
-              models: {
-                brand: {
-                  id_brand: Number(idBrand),
-                },
-              },
-            },
-          },
-        },
-      });
-      res.status(200).json(usersByBrand);
-    } catch (err) {
-      next(err);
-    }
-  }
-);
 
 brandsRouter.post(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const addBrands = await prisma.brand.create({
+      const createdBrand = await prisma.brands.create({
         data: {
           code: req.body.code,
           name: req.body.name,
         },
       });
-      res.json(addBrands);
+      res.json(createdBrand);
     } catch (err) {
       next(err);
     }
@@ -134,7 +94,7 @@ brandsRouter.put(
   async (req: Request, res: Response, next: NextFunction) => {
     const id: number = parseInt(req.params.id);
     try {
-      const brandUpdate = await prisma.brand.update({
+      const updatedBrand = await prisma.brands.update({
         where: {
           id_brand: id,
         },
@@ -143,7 +103,7 @@ brandsRouter.put(
           name: req.body.name,
         },
       });
-      res.json(brandUpdate);
+      res.json(updatedBrand);
     } catch (err) {
       next(err);
     }
@@ -155,16 +115,16 @@ brandsRouter.delete(
   async (req: Request, res: Response, next: NextFunction) => {
     const id: number = parseInt(req.params.id);
     try {
-      const brandDeleted = await prisma.brand.delete({
+      const deletedBrand = await prisma.brands.delete({
         where: {
           id_brand: id,
         },
       });
-      res.send(`${brandDeleted.name} deleted`);
+      res.send(`${deletedBrand.name} deleted`);
     } catch (err) {
       next(err);
     }
   }
 );
 
-module.exports = brandsRouter;
+export default brandsRouter;

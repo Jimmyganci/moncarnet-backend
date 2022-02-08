@@ -1,14 +1,17 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, Router } from "express";
 import prisma from "../helpers/prisma";
 import IAppointment from "../interfaces/IAppointment";
 
-const appointmentRouter = require("express").Router();
+const appointmentRouter = Router();
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 appointmentRouter.get(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const getAllAppointment = await prisma.appointment.findMany();
+      const getAllAppointment = await prisma.appointments.findMany();
       res.status(200).json(getAllAppointment);
     } catch (err) {
       next(err);
@@ -16,46 +19,15 @@ appointmentRouter.get(
   }
 );
 
-appointmentRouter.get(
-  "/user/:idUser",
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { idUser } = req.params;
-    try {
-      const getOneAppointment = await prisma.appointment.findMany({
-        where: {
-          userId: Number(idUser),
-        },
-      });
-      res.status(200).json(getOneAppointment);
-    } catch (err) {
-      next(err);
-    }
-  }
-);
-
-appointmentRouter.get(
-  "/pros/:idPros",
-  async (req: Request, res: Response, next: NextFunction) => {
-    const { idPros } = req.params;
-    try {
-      const getOneAppointment = await prisma.appointment.findMany({
-        where: {
-          prosId: Number(idPros),
-        },
-      });
-      res.status(200).json(getOneAppointment);
-    } catch (err) {
-      next(err);
-    }
-  }
-);
-
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 appointmentRouter.get(
   "/:idAppointment",
   async (req: Request, res: Response, next: NextFunction) => {
     const { idAppointment } = req.params;
     try {
-      const getOneAppointment = await prisma.appointment.findUnique({
+      const getOneAppointment = await prisma.appointments.findUnique({
         where: {
           id_appointment: Number(idAppointment),
         },
@@ -68,12 +40,15 @@ appointmentRouter.get(
   }
 );
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 appointmentRouter.post(
   "/",
   async (req: Request, res: Response, next: NextFunction) => {
     const { userId, prosId, date, comment, immat }: IAppointment = req.body;
     try {
-      const postAppointment = await prisma.appointment.create({
+      const postAppointment = await prisma.appointments.create({
         data: {
           userId: userId,
           prosId: prosId,
@@ -89,13 +64,16 @@ appointmentRouter.post(
   }
 );
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 appointmentRouter.put(
   "/:idAppointment",
   async (req: Request, res: Response, next: NextFunction) => {
     const { idAppointment } = req.params;
     const { userId, prosId, date, comment }: IAppointment = req.body;
     try {
-      const updateAppointment = await prisma.appointment.update({
+      const updatedAppointment = await prisma.appointments.update({
         where: {
           id_appointment: Number(idAppointment),
         },
@@ -106,19 +84,22 @@ appointmentRouter.put(
           comment: comment,
         },
       });
-      res.status(200).json(updateAppointment);
+      res.status(200).json(updatedAppointment);
     } catch (err) {
       next(err);
     }
   }
 );
 
+/*//////////////////////////////////////////////////////////////
+                        ROUTE IS USED
+/////////////////////////////////////////////////////////////*/
 appointmentRouter.delete(
   "/:idAppointment",
   async (req: Request, res: Response, next: NextFunction) => {
     const { idAppointment } = req.params;
     try {
-      const deleteOneAppointment = await prisma.appointment.delete({
+      const deletedOneAppointment = await prisma.appointments.delete({
         where: {
           id_appointment: Number(idAppointment),
         },
@@ -126,7 +107,7 @@ appointmentRouter.delete(
       res
         .status(200)
         .send(
-          `Appointment of ${deleteOneAppointment.date} with pros Id ${deleteOneAppointment.prosId} deleted`
+          `Appointment of ${deletedOneAppointment.date} with pros Id ${deletedOneAppointment.prosId} deleted`
         );
     } catch (err) {
       next(err);

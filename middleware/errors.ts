@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 require("dotenv").config();
 
 class ErrorHandler extends Error {
@@ -10,16 +10,11 @@ class ErrorHandler extends Error {
   }
 }
 
-const handleError = (
-  err: ErrorHandler,
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  // gèrer l'environnement PROD/DEV
+const handleError = (err: ErrorHandler, req: Request, res: Response) => {
+  // manage environment PROD/DEV
   const { statusCode = 500, message } = err;
 
-  // On affiche le message uniquement en environnement de DEV
+  // show message only in dev environment
   if (process.env.NODE_ENV === "DEV") {
     res.status(statusCode).json({
       status: "error",

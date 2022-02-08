@@ -1,16 +1,17 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response, NextFunction, Router } from "express";
 import prisma from "../helpers/prisma";
 import bodyValidator from "../middleware/bodyValidator";
 import { postAdmin } from "../JOI/validate";
-import AdminInfos from "../interfaces/IAdminInfos";
-const UserAuth = require("../helpers/users");
-const adminRouter = require("express").Router();
-import checktoken from "../middleware/checkToken";
+import IAdmin from "../interfaces/IAdmin";
+import UserAuth from "../helpers/users";
+import checkToken from "../middleware/checkToken";
 import checkRole from "../middleware/checkRole";
+
+const adminRouter = Router();
 
 adminRouter.get(
   "/",
-  checktoken,
+  checkToken,
   checkRole,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -24,7 +25,7 @@ adminRouter.get(
 
 adminRouter.get(
   "/:idAdmin",
-  checktoken,
+  checkToken,
   checkRole,
   async (req: Request, res: Response, next: NextFunction) => {
     const { idAdmin } = req.params;
@@ -46,7 +47,7 @@ adminRouter.post(
   "/",
   bodyValidator(postAdmin),
   async (req: Request, res: Response, next: NextFunction) => {
-    const admin: AdminInfos = req.body;
+    const admin: IAdmin = req.body;
     try {
       const emailExisting = await prisma.admin.findUnique({
         where: {
@@ -54,9 +55,9 @@ adminRouter.post(
         },
       });
 
-      if (emailExisting === null) {
+      if (!emailExisting) {
         const hashedPassword = await UserAuth.hashPassword(admin.password);
-        const createAdmin = await prisma.admin.create({
+        const createdAdmin = await prisma.admin.create({
           data: {
             firstname: admin.firstname,
             lastname: admin.lastname,
@@ -64,7 +65,7 @@ adminRouter.post(
             hashedPassword: hashedPassword,
           },
         });
-        res.status(200).json(createAdmin);
+        res.status(200).json(createdAdmin);
       } else {
         res.status(409).send("Email already used");
       }
@@ -77,11 +78,11 @@ adminRouter.post(
 adminRouter.put(
   "/:idAdmin",
   bodyValidator(postAdmin),
-  checktoken,
+  checkToken,
   checkRole,
   async (req: Request, res: Response, next: NextFunction) => {
     const { idAdmin } = req.params;
-    const admin: AdminInfos = req.body;
+    const admin: IAdmin = req.body;
     try {
       const emailExisting = await prisma.admin.findMany({
         where: {
@@ -92,9 +93,9 @@ adminRouter.put(
         },
       });
 
-      if (emailExisting.length === 0) {
+      if (!emailExisting.length) {
         const hashedPassword = await UserAuth.hashPassword(admin.password);
-        const adminUpdate = await prisma.admin.update({
+        const updatedAdmin = await prisma.admin.update({
           where: {
             id_admin: Number(idAdmin),
           },
@@ -105,7 +106,7 @@ adminRouter.put(
             hashedPassword: hashedPassword,
           },
         });
-        if (adminUpdate) res.status(204).send("Admin updated");
+        if (updatedAdmin) res.status(204).send("Admin updated");
       } else {
         res.status(409).send("Email already used!");
       }
@@ -117,21 +118,21 @@ adminRouter.put(
 
 adminRouter.delete(
   "/:idAdmin",
-  checktoken,
+  checkToken,
   checkRole,
   async (req: Request, res: Response, next: NextFunction) => {
     const { idAdmin } = req.params;
     try {
-      const deleteAdmin = await prisma.admin.delete({
+      const deletedAdmin = await prisma.admin.delete({
         where: {
           id_admin: Number(idAdmin),
         },
       });
-      if (deleteAdmin) res.status(204).send("Admin deleted");
+      if (deletedAdmin) res.status(204).send("Admin deleted");
     } catch (err) {
       next(err);
     }
   }
 );
 
-module.exports = adminRouter;
+export default adminRouter;

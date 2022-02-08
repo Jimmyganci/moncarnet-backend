@@ -141,7 +141,7 @@ usersRouter.get(
           },
         },
       });
-      res.status(200).json(getOneFavorite?.pros);
+      res.status(200).json(getOneFavorite?.pros[0]);
     } catch (err) {
       next(err);
     }

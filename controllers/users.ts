@@ -177,6 +177,12 @@ usersRouter.get(
       const getOneAppointment = await prisma.appointments.findMany({
         where: {
           userId: Number(idUser),
+          OR: {
+            vehicules: {
+              active: true,
+              validate: true,
+            },
+          },
         },
       });
       res.status(200).json(getOneAppointment);

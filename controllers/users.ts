@@ -4,7 +4,7 @@ import bodyValidator from "../middleware/bodyValidator";
 import { postUser, putUser } from "../JOI/validate";
 import UserAuth from "../helpers/users";
 import IUser from "../interfaces/IUser";
-import checktoken from "../middleware/checkToken";
+import checkToken from "../middleware/checkToken";
 
 /*//////////////////////////////////////////////////////////////
                         ROUTE IS USED
@@ -14,7 +14,7 @@ const usersRouter = Router();
 // authorization : admin
 usersRouter.get(
   "/",
-  checktoken,
+  checkToken,
   async (req: Request, res: Response, next: NextFunction) => {
     const { lastname, city, postal_code } = req.query;
     if (req.query.appointments) {
@@ -81,7 +81,7 @@ usersRouter.get(
 // authorizations: user, admin, pros
 usersRouter.get(
   "/:idUser",
-  checktoken,
+  checkToken,
   async (req: Request, res: Response, next: NextFunction) => {
     const idUser = parseInt(req.params.idUser);
     try {
@@ -103,7 +103,7 @@ usersRouter.get(
 // authorization: admin, user
 usersRouter.get(
   "/:idUser/pros",
-  checktoken,
+  checkToken,
   async (req: Request, res: Response, next: NextFunction) => {
     const idUser = parseInt(req.params.idUser);
     try {
@@ -123,9 +123,34 @@ usersRouter.get(
   }
 );
 
+usersRouter.get(
+  "/:idUser/pros/:idPros",
+  checkToken,
+  async (req: Request, res: Response, next: NextFunction) => {
+    const { idUser, idPros } = req.params;
+    try {
+      const getOneFavorite = await prisma.users.findUnique({
+        where: {
+          id_user: Number(idUser),
+        },
+        select: {
+          pros: {
+            where: {
+              id_pros: Number(idPros),
+            },
+          },
+        },
+      });
+      res.status(200).json(getOneFavorite?.pros[0]);
+    } catch (err) {
+      next(err);
+    }
+  }
+);
+
 usersRouter.put(
   "/:idUser/pros/:idPros",
-  checktoken,
+  checkToken,
   async (req: Request, res: Response, next: NextFunction) => {
     const { idUser, idPros } = req.params;
     try {
@@ -197,7 +222,7 @@ usersRouter.get(
 /////////////////////////////////////////////////////////////*/
 usersRouter.delete(
   "/:idUser/prosDeleted/:idPros",
-  checktoken,
+  checkToken,
   async (req: Request, res: Response, next: NextFunction) => {
     const { idUser, idPros } = req.params;
     try {
@@ -273,7 +298,7 @@ usersRouter.post(
 usersRouter.put(
   "/:idUser",
   bodyValidator(putUser),
-  checktoken,
+  checkToken,
   async (req: Request, res: Response, next: NextFunction) => {
     const idUser = parseInt(req.params.idUser);
     const user: IUser = req.body;
@@ -316,7 +341,7 @@ usersRouter.put(
 // authorization: admin, user
 usersRouter.delete(
   "/:idUser",
-  checktoken,
+  checkToken,
   async (req: Request, res: Response, next: NextFunction) => {
     const idUser: number = parseInt(req.params.idUser);
     try {
